@@ -4,6 +4,7 @@ import { clientMessageSchema, type ServerMessage } from '@workspace/shared';
 import type { BoardStore } from '../office/boardStore.ts';
 import type { Summarizer } from '../office/summarizer.ts';
 import type { Presence } from '../office/notifier.ts';
+import type { PictureStore } from '../office/pictureStore.ts';
 import type { UsageTracker } from '../office/usageTracker.ts';
 import type { TerminalSubscriber } from '../sessions/deskRuntime.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
@@ -19,6 +20,7 @@ interface Deps {
   summarizer: Summarizer;
   usage: UsageTracker;
   presence: Presence;
+  pictures: PictureStore;
 }
 
 class ClientConnection implements TerminalSubscriber {
@@ -41,7 +43,7 @@ class ClientConnection implements TerminalSubscriber {
 
 export function registerWebSocket(
   app: FastifyInstance,
-  { store, sessions, boards, summarizer, usage, presence }: Deps,
+  { store, sessions, boards, summarizer, usage, presence, pictures }: Deps,
 ): void {
   const clients = new Set<ClientConnection>();
 
@@ -57,6 +59,7 @@ export function registerWebSocket(
   usage.on('usage', (next) => broadcast({ t: 'usage.update', usage: next }));
   usage.on('alert', (alert) => broadcast({ t: 'usage.alert', alert }));
   usage.on('deskStats', (deskId, stats) => broadcast({ t: 'desk.stats', deskId, stats }));
+  pictures.on('changed', (list) => broadcast({ t: 'pictures.update', pictures: list }));
 
   app.get('/ws', { websocket: true }, (socket) => {
     const client = new ClientConnection(socket);
@@ -68,6 +71,7 @@ export function registerWebSocket(
       boards: store.listRooms().map((room) => boards.board(room.id)),
       usage: usage.usage(),
       deskStats: usage.deskStats(),
+      pictures: pictures.list(),
     });
 
     socket.on('message', (raw) => {

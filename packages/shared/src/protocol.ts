@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Desk, OfficeSummary, Room, RoomBoard } from './models.ts';
+import type { FramePicture } from './pictures.ts';
 import type { DeskStats, SubscriptionUsage, UsageAlert } from './usage.ts';
 
 /**
@@ -47,7 +48,9 @@ export type ServerMessage =
       boards: RoomBoard[];
       usage: SubscriptionUsage;
       deskStats: Record<string, DeskStats>;
+      pictures: FramePicture[];
     }
+  | { t: 'pictures.update'; pictures: FramePicture[] }
   | { t: 'usage.update'; usage: SubscriptionUsage }
   | { t: 'usage.alert'; alert: UsageAlert }
   | { t: 'desk.stats'; deskId: string; stats: DeskStats }

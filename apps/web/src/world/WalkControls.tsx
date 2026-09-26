@@ -27,6 +27,7 @@ type Interactive =
   | { kind: 'desk'; deskId: string }
   | { kind: 'board'; roomId: string }
   | { kind: 'screen'; panel: 'map' | 'summary' | 'inbox' | 'timeline' }
+  | { kind: 'frame'; frameId: string; aspect: number }
   | { kind: 'seat'; seat: Seat };
 
 interface Pose {
@@ -129,8 +130,13 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
     raycaster.far = INTERACT_DISTANCE;
     const interactive: THREE.Object3D[] = [];
     scene.traverse((object) => {
-      const data = object.userData as { deskId?: string; boardRoomId?: string; panel?: string };
-      if (data.deskId || data.boardRoomId || data.panel) interactive.push(object);
+      const data = object.userData as {
+        deskId?: string;
+        boardRoomId?: string;
+        panel?: string;
+        frameId?: string;
+      };
+      if (data.deskId || data.boardRoomId || data.panel || data.frameId) interactive.push(object);
     });
     let found: (Interactive & { distance: number }) | null = null;
     const hit = raycaster.intersectObjects(interactive, false)[0];
@@ -139,9 +145,19 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
         deskId?: string;
         boardRoomId?: string;
         panel?: 'map' | 'summary' | 'inbox' | 'timeline';
+        frameId?: string;
+        frameAspect?: number;
       };
       if (data.deskId) found = { kind: 'desk', deskId: data.deskId, distance: hit.distance };
-      else if (data.boardRoomId) found = { kind: 'board', roomId: data.boardRoomId, distance: hit.distance };
+      else if (data.frameId) {
+        found = {
+          kind: 'frame',
+          frameId: data.frameId,
+          aspect: data.frameAspect ?? 1,
+          distance: hit.distance,
+        };
+      } else if (data.boardRoomId)
+        found = { kind: 'board', roomId: data.boardRoomId, distance: hit.distance };
       else if (data.panel) found = { kind: 'screen', panel: data.panel, distance: hit.distance };
     }
     if (!seated.current) {
@@ -208,7 +224,9 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
       document.exitPointerLock();
       if (found.kind === 'desk') useOffice.getState().openTerminal(found.deskId);
       else if (found.kind === 'board') useOffice.getState().setPanel({ kind: 'board', roomId: found.roomId });
-      else useOffice.getState().setPanel({ kind: found.panel });
+      else if (found.kind === 'frame') {
+        useOffice.getState().setPanel({ kind: 'frame', frameId: found.frameId, aspect: found.aspect });
+      } else useOffice.getState().setPanel({ kind: found.panel });
     };
     const onClick = () => {
       const { terminalDeskId, panel } = useOffice.getState();
@@ -304,7 +322,13 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
     if (aimClock.current >= AIM_INTERVAL) {
       aimClock.current = 0;
       const locked = document.pointerLockElement === gl.domElement;
-      const aim: WalkAim = locked && !blocked && !transition.current ? (target()?.kind ?? null) : null;
+      const found = locked && !blocked && !transition.current ? target() : null;
+      const aim: WalkAim =
+        found?.kind === 'frame'
+          ? useOffice.getState().pictures[found.frameId]
+            ? 'picture'
+            : 'frame'
+          : (found?.kind ?? null);
       if (useWalk.getState().aim !== aim) useWalk.setState({ aim });
     }
   });

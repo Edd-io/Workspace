@@ -50,7 +50,9 @@
         "desk": "E · Open the terminal",
         "board": "E · Open the board",
         "screen": "E · Open the screen",
-        "seat": "E · Sit down"
+        "seat": "E · Sit down",
+        "frame": "E · Put a picture",
+        "picture": "E · Change the picture"
       }
     }
   },
@@ -493,5 +495,18 @@
     "lessThanMinute": "< 1 min",
     "idleDesks_one": "{{count}} desk without activity in this period.",
     "idleDesks_other": "{{count}} desks without activity in this period."
+  },
+  "frames": {
+    "title": "Frame",
+    "choose": "Choose a picture…",
+    "replace": "Change the picture…",
+    "remove": "Remove the picture",
+    "drop": "Click to choose a picture, drop it here or paste it ({{shortcut}}).",
+    "uploading": "Uploading…",
+    "hint": "The picture is cropped around its center to fill the frame. It is stored on the Workspace server.",
+    "errors": {
+      "not_image": "This file is not a readable picture.",
+      "upload_failed": "The picture could not be saved. Try again."
+    }
   }
 }

@@ -108,4 +108,11 @@ export const MIGRATIONS: string[] = [
   INSERT INTO desk_transcripts (desk_id, path, first_seen)
     SELECT id, transcript_path, created_at FROM desks WHERE transcript_path IS NOT NULL;
   `,
+  `
+  CREATE TABLE pictures (
+    frame_id TEXT PRIMARY KEY,
+    mime TEXT NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  `,
 ];

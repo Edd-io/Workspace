@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { createReadStream, existsSync } from 'node:fs';
 import cookie from '@fastify/cookie';
 import fastifyStatic from '@fastify/static';
 import websocket from '@fastify/websocket';
@@ -11,6 +11,8 @@ import {
   deskPromptSchema,
   integrationTargetSchema,
   loginSchema,
+  MAX_PICTURE_BYTES,
+  PICTURE_TYPES,
   pullRequestSchema,
   searchQuerySchema,
   statsQuerySchema,
@@ -26,6 +28,7 @@ import type { BoardStore } from '../office/boardStore.ts';
 import type { IntegrationService } from '../office/integrationService.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
 import type { RoomAwareness } from '../office/roomAwareness.ts';
+import { PictureError, type PictureStore } from '../office/pictureStore.ts';
 import type { Insights } from '../office/stats.ts';
 import type { Summarizer } from '../office/summarizer.ts';
 import type { Notifier, Presence } from '../office/notifier.ts';
@@ -52,6 +55,7 @@ export interface AppDeps {
   notifier: Notifier;
   presence: Presence;
   insights: Insights;
+  pictures: PictureStore;
 }
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
@@ -82,6 +86,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     notifier,
     presence,
     insights,
+    pictures,
   } = deps;
   const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' }, bodyLimit: 1024 * 1024 });
 
@@ -330,6 +335,49 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return buildTimeline(store, to - hours * 3600_000, to);
   });
 
+  // ---- pictures in the office's frames ---------------------------------------------------------
+
+  app.addContentTypeParser(
+    [...PICTURE_TYPES],
+    { parseAs: 'buffer', bodyLimit: MAX_PICTURE_BYTES },
+    (_request, body, done) => done(null, body),
+  );
+
+  app.get('/api/pictures', async () => pictures.list());
+
+  app.get<{ Params: { frameId: string } }>('/api/pictures/:frameId', async (request, reply) => {
+    const file = pictures.file(request.params.frameId);
+    if (!file || !existsSync(file.path)) return reply.code(404).send({ error: 'not_found' });
+    return (
+      reply
+        .header('content-type', file.type)
+        // The URL changes with the picture.
+        .header('cache-control', 'private, max-age=31536000, immutable')
+        .header('x-content-type-options', 'nosniff')
+        .send(createReadStream(file.path))
+    );
+  });
+
+  app.put<{ Params: { frameId: string } }>(
+    '/api/pictures/:frameId',
+    { bodyLimit: MAX_PICTURE_BYTES },
+    async (request, reply) => {
+      const type = (request.headers['content-type'] ?? '').split(';')[0]!.trim().toLowerCase();
+      try {
+        return pictures.save(request.params.frameId, type, request.body as Buffer);
+      } catch (error) {
+        if (error instanceof PictureError) {
+          return reply.code(400).send({ error: error.code, message: error.message });
+        }
+        throw error;
+      }
+    },
+  );
+
+  app.delete<{ Params: { frameId: string } }>('/api/pictures/:frameId', async (request) =>
+    pictures.remove(request.params.frameId),
+  );
+
   // ---- statistics and search ------------------------------------------------------------------
 
   app.get('/api/stats', async (request) => insights.stats(statsQuerySchema.parse(request.query).period));
@@ -365,7 +413,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
 
   // ---- realtime -------------------------------------------------------------------------------
 
-  registerWebSocket(app, { store, sessions, boards, summarizer, usage, presence });
+  registerWebSocket(app, { store, sessions, boards, summarizer, usage, presence, pictures });
 
   // ---- web client (production build) ----------------------------------------------------------
 

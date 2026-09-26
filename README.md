@@ -51,7 +51,9 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
 - **Walk** (`V` or the top bar): first-person visit. Click to look around, WASD / ZQSD / arrows to
   move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you, or to sit
   down on a free seat (your chair at the master desk, sofas, stools, benches); walk away to stand up.
-- **Master office** (at the entrance): live map, Haiku briefing, inbox and the day's timeline.
+- **Master office** (at the entrance): live map, Haiku briefing, inbox and the day's timeline, and a
+  gallery wall of empty frames: walk up to one and press `E` to put your own picture in it (pick a
+  file, drop it or paste it). Pictures are stored under `<data dir>/pictures`.
 - **Activity** (top bar): the timeline of every desk's states, and statistics over 24 h / 7 / 30 days
   (working and waiting time, prompts, tools, lines written, tokens, context, integrations).
 - **Search** (🔍 in the top bar, ⌘K / Ctrl+K): every desk's prompts and answers, ignoring case and

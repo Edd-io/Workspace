@@ -25,7 +25,8 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 - 💡 **Real weather** behind the windows (rain, sun) through a weather API.
 - 💡 **Seasons** following the real date: autumn leaves, snow in winter, blossoms in spring.
 - 💡 **More character life** (beyond phase 9): stretching, chatting at the water cooler in pairs, lunch breaks.
-- 💡 **Master office customization** (decoration, posters, plants).
+- 💡 **Master office customization** (decoration, posters, plants); beyond the gallery wall: choose
+  how a picture is cropped, frames in the project rooms and the lounge, a slideshow frame.
 - 💡 **More realistic rendering**: PBR materials, lightmaps baked in Blender, post-processing (SSAO, bloom), more detailed characters.
 - 💡 **Post-processing on the Max graphics level**: ambient occlusion (N8AO), bloom on lamps and screens.
 - 💡 **Meeting room** as a real room type (meeting table + chairs + TV props already exist).

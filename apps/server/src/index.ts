@@ -8,6 +8,7 @@ import { BoardStore } from './office/boardStore.ts';
 import { IntegrationService } from './office/integrationService.ts';
 import { OfficeService } from './office/officeService.ts';
 import { RoomAwareness } from './office/roomAwareness.ts';
+import { PictureStore } from './office/pictureStore.ts';
 import { Insights } from './office/stats.ts';
 import { Summarizer } from './office/summarizer.ts';
 import { UsageTracker } from './office/usageTracker.ts';
@@ -41,6 +42,7 @@ const notifier = new Notifier(store, presence, loadLocales(config.repoRoot));
 notifier.start();
 usage.on('alert', (alert) => notifier.onUsageAlert(alert));
 const insights = new Insights(store);
+const pictures = new PictureStore(db, config.dataDir);
 
 const app = await buildApp({
   config,
@@ -56,6 +58,7 @@ const app = await buildApp({
   notifier,
   presence,
   insights,
+  pictures,
 });
 await sessions.init();
 auth.purgeExpired();

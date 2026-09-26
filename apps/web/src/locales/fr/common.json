@@ -50,7 +50,9 @@
         "desk": "E · Ouvrir le terminal",
         "board": "E · Ouvrir le tableau",
         "screen": "E · Ouvrir l'écran",
-        "seat": "E · S'asseoir"
+        "seat": "E · S'asseoir",
+        "frame": "E · Mettre une image",
+        "picture": "E · Changer l'image"
       }
     }
   },
@@ -493,5 +495,18 @@
     "lessThanMinute": "< 1 min",
     "idleDesks_one": "{{count}} poste sans activité sur la période.",
     "idleDesks_other": "{{count}} postes sans activité sur la période."
+  },
+  "frames": {
+    "title": "Cadre",
+    "choose": "Choisir une image…",
+    "replace": "Changer l'image…",
+    "remove": "Retirer l'image",
+    "drop": "Clique pour choisir une image, glisse-la ici ou colle-la ({{shortcut}}).",
+    "uploading": "Envoi…",
+    "hint": "L'image est recadrée au centre pour remplir le cadre. Elle est enregistrée sur le serveur de Workspace.",
+    "errors": {
+      "not_image": "Ce fichier n'est pas une image lisible.",
+      "upload_failed": "L'image n'a pas pu être enregistrée. Réessaie."
+    }
   }
 }

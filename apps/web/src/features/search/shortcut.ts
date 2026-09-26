@@ -1,7 +1,7 @@
-const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+import { isMac, modKey } from '../../lib/platform';
 
 /** Shown in the search button's tooltip. */
-export const SEARCH_SHORTCUT = isMac ? '⌘K' : 'Ctrl+K';
+export const SEARCH_SHORTCUT = modKey('K');
 
 /**
  * ⌘K on macOS, Ctrl+K elsewhere — except in an open terminal, where Ctrl+K belongs to the shell

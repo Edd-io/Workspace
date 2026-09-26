@@ -217,6 +217,51 @@ export function masterTvPose(room: RoomRect): { position: [number, number, numbe
   };
 }
 
+/** A picture frame hung on a wall, for the human's own pictures. */
+export interface FrameSlot {
+  id: string;
+  /** Center of the frame's back, against the wall. */
+  position: [number, number, number];
+  /** Around Y; the picture faces the frame's local +Z. */
+  rotation: number;
+  width: number;
+  height: number;
+  finish: 'black' | 'oak';
+}
+
+/**
+ * Gallery wall composition, in meters: `u` to the right as seen from the room, `v` the height of
+ * the frame's center. A large landscape in the middle, pairs of small frames stacked on each side,
+ * portraits at both ends.
+ */
+const GALLERY: { u: number; v: number; width: number; height: number; finish: FrameSlot['finish'] }[] = [
+  { u: -2.25, v: 1.55, width: 0.55, height: 0.8, finish: 'black' },
+  { u: -1.3, v: 1.87, width: 0.7, height: 0.5, finish: 'oak' },
+  { u: -1.3, v: 1.25, width: 0.7, height: 0.5, finish: 'black' },
+  { u: 0, v: 1.6, width: 1.3, height: 0.9, finish: 'black' },
+  { u: 1.3, v: 1.87, width: 0.7, height: 0.5, finish: 'black' },
+  { u: 1.3, v: 1.25, width: 0.7, height: 0.5, finish: 'oak' },
+  { u: 2.25, v: 1.55, width: 0.55, height: 0.8, finish: 'black' },
+];
+
+/** Picture frames of the master office: on the long corridor-side wall, between the coat rack and the corner. */
+export function masterGallery(room: RoomRect): FrameSlot[] {
+  const frame = frameOf(room);
+  const rotation = frame.facingCorridor + Math.PI;
+  const wallZ = frame.frontZ - frame.toward * INSET;
+  // The frame's local +X (the viewer's right) in world X.
+  const right = Math.cos(rotation);
+  const center = (room.x0 + 3.1 + room.x1 - 0.5) / 2;
+  return GALLERY.map((item, index) => ({
+    id: `master-${index + 1}`,
+    position: [center + right * item.u, item.v, wallZ],
+    rotation,
+    width: item.width,
+    height: item.height,
+    finish: item.finish,
+  }));
+}
+
 /** The three monitors of the master desk (map, summary, inbox), in the desk's local frame. */
 export const MASTER_MONITORS: { x: number; angle: number }[] = [
   { x: -0.72, angle: 0.28 },

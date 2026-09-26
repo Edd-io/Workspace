@@ -3,5 +3,6 @@ export * from './insights.ts';
 export * from './integration.ts';
 export * from './models.ts';
 export * from './notifications.ts';
+export * from './pictures.ts';
 export * from './protocol.ts';
 export * from './usage.ts';

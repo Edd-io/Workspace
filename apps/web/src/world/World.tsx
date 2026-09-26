@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { desksOfRoom, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
 import { CharacterLife } from './CharacterLife';
-import type { PropPlacement } from './decor';
+import { masterGallery, type PropPlacement } from './decor';
 import type { Daylight } from './daylight';
 import { FrameScheduler } from './FrameScheduler';
 import { GRAPHICS_PROFILES, useGraphicsQuality } from './graphicsSettings';
@@ -15,6 +15,7 @@ import { MasterScreens } from './MasterScreens';
 import { OutdoorScene } from './OutdoorScene';
 import { Soundscape } from './Soundscape';
 import { TimelineTV } from './TimelineTV';
+import { PictureFrames } from './PictureFrames';
 import { PropInstances } from './props/PropInstances';
 import { RoomView } from './RoomView';
 import { Structure } from './structure/Structure';
@@ -108,6 +109,10 @@ export function World() {
     () => (walking ? props : props.filter((prop) => !HIDDEN_IN_CUTAWAY.has(prop.model))),
     [props, walking],
   );
+  const frameSlots = useMemo(
+    () => layout.rooms.filter((room) => room.kind === 'master').flatMap((room) => masterGallery(room)),
+    [layout],
+  );
   const profile = GRAPHICS_PROFILES[useGraphicsQuality()];
   const daylight = useDaylight();
   // Sky, sun, fog and outdoor tint do not depend on where the viewer stands: the outdoor values.
@@ -163,11 +168,12 @@ export function World() {
         <DeskStation key={desk.desk.id} layout={desk} showLabel={!walking} />
       ))}
       <MasterScreens layout={layout} />
-      {/* The wall TV hangs above the cut walls of the overview: only shown indoors. */}
+      {/* The wall TV and the frames hang above the cut walls of the overview: only shown indoors. */}
       {walking &&
         layout.rooms
           .filter((room) => room.kind === 'master')
           .map((room) => <TimelineTV key="timeline-tv" room={room} />)}
+      {walking && <PictureFrames slots={frameSlots} />}
 
       <FrameScheduler walking={walking} />
       {import.meta.env.DEV && <DevHandles />}

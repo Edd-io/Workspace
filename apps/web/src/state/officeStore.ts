@@ -3,6 +3,7 @@ import {
   ATTENTION_STATES,
   type Desk,
   type DeskStats,
+  type FramePicture,
   type OfficeSummary,
   type Room,
   type RoomBoard,
@@ -23,6 +24,7 @@ export type Panel =
   | { kind: 'integrate'; deskId: string }
   | { kind: 'notifications' }
   | { kind: 'search' }
+  | { kind: 'frame'; frameId: string; aspect: number }
   | null;
 
 /** Short-lived in-app notification: a desk started waiting for the human, or usage is running out. */
@@ -42,6 +44,8 @@ interface OfficeState {
   usage: SubscriptionUsage | null;
   /** Live figures of each desk's session (model, context size). */
   deskStats: Record<string, DeskStats>;
+  /** Pictures in the office's frames: frame id → image URL. */
+  pictures: Record<string, string>;
   toasts: Toast[];
   /** Desk the camera is looking at. */
   focusedDeskId: string | null;
@@ -67,6 +71,10 @@ interface OfficeState {
   setPanel: (panel: Panel) => void;
 }
 
+export function picturesById(pictures: FramePicture[]): Record<string, string> {
+  return Object.fromEntries(pictures.map((picture) => [picture.frameId, picture.url]));
+}
+
 export const useOffice = create<OfficeState>((set) => ({
   connection: 'closed',
   loaded: false,
@@ -76,6 +84,7 @@ export const useOffice = create<OfficeState>((set) => ({
   summary: null,
   usage: null,
   deskStats: {},
+  pictures: {},
   clockOverride: null,
   toasts: [],
   focusedDeskId: null,
@@ -136,7 +145,11 @@ function applyMessage(message: ServerMessage): void {
         boards: Object.fromEntries(message.boards.map((board) => [board.roomId, board])),
         usage: message.usage,
         deskStats: message.deskStats,
+        pictures: picturesById(message.pictures),
       });
+      break;
+    case 'pictures.update':
+      useOffice.setState({ pictures: picturesById(message.pictures) });
       break;
     case 'usage.update':
       useOffice.setState({ usage: message.usage });

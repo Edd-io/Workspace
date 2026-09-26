@@ -12,6 +12,7 @@ import { RoomBoardDialog } from '../board/RoomBoardDialog';
 import { CreateDeskDialog } from './CreateDeskDialog';
 import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
+import { FrameDialog } from '../frames/FrameDialog';
 import { IntegrationDialog } from '../integration/IntegrationDialog';
 import { NotificationsDialog } from '../notifications/NotificationsDialog';
 import { SearchDialog } from '../search/SearchDialog';
@@ -259,6 +260,9 @@ function Dialogs() {
   if (panel.kind === 'map') return <MapPanel onClose={close} />;
   if (panel.kind === 'timeline') return <TimelinePanel onClose={close} />;
   if (panel.kind === 'search') return <SearchDialog onClose={close} />;
+  if (panel.kind === 'frame') {
+    return <FrameDialog key={panel.frameId} frameId={panel.frameId} aspect={panel.aspect} onClose={close} />;
+  }
   if (panel.kind === 'notifications') return <NotificationsDialog onClose={close} />;
   if (panel.kind === 'integrate') return <IntegrationDialog deskId={panel.deskId} onClose={close} />;
   return <CreateDeskDialog roomId={panel.roomId} onClose={close} />;
