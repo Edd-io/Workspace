@@ -27,11 +27,17 @@ function clip(text: string | null | undefined, max = MAX_FIELD): string {
   return flat.length > max ? `${flat.slice(0, max - 1)}…` : flat;
 }
 
-/** Local wall-clock time with its offset, e.g. "2026-09-26 17:26 GMT+2". */
-function localTime(timestamp: number): string {
+/**
+ * Local wall-clock time with its offset, e.g. "2026-09-26 17:26 GMT+2". (Intl rejects `dateStyle` /
+ * `timeStyle` together with `timeZoneName`: the fields are spelled out.)
+ */
+export function localTime(timestamp: number): string {
   return new Date(timestamp).toLocaleString('sv-SE', {
-    dateStyle: 'short',
-    timeStyle: 'short',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
     timeZoneName: 'short',
   });
 }
