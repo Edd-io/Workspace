@@ -80,10 +80,13 @@
       "restart": "Restart",
       "delete": "Delete desk",
       "confirmDelete": "Delete",
-      "integrate": "Integrate the work…"
+      "integrate": "Integrate the work…",
+      "editRole": "Role…"
     },
     "confirmDelete": "The session stops and its worktree is removed. The branch {{branch}} is kept.",
-    "confirmDeleteUncommitted": "This desk has uncommitted changes. They will be lost if you delete it."
+    "confirmDeleteUncommitted": "This desk has uncommitted changes. They will be lost if you delete it.",
+    "saveRole": "Save",
+    "noRole": "No role"
   },
   "errors": {
     "path_not_found": "This folder does not exist on the server.",
@@ -105,7 +108,27 @@
     "project": "Project folder on the server",
     "parent": "Parent folder",
     "hint": "Every desk of this room works on this project.",
-    "submit": "Create the room"
+    "submit": "Create the room",
+    "templates": {
+      "label": "Starting team",
+      "empty": {
+        "label": "Empty room",
+        "description": "You add the desks yourself."
+      },
+      "solo": {
+        "label": "Solo",
+        "description": "One development desk."
+      },
+      "duo": {
+        "label": "Duo",
+        "description": "A developer and a reviewer."
+      },
+      "team": {
+        "label": "Team",
+        "description": "A team lead who splits the work, front end, back end and tests."
+      }
+    },
+    "creatingDesks": "Creating the desks…"
   },
   "createDesk": {
     "title": "New desk in {{room}}",
@@ -129,7 +152,9 @@
     "initialPrompt": "First instruction (optional)",
     "initialPromptPlaceholder": "What should this desk work on?",
     "submit": "Create the desk",
-    "creating": "Creating…"
+    "creating": "Creating…",
+    "role": "Role (optional)",
+    "rolePlaceholder": "What this desk takes care of in the room"
   },
   "permissionModes": {
     "default": "Ask every time",
@@ -156,7 +181,10 @@
     "nobody": "Nobody here yet",
     "noNotes": "No note yet",
     "human": "You",
-    "room": "everyone"
+    "room": "everyone",
+    "autoWake": "Wake idle desks up when someone writes to them",
+    "autoWakeHint": "A message to an idle desk is typed in as a prompt (at most 4 times per 10 minutes).",
+    "deliveryHint": "A working desk gets messages at its next tool use; an idle desk is woken up right away when waking is on."
   },
   "board": {
     "formerDesk": "Former desk",
@@ -329,5 +357,35 @@
     "notifications": "Browser notifications",
     "on": "On",
     "off": "Off"
+  },
+  "roles": {
+    "lead": {
+      "label": "Team lead",
+      "description": "takes the requests, splits them into clear tasks, hands them to colleagues with the delegate tool, follows progress and checks the integration. Codes little itself."
+    },
+    "developer": {
+      "label": "Development",
+      "description": "implements the requested features, with tests, and commits as it goes."
+    },
+    "frontend": {
+      "label": "Front end",
+      "description": "user interface: components, styles, accessibility and API integration."
+    },
+    "backend": {
+      "label": "Back end",
+      "description": "API, data, server logic and performance."
+    },
+    "tests": {
+      "label": "Tests and quality",
+      "description": "writes and runs the tests, reviews colleagues' work and reports regressions."
+    },
+    "reviewer": {
+      "label": "Review",
+      "description": "reviews colleagues' changes, suggests fixes and checks that the tests pass."
+    },
+    "docs": {
+      "label": "Documentation",
+      "description": "README, guides and useful comments, kept up to date with the code."
+    }
   }
 }

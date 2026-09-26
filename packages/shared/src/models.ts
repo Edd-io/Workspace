@@ -33,6 +33,8 @@ export interface Room {
   accentColor: string;
   position: number;
   createdAt: number;
+  /** A message to an idle desk of this room is typed into its session (see WakeService). */
+  autoWake: boolean;
 }
 
 export interface Desk {
@@ -45,6 +47,8 @@ export interface Desk {
   branch: string | null;
   /** Project branch the desk's worktree started from (worktree desks). */
   baseBranch: string | null;
+  /** What this desk is responsible for in its room (e.g. "Back-end: API and data"). */
+  role: string | null;
   sessionId: string;
   model: string | null;
   permissionMode: PermissionMode | null;
@@ -131,6 +135,7 @@ export const updateRoomSchema = z.object({
     .string()
     .regex(/^#[0-9a-fA-F]{6}$/)
     .optional(),
+  autoWake: z.boolean().optional(),
 });
 export type UpdateRoomInput = z.infer<typeof updateRoomSchema>;
 
@@ -141,11 +146,13 @@ export const createDeskSchema = z.object({
   model: z.string().trim().min(1).max(60).optional(),
   permissionMode: z.enum(PERMISSION_MODES).optional(),
   initialPrompt: z.string().trim().min(1).max(20_000).optional(),
+  role: z.string().trim().min(1).max(600).optional(),
 });
 export type CreateDeskInput = z.infer<typeof createDeskSchema>;
 
 export const updateDeskSchema = z.object({
   name: z.string().trim().min(1).max(40).optional(),
+  role: z.string().trim().max(600).nullable().optional(),
 });
 export type UpdateDeskInput = z.infer<typeof updateDeskSchema>;
 

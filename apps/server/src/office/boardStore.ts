@@ -29,7 +29,7 @@ function toNote(row: Row): RoomNote {
 }
 
 /** Messages and pinned notes shared by the desks of a room. */
-export class BoardStore extends EventEmitter<{ boardChanged: [string] }> {
+export class BoardStore extends EventEmitter<{ boardChanged: [string]; messagePosted: [RoomMessage] }> {
   private readonly db: Database;
 
   constructor(db: Database) {
@@ -58,8 +58,10 @@ export class BoardStore extends EventEmitter<{ boardChanged: [string] }> {
         'INSERT INTO room_messages (room_id, from_desk_id, to_desk_id, body, created_at) VALUES (?, ?, ?, ?, ?)',
       )
       .run(roomId, fromDeskId, toDeskId, body, createdAt);
+    const message = { id: Number(result.lastInsertRowid), roomId, fromDeskId, toDeskId, body, createdAt };
     this.emit('boardChanged', roomId);
-    return { id: Number(result.lastInsertRowid), roomId, fromDeskId, toDeskId, body, createdAt };
+    this.emit('messagePosted', message);
+    return message;
   }
 
   /** Messages addressed to a desk (directly or to the whole room) that it has not read yet. */

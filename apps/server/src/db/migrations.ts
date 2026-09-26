@@ -94,4 +94,8 @@ export const MIGRATIONS: string[] = [
   `
   ALTER TABLE desks ADD COLUMN base_branch TEXT;
   `,
+  `
+  ALTER TABLE rooms ADD COLUMN auto_wake INTEGER NOT NULL DEFAULT 1;
+  ALTER TABLE desks ADD COLUMN role TEXT;
+  `,
 ];

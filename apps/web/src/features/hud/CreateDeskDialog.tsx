@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, ApiError } from '../../api/http';
 import { useOffice } from '../../state/officeStore';
+import { ROLE_IDS, roleText } from '../rooms/roomTemplates';
 import { Dialog } from './Dialog';
 
 const MODELS = ['', 'opus', 'sonnet', 'haiku'] as const;
@@ -16,6 +17,7 @@ export function CreateDeskDialog({ roomId, onClose }: { roomId: string; onClose:
   const [model, setModel] = useState<(typeof MODELS)[number]>('');
   const [permissionMode, setPermissionMode] = useState<PermissionMode | ''>('');
   const [initialPrompt, setInitialPrompt] = useState('');
+  const [role, setRole] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -33,6 +35,7 @@ export function CreateDeskDialog({ roomId, onClose }: { roomId: string; onClose:
         ...(model ? { model } : {}),
         ...(permissionMode ? { permissionMode } : {}),
         ...(initialPrompt.trim() ? { initialPrompt: initialPrompt.trim() } : {}),
+        ...(role.trim() ? { role: role.trim() } : {}),
       });
       onClose();
       openTerminal(desk.id);
@@ -115,6 +118,30 @@ export function CreateDeskDialog({ roomId, onClose }: { roomId: string; onClose:
               ))}
             </select>
           </label>
+        </div>
+        <div className="field">
+          <label className="field__label" htmlFor="desk-role">
+            {t('createDesk.role')}
+          </label>
+          <input
+            id="desk-role"
+            className="input"
+            value={role}
+            placeholder={t('createDesk.rolePlaceholder')}
+            onChange={(event) => setRole(event.target.value)}
+          />
+          <span className="role-chips">
+            {ROLE_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                className="tag role-chip"
+                onClick={() => setRole(roleText(t, id))}
+              >
+                {t(`roles.${id}.label`)}
+              </button>
+            ))}
+          </span>
         </div>
         <label className="field">
           <span className="field__label">{t('createDesk.initialPrompt')}</span>

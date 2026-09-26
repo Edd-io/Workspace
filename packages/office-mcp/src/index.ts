@@ -55,7 +55,7 @@ server.registerTool(
   {
     title: 'List colleagues',
     description:
-      'List the other Claude Code sessions (desks) working in your room: their name, state, what they are working on and their git branch.',
+      'List the other Claude Code sessions (desks) working in your room: their name, role, state, what they are working on and their git branch.',
     annotations: { readOnlyHint: true },
   },
   () => run(() => call('GET', '/colleagues')),
@@ -84,6 +84,20 @@ server.registerTool(
     },
   },
   ({ message, to }) => run(() => call('POST', '/messages', { body: message, ...(to ? { to } : {}) })),
+);
+
+server.registerTool(
+  'delegate',
+  {
+    title: 'Delegate a task to a colleague',
+    description:
+      'Hand a well-defined task to a colleague of your room (by name). It becomes their current task and, if they are idle, they start on it right away. Describe the goal, the constraints and what "done" means.',
+    inputSchema: {
+      to: z.string().min(1).describe('Name of the colleague (see the colleagues tool)'),
+      task: z.string().min(1).max(4000),
+    },
+  },
+  ({ to, task }) => run(() => call('POST', '/delegate', { to, task })),
 );
 
 server.registerTool(

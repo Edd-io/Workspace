@@ -66,6 +66,19 @@ export function RoomBoardDialog({ roomId, onClose }: { roomId: string; onClose: 
 
   return (
     <Dialog title={t('whiteboard.title', { room: room.name })} onClose={onClose} wide>
+      <label className="board__option" title={t('whiteboard.autoWakeHint')}>
+        <input
+          type="checkbox"
+          checked={room.autoWake}
+          onChange={(event) =>
+            void run(
+              () => api('PATCH', `/api/rooms/${roomId}`, { autoWake: event.target.checked }),
+              () => undefined,
+            )
+          }
+        />
+        {t('whiteboard.autoWake')}
+      </label>
       <div className="board">
         <section className="board__section">
           <h3>{t('whiteboard.whoDoesWhat')}</h3>

@@ -37,6 +37,16 @@ export function authenticateDesk(
 }
 
 const setTaskSchema = z.object({ task: z.string().trim().max(200) });
+const delegateSchema = z.object({
+  to: z.string().trim().min(1),
+  task: z.string().trim().min(1).max(4000),
+});
+
+/** The first line of a delegated task, short enough for the desk's topic. */
+function oneLineTask(task: string): string {
+  const line = task.split('\n')[0]!.trim();
+  return line.length > 200 ? `${line.slice(0, 197)}…` : line;
+}
 const deskMessageSchema = z.object({
   body: z.string().trim().min(1).max(4000),
   /** Recipient desk name or id; omitted to address the whole room. */
@@ -69,6 +79,7 @@ export function registerOfficeRoutes(app: FastifyInstance, { store, boards, awar
       you: desk.name,
       colleagues: awareness.colleagues(desk).map((other) => ({
         name: other.name,
+        role: other.role,
         state: other.state,
         topic: deskTopic(other),
         branch: other.branch,
@@ -104,6 +115,27 @@ export function registerOfficeRoutes(app: FastifyInstance, { store, boards, awar
     }
     const message = boards.postMessage(desk.roomId, desk.id, toDeskId, body);
     return { ok: true, id: message.id };
+  });
+
+  // A task handed to a colleague: a message to it, its declared task, and (WakeService) its session
+  // gets it right away when idle.
+  app.post<{ Params: { deskId: string } }>('/internal/office/:deskId/delegate', async (request, reply) => {
+    const desk = authenticateDesk(store, request, reply);
+    if (!desk) return reply;
+    const { to, task } = delegateSchema.parse(request.body);
+    const target = awareness
+      .colleagues(desk)
+      .find((other) => other.id === to || other.name.toLowerCase() === to.toLowerCase());
+    if (!target) {
+      return reply.code(404).send({
+        error: 'unknown_colleague',
+        colleagues: awareness.colleagues(desk).map((other) => other.name),
+      });
+    }
+    const message = boards.postMessage(desk.roomId, desk.id, target.id, `Task for you: ${task}`);
+    store.updateDesk(target.id, { currentTask: oneLineTask(task) });
+    store.addDeskEvent(target.id, 'delegated', null, { from: desk.id });
+    return { ok: true, id: message.id, to: target.name, state: target.state };
   });
 
   app.get<{ Params: { deskId: string } }>('/internal/office/:deskId/messages', async (request, reply) => {

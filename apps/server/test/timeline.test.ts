@@ -13,6 +13,7 @@ function desk(id: string, createdAt: number): DeskRecord {
     workdir: '/w',
     branch: null,
     baseBranch: null,
+    role: null,
     sessionId: id,
     model: null,
     permissionMode: null,
@@ -47,6 +48,7 @@ describe('buildTimeline', () => {
       accentColor: '#000000',
       position: 0,
       createdAt: 0,
+      autoWake: true,
     });
     store.insertDesk(desk('d', 0));
     store.addDeskEvent('d', 'state', 'idle', {}, 50);

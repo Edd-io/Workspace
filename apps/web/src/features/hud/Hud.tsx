@@ -136,7 +136,11 @@ function OfficeSidebar() {
                   key={desk.id}
                   className={`sidebar-desk${desk.id === focusedDeskId ? ' sidebar-desk--focused' : ''}`}
                 >
-                  <button className="sidebar-desk__main" onClick={() => openTerminal(desk.id)}>
+                  <button
+                    className="sidebar-desk__main"
+                    onClick={() => openTerminal(desk.id)}
+                    title={desk.role ?? undefined}
+                  >
                     <StateDot state={desk.state} />
                     <span className="sidebar-desk__name">{desk.name}</span>
                     <span className="sidebar-desk__task muted">

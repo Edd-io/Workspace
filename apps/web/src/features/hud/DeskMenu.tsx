@@ -9,6 +9,7 @@ export function DeskMenu({ desk, onClose }: { desk: Desk; onClose: () => void })
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<'normal' | 'force' | null>(null);
   const setPanel = useOffice((state) => state.setPanel);
+  const [role, setRole] = useState<string | null>(null);
 
   const run = async (action: () => Promise<unknown>) => {
     setError(null);
@@ -53,6 +54,30 @@ export function DeskMenu({ desk, onClose }: { desk: Desk; onClose: () => void })
             {t('desk.actions.stop')}
           </button>
         </>
+      )}
+      {role === null ? (
+        <button className="desk-menu__item" onClick={() => setRole(desk.role ?? '')}>
+          {t('desk.actions.editRole')}
+        </button>
+      ) : (
+        <div className="desk-menu__confirm">
+          <textarea
+            className="input"
+            rows={3}
+            autoFocus
+            value={role}
+            placeholder={t('createDesk.rolePlaceholder')}
+            onChange={(event) => setRole(event.target.value)}
+          />
+          <button
+            className="button button--small"
+            onClick={() =>
+              void run(() => api('PATCH', `/api/desks/${desk.id}`, { role: role.trim() || null }))
+            }
+          >
+            {t('desk.saveRole')}
+          </button>
+        </div>
       )}
       {desk.mode === 'worktree' && (
         <button

@@ -31,6 +31,7 @@ export type DeskPatch = Partial<
     | 'desiredRunning'
     | 'initialPrompt'
     | 'attention'
+    | 'role'
   >
 >;
 
@@ -68,6 +69,7 @@ const DESK_COLUMNS: Record<keyof DeskPatch, string> = {
   desiredRunning: 'desired_running',
   initialPrompt: 'initial_prompt',
   attention: 'attention',
+  role: 'role',
 };
 
 function toRoom(row: Row): Room {
@@ -79,6 +81,7 @@ function toRoom(row: Row): Room {
     accentColor: row.accent_color as string,
     position: row.position as number,
     createdAt: row.created_at as number,
+    autoWake: row.auto_wake !== 0,
   };
 }
 
@@ -92,6 +95,7 @@ function toDeskRecord(row: Row): DeskRecord {
     workdir: row.workdir as string,
     branch: (row.branch as string | null) ?? null,
     baseBranch: (row.base_branch as string | null) ?? null,
+    role: (row.role as string | null) ?? null,
     sessionId: row.session_id as string,
     model: (row.model as string | null) ?? null,
     permissionMode: (row.permission_mode as PermissionMode | null) ?? null,
@@ -173,8 +177,8 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
   insertRoom(room: Room): void {
     this.db
       .prepare(
-        `INSERT INTO rooms (id, name, project_path, is_git_repo, accent_color, position, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO rooms (id, name, project_path, is_git_repo, accent_color, position, created_at, auto_wake)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         room.id,
@@ -184,11 +188,15 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         room.accentColor,
         room.position,
         room.createdAt,
+        room.autoWake ? 1 : 0,
       );
     this.emit('roomUpsert', room);
   }
 
-  updateRoom(id: string, patch: { name?: string; accentColor?: string }): Room | null {
+  updateRoom(id: string, patch: { name?: string; accentColor?: string; autoWake?: boolean }): Room | null {
+    if (patch.autoWake !== undefined) {
+      this.db.prepare('UPDATE rooms SET auto_wake = ? WHERE id = ?').run(patch.autoWake ? 1 : 0, id);
+    }
     if (patch.name !== undefined)
       this.db.prepare('UPDATE rooms SET name = ? WHERE id = ?').run(patch.name, id);
     if (patch.accentColor !== undefined) {
@@ -234,8 +242,8 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         `INSERT INTO desks (id, room_id, name, slug, mode, workdir, branch, session_id, model, permission_mode,
            appearance_seed, position, token, desired_running, initial_prompt, transcript_path, state, state_since,
            in_turn, current_task, current_tool, last_prompt, last_assistant_message, created_at, blockers, session_title,
-           attention, base_branch)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           attention, base_branch, role)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         desk.id,
@@ -266,6 +274,7 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         desk.sessionTitle,
         desk.attention ? JSON.stringify(desk.attention) : null,
         desk.baseBranch,
+        desk.role,
       );
     this.emit('deskUpsert', toPublicDesk(desk));
   }

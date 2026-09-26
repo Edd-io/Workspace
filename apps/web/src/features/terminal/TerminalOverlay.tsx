@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../api/http';
 import { officeSocket } from '../../api/socket';
 import { useOffice } from '../../state/officeStore';
+import { roleLabel } from '../rooms/roomTemplates';
 import { StateBadge } from '../hud/StateBadge';
 
 const TERMINAL_THEME = {
@@ -115,6 +116,11 @@ function TerminalWindow({ deskId }: { deskId: string }) {
           <div className="terminal-window__title">
             <strong>{desk.name}</strong>
             <span className="muted">{room?.name}</span>
+            {desk.role && (
+              <span className="tag" title={desk.role}>
+                {roleLabel(desk.role)}
+              </span>
+            )}
             {desk.branch && <code className="muted">{desk.branch}</code>}
             {stats && (stats.model || stats.contextPercent !== null) && (
               <span className="muted">

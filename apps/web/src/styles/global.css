@@ -1257,3 +1257,23 @@ textarea.input {
 .settings__logout {
   align-self: stretch;
 }
+
+/* ---- roles and room options ------------------------------------------------------------------- */
+.role-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.role-chip {
+  margin-left: 0;
+  border: 0;
+  cursor: pointer;
+}
+.board__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--text-muted);
+}

@@ -118,6 +118,7 @@ export class OfficeService {
       accentColor: input.accentColor ?? ROOM_COLORS[position % ROOM_COLORS.length]!,
       position,
       createdAt: Date.now(),
+      autoWake: true,
     };
     this.store.insertRoom(room);
     return room;
@@ -200,6 +201,7 @@ export class OfficeService {
       workdir,
       branch,
       baseBranch,
+      role: input.role ?? null,
       sessionId: randomUUID(),
       model: input.model ?? null,
       permissionMode: input.permissionMode ?? null,

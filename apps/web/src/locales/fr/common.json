@@ -80,10 +80,13 @@
       "restart": "Redémarrer",
       "delete": "Supprimer le poste",
       "confirmDelete": "Supprimer",
-      "integrate": "Intégrer le travail…"
+      "integrate": "Intégrer le travail…",
+      "editRole": "Rôle…"
     },
     "confirmDelete": "La session s'arrête et son worktree est supprimé. La branche {{branch}} est conservée.",
-    "confirmDeleteUncommitted": "Ce poste a des modifications non commitées. Elles seront perdues si tu le supprimes."
+    "confirmDeleteUncommitted": "Ce poste a des modifications non commitées. Elles seront perdues si tu le supprimes.",
+    "saveRole": "Enregistrer",
+    "noRole": "Aucun rôle"
   },
   "errors": {
     "path_not_found": "Ce dossier n'existe pas sur le serveur.",
@@ -105,7 +108,27 @@
     "project": "Dossier du projet sur le serveur",
     "parent": "Dossier parent",
     "hint": "Tous les postes de cette salle travaillent sur ce projet.",
-    "submit": "Créer la salle"
+    "submit": "Créer la salle",
+    "templates": {
+      "label": "Équipe de départ",
+      "empty": {
+        "label": "Salle vide",
+        "description": "Tu ajoutes les postes toi-même."
+      },
+      "solo": {
+        "label": "Solo",
+        "description": "Un poste de développement."
+      },
+      "duo": {
+        "label": "Duo",
+        "description": "Un développeur et un relecteur."
+      },
+      "team": {
+        "label": "Équipe",
+        "description": "Un chef d'équipe qui répartit le travail, front-end, back-end et tests."
+      }
+    },
+    "creatingDesks": "Création des postes…"
   },
   "createDesk": {
     "title": "Nouveau poste dans {{room}}",
@@ -129,7 +152,9 @@
     "initialPrompt": "Première consigne (facultatif)",
     "initialPromptPlaceholder": "Sur quoi ce poste doit-il travailler ?",
     "submit": "Créer le poste",
-    "creating": "Création…"
+    "creating": "Création…",
+    "role": "Rôle (facultatif)",
+    "rolePlaceholder": "Ce dont ce poste s'occupe dans la salle"
   },
   "permissionModes": {
     "default": "Demander à chaque fois",
@@ -156,7 +181,10 @@
     "nobody": "Personne pour l'instant",
     "noNotes": "Aucune note",
     "human": "Toi",
-    "room": "tout le monde"
+    "room": "tout le monde",
+    "autoWake": "Réveiller les postes inactifs quand on leur écrit",
+    "autoWakeHint": "Un message à un poste au repos lui est tapé comme consigne (4 fois au plus par 10 minutes).",
+    "deliveryHint": "Un poste qui travaille reçoit les messages à sa prochaine utilisation d'outil ; un poste au repos est réveillé tout de suite si le réveil est activé."
   },
   "board": {
     "formerDesk": "Ancien poste",
@@ -329,5 +357,35 @@
     "notifications": "Notifications du navigateur",
     "on": "Activé",
     "off": "Coupé"
+  },
+  "roles": {
+    "lead": {
+      "label": "Chef d'équipe",
+      "description": "reçoit les demandes, les découpe en tâches claires, les confie aux collègues avec l'outil delegate, suit l'avancement et vérifie l'intégration. Code peu lui-même."
+    },
+    "developer": {
+      "label": "Développement",
+      "description": "implémente les fonctionnalités demandées, avec des tests, et commite au fil de l'eau."
+    },
+    "frontend": {
+      "label": "Front-end",
+      "description": "interface utilisateur : composants, styles, accessibilité et intégration avec l'API."
+    },
+    "backend": {
+      "label": "Back-end",
+      "description": "API, données, logique serveur et performances."
+    },
+    "tests": {
+      "label": "Tests et qualité",
+      "description": "écrit et lance les tests, relit le travail des collègues et signale les régressions."
+    },
+    "reviewer": {
+      "label": "Relecture",
+      "description": "relit les changements des collègues, propose des corrections et vérifie que les tests passent."
+    },
+    "docs": {
+      "label": "Documentation",
+      "description": "README, guides et commentaires utiles, à jour avec le code."
+    }
   }
 }

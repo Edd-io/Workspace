@@ -325,6 +325,25 @@ A living office:
 - [x] Procedural lawn, paving, asphalt and road textures; street lamp light pools computed in the
       ground shaders instead of point lights; walk mode lit as outdoors when the visitor is outside
 
+### Phase 11 — Teamwork, notifications and insight
+Auto wake-up:
+- [x] A message to an idle desk (or a desk going idle with unread messages) is typed into its session;
+      per-room setting, rate-limited so desks cannot keep waking each other up
+
+Room lead and templates:
+- [x] Desk roles (shown in the office, part of each desk's system prompt and of `colleagues`)
+- [x] `delegate` office tool: hand a task to a colleague, who is woken up with it
+- [x] Room templates (e.g. lead + front + back + tests) creating desks with roles and first prompts
+
+Phone notifications (Discord):
+- [ ] Discord webhook settings (masked, test button, events, hide content), messages in the UI language
+- [ ] Sent only when no Workspace tab is visible; one per attention episode, grouped
+- [ ] Links open the desk's terminal (`?desk=` deep link, public URL setting)
+
+Stats and search:
+- [ ] Per-desk statistics over a period: working time, prompts, lines changed, context, integrations
+- [ ] Search across every desk's conversation
+
 ## 4. Risks & open points
 
 - **Subscription limits**: many parallel sessions drain the usage windows fast → the `limited` state

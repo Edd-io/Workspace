@@ -14,6 +14,7 @@ const room = (id: string, position: number): Room => ({
   accentColor: '#e07a5f',
   position,
   createdAt: position,
+  autoWake: true,
 });
 
 const desk = (id: string, roomId: string, position: number): Desk => ({
@@ -25,6 +26,7 @@ const desk = (id: string, roomId: string, position: number): Desk => ({
   workdir: '/w',
   branch: null,
   baseBranch: null,
+  role: null,
   sessionId: id,
   model: null,
   permissionMode: null,

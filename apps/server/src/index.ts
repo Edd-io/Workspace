@@ -10,6 +10,7 @@ import { OfficeService } from './office/officeService.ts';
 import { RoomAwareness } from './office/roomAwareness.ts';
 import { Summarizer } from './office/summarizer.ts';
 import { UsageTracker } from './office/usageTracker.ts';
+import { WakeService } from './office/wakeService.ts';
 import { SessionManager } from './sessions/sessionManager.ts';
 import { TmuxHost } from './sessions/tmuxHost.ts';
 import { OfficeStore } from './store/officeStore.ts';
@@ -31,6 +32,8 @@ const integration = new IntegrationService(store, sessions);
 const usage = new UsageTracker(store);
 store.on('deskRemoved', (deskId) => usage.forgetDesk(deskId));
 summarizer.setUsageSource(() => usage.usage());
+const wake = new WakeService(store, boards, sessions);
+wake.start();
 
 const app = await buildApp({
   config,
@@ -56,6 +59,7 @@ let shuttingDown = false;
 const shutdown = async (): Promise<void> => {
   if (shuttingDown) return;
   shuttingDown = true;
+  wake.stop();
   sessions.shutdown();
   await app.close();
   db.close();

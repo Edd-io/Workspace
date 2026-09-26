@@ -43,6 +43,7 @@ export class RoomAwareness {
   describeColleague(other: DeskRecord): string {
     const topic = deskTopic(other);
     const parts = [`${other.name} (${other.state})`];
+    if (other.role) parts.push(`role: ${oneLine(other.role)}`);
     if (topic) parts.push(`working on: ${oneLine(topic)}`);
     if (other.branch) parts.push(`branch ${other.branch}`);
     return `- ${parts.join(' — ')}`;
