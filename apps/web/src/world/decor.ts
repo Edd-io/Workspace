@@ -28,6 +28,8 @@ export const DESK_TOP = 0.74;
 export const SCREEN_CENTER: [number, number, number] = [0, DESK_TOP + 0.338, -0.22 + 0.0172];
 export const STATUS_LAMP: [number, number, number] = [0.62, DESK_TOP, -0.26];
 export const CHAIR: [number, number, number] = [0, 0, 0.72];
+/** Where the seated character's root goes: on the front half of the seat, facing the desk. */
+export const SEAT: [number, number, number] = [0, 0, 0.64];
 
 function hashString(text: string): number {
   let hash = 2166136261;
@@ -82,7 +84,7 @@ export function deskProps(desk: DeskLayout): PropPlacement[] {
   const list: PropPlacement[] = [];
   const random = seededRandom(desk.desk.appearanceSeed);
   placeAtDesk(list, desk, 'desk', [0, 0, 0]);
-  placeAtDesk(list, desk, 'office_chair', CHAIR, Math.PI + (random() - 0.5) * 0.5);
+  placeAtDesk(list, desk, 'office_chair', CHAIR, Math.PI + (random() - 0.5) * 0.12);
   placeAtDesk(list, desk, 'monitor', [0, DESK_TOP, -0.22]);
   placeAtDesk(list, desk, 'keyboard', [0, DESK_TOP, 0.1]);
   placeAtDesk(list, desk, 'mouse', [0.32, DESK_TOP, 0.12], (random() - 0.5) * 0.4);

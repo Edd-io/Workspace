@@ -61,6 +61,13 @@ export const useOffice = create<OfficeState>((set) => ({
   setPanel: (panel) => set({ panel }),
 }));
 
+if (import.meta.env.DEV) {
+  // Handle for automated browser checks during development.
+  (window as unknown as { __office?: unknown }).__office = {
+    goTo: (x: number, z: number, yaw?: number) => useOffice.getState().goTo(x, z, yaw),
+  };
+}
+
 function applyMessage(message: ServerMessage): void {
   switch (message.t) {
     case 'office.snapshot':

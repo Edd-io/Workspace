@@ -1,13 +1,14 @@
 import { Billboard, Text } from '@react-three/drei';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import { DESK_STATE_COLORS, type DeskState } from '@workspace/shared';
-import { useMemo, useRef, useState } from 'react';
+import { Suspense, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import { deskTopic } from '../lib/desk';
 import { useOffice } from '../state/officeStore';
 import { appearanceFromSeed } from './appearance';
-import { CHAIR, SCREEN_CENTER, STATUS_LAMP } from './decor';
+import { Character } from './character/Character';
+import { SCREEN_CENTER, SEAT, STATUS_LAMP } from './decor';
 import { FONT_TEXT_BOLD } from './fonts';
 import type { DeskLayout } from './layout';
 import { usePreviewTexture } from './usePreviewTexture';
@@ -106,21 +107,12 @@ export function DeskStation({ layout, showLabel }: { layout: DeskLayout; showLab
         </mesh>
       </group>
 
-      {/* Placeholder character (replaced by the Blender character in Phase 5). */}
+      {/* Nobody sits at a stopped desk. */}
       {live && (
-        <group position={[CHAIR[0], 0, CHAIR[2] + 0.03]}>
-          <mesh position={[0, 0.8, 0]} castShadow>
-            <capsuleGeometry args={[0.19, 0.34, 6, 12]} />
-            <meshStandardMaterial color={appearance.shirt} roughness={0.8} />
-          </mesh>
-          <mesh position={[0, 1.3, -0.04]} castShadow>
-            <sphereGeometry args={[0.14, 20, 16]} />
-            <meshStandardMaterial color={appearance.skin} roughness={0.7} />
-          </mesh>
-          <mesh position={[0, 1.37, 0]} castShadow>
-            <sphereGeometry args={[0.145, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-            <meshStandardMaterial color={appearance.hair} roughness={0.9} />
-          </mesh>
+        <group position={SEAT} rotation={[0, Math.PI, 0]}>
+          <Suspense fallback={null}>
+            <Character appearance={appearance} state={desk.state} seed={desk.appearanceSeed} />
+          </Suspense>
         </group>
       )}
 

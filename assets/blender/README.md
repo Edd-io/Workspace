@@ -23,3 +23,18 @@ files by hand.
 - Adding a prop: write a builder returning `join(parts, "<name>")` in `props/*.py`, register it in
   that module's `PROPS`, add the name to `PROP_NAMES` in `apps/web/src/world/props/propLibrary.ts`,
   then place it in `apps/web/src/world/decor.ts`.
+
+## Character
+
+```sh
+# Build the rigged character (apps/web/public/models/character.glb) and render one image per pose
+/Applications/Blender.app/Contents/MacOS/Blender --background --python assets/blender/build_character.py -- \
+  --preview /tmp/character
+```
+
+- `character/rig.py`: armature, body parts (each weighted to one bone), hairstyles, posing helpers
+  (`aim` a bone at a world direction, analytic `two_bone_ik`).
+- `build_character.py`: pose functions (`t` from 0 to 1 over the loop) baked into one action per
+  animation. Poses target real positions: the character root sits 0.64 m in front of the desk
+  center, the keyboard is 0.5 m ahead at 0.78 m.
+- Materials `skin`, `hair`, `shirt`, `pants`, `shoes` are recolored per desk by the web client.

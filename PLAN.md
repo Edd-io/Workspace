@@ -242,11 +242,14 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
 - [x] Minimap HUD with live desk states; click to fly/teleport; unit tests on the layout
 - [ ] Post-processing (ambient occlusion, bloom) behind a quality setting — see IDEAS.md
 
-### Phase 5 — Characters
-- [ ] Blender script: rigged low-poly character + variations
-- [ ] Animations: sit idle, type, raise hand, drink coffee/stretch, head in hands, sleep
-- [ ] Runtime: animation state driven by desk state, smooth blending
-- Demo: characters react to their session state.
+### Phase 5 — Characters ✅
+- [x] Blender script (`assets/blender/build_character.py`): 18-bone rig, rigid low-poly body parts
+      with ball joints, face, 5 hairstyles + glasses, named materials recolored per desk
+- [x] Poses authored against real targets (keyboard, face, floor) with an analytic two-bone IK:
+      Typing, Idle, LeanBack, RaiseHand, Drink, HeadInHands, Sleep (preview renders per pose)
+- [x] Runtime: per-desk clone (SkeletonUtils), seeded appearance, state → clip mapping with
+      cross-fades (working/compacting → typing, question → raised hand, error → head in hands,
+      limited → coffee, idle → rotating idle/lean back/drink), nobody at stopped desks
 
 ### Phase 6 — Master room
 - [ ] 2D map monitor (click → teleport)

@@ -260,8 +260,8 @@ export function deskCameraPose(desk: DeskLayout): {
   target: [number, number, number];
 } {
   return {
-    position: deskToWorld(desk, [0.55, 1.55, 1.45]),
-    target: deskToWorld(desk, [0.05, 1.08, -0.22]),
+    position: deskToWorld(desk, [0.78, 1.72, 1.35]),
+    target: deskToWorld(desk, [0.02, 1.05, -0.22]),
   };
 }
 

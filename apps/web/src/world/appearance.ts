@@ -13,11 +13,19 @@ const SHIRT_COLORS = [
   '#e56b6f',
   '#f4f1de',
 ];
+const PANTS_COLORS = ['#2f3e46', '#3b4a6b', '#4a4a4a', '#6b5a45', '#1f2328', '#5b6270'];
+const SHOES_COLORS = ['#1f2328', '#f4f4f4', '#6f4e37', '#3a3f47'];
+export const HAIR_STYLES = ['hair_short', 'hair_long', 'hair_bun', 'hair_curly', 'hair_cap'] as const;
+export type HairStyle = (typeof HAIR_STYLES)[number];
 
 export interface Appearance {
   skin: string;
   hair: string;
   shirt: string;
+  pants: string;
+  shoes: string;
+  hairStyle: HairStyle;
+  glasses: boolean;
 }
 
 /** Small deterministic PRNG (mulberry32). */
@@ -42,5 +50,9 @@ export function appearanceFromSeed(seed: number): Appearance {
     skin: pick(random, SKIN_TONES),
     hair: pick(random, HAIR_COLORS),
     shirt: pick(random, SHIRT_COLORS),
+    pants: pick(random, PANTS_COLORS),
+    shoes: pick(random, SHOES_COLORS),
+    hairStyle: pick(random, HAIR_STYLES),
+    glasses: random() < 0.3,
   };
 }
