@@ -11,6 +11,7 @@ import { Character } from './character/Character';
 import { SCREEN_CENTER, SEAT, STATUS_LAMP } from './decor';
 import { FONT_TEXT_BOLD } from './fonts';
 import type { DeskLayout } from './layout';
+import { tripClock, tripPose, useTrips, type TripClip } from './trips';
 import { usePreviewTexture } from './usePreviewTexture';
 
 const SCREEN_WIDTH = 0.6;
@@ -60,6 +61,37 @@ export function DeskStation({ layout, showLabel }: { layout: DeskLayout; showLab
   );
   // Far desks keep their last frame instead of streaming (bandwidth and CPU with many desks).
   const screen = usePreviewTexture(desk.id, live, screenMessage, near || focused);
+
+  // Away from the desk (coffee break, errand): the trip decides where the character is.
+  const trip = useTrips((state) => state.trips[desk.id]);
+  const characterGroup = useRef<THREE.Group>(null);
+  const characterYaw = useRef(Math.PI);
+  const [tripClip, setTripClip] = useState<{ clip: TripClip; timeScale: number } | null>(null);
+  useFrame((_, delta) => {
+    const group = characterGroup.current;
+    if (!group) return;
+    const pose = trip ? tripPose(trip, tripClock()) : null;
+    if (trip && !pose) useTrips.getState().finish(desk.id, tripClock());
+    if (!pose) {
+      group.position.set(...SEAT);
+      group.rotation.y = characterYaw.current = Math.PI;
+      if (tripClip) setTripClip(null);
+      return;
+    }
+    // World pose → the desk's frame, which the character group lives in.
+    const cos = Math.cos(layout.rotation);
+    const sin = Math.sin(layout.rotation);
+    const dx = pose.x - layout.x;
+    const dz = pose.z - layout.z;
+    group.position.set(dx * cos - dz * sin, 0, dx * sin + dz * cos);
+    const target = pose.yaw - layout.rotation;
+    const turn = Math.atan2(Math.sin(target - characterYaw.current), Math.cos(target - characterYaw.current));
+    characterYaw.current += turn * Math.min(1, delta * 8);
+    group.rotation.y = characterYaw.current;
+    if (tripClip?.clip !== pose.clip || tripClip.timeScale !== pose.timeScale) {
+      setTripClip({ clip: pose.clip, timeScale: pose.timeScale });
+    }
+  });
 
   useFrame(({ clock, camera }) => {
     const material = lampMaterial.current;
@@ -125,9 +157,15 @@ export function DeskStation({ layout, showLabel }: { layout: DeskLayout; showLab
 
       {/* Nobody sits at a stopped desk. */}
       {live && (
-        <group position={SEAT} rotation={[0, Math.PI, 0]}>
+        <group ref={characterGroup} position={SEAT} rotation={[0, Math.PI, 0]}>
           <Suspense fallback={null}>
-            <Character appearance={appearance} state={desk.state} seed={desk.appearanceSeed} />
+            <Character
+              appearance={appearance}
+              state={desk.state}
+              seed={desk.appearanceSeed}
+              tripClip={tripClip?.clip}
+              timeScale={tripClip?.timeScale}
+            />
           </Suspense>
         </group>
       )}

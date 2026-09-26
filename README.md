@@ -57,5 +57,7 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
   subscription, relayed by the desks' status lines, with alerts at 80 % and 95 %.
 - **Integrate a desk's work** (desk menu or terminal header): diff, merge into a branch, or pull
   request through `gh`.
+- **Living office**: the light follows the time of day; idle characters take coffee breaks in the
+  lounge, walk to a colleague they message or to the whiteboard, and hurry back when needed.
 - Desk lamps: blue = working, orange = needs you, green = idle, purple = compacting,
   yellow = usage limit, red = error, off = stopped.

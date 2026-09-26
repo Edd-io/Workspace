@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { desksOfRoom, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
+import { CharacterLife } from './CharacterLife';
 import type { PropPlacement } from './decor';
 import type { Daylight } from './daylight';
 import { FrameScheduler } from './FrameScheduler';
@@ -170,6 +171,7 @@ export function World() {
       <CameraClipping walking={walking} />
       {walking ? <WalkControls layout={layout} props={props} /> : <CameraRig layout={layout} />}
       <Soundscape layout={layout} />
+      <CharacterLife layout={layout} props={props} />
     </Canvas>
   );
 }

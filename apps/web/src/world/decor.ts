@@ -260,6 +260,32 @@ function masterRoomProps(room: SpecialRoomLayout): PropPlacement[] {
   return list;
 }
 
+/** Kitchen layout of the lounge (from x0 and from the back wall), shared by its props and spots. */
+const LOUNGE_COUNTER_X = 2.05;
+const LOUNGE_TABLE: [number, number] = [2.2, 2.2];
+const LOUNGE_COOLER_BACK = 1.4;
+
+/** Where characters stand in the lounge on a break, and which way they face. */
+export function loungeSpots(room: RoomRect): { position: [number, number]; yaw: number }[] {
+  const frame = frameOf(room);
+  const back = (offset: number) => frame.backZ + frame.toward * (INSET + offset);
+  // Facing the back wall (the counter).
+  const towardBack = Math.atan2(0, -frame.toward);
+  const counterX = room.x0 + LOUNGE_COUNTER_X;
+  const table: [number, number] = [room.x0 + LOUNGE_TABLE[0], back(LOUNGE_TABLE[1])];
+  const atTable = (angle: number): { position: [number, number]; yaw: number } => {
+    const position: [number, number] = [table[0] + Math.cos(angle) * 0.8, table[1] + Math.sin(angle) * 0.8];
+    return { position, yaw: Math.atan2(table[0] - position[0], table[1] - position[1]) };
+  };
+  return [
+    { position: [counterX - 0.3, back(1.05)], yaw: towardBack },
+    { position: [room.x1 - INSET - 1.05, back(LOUNGE_COOLER_BACK)], yaw: Math.PI / 2 },
+    atTable(0.4 + Math.PI / 3),
+    { position: [counterX + 0.55, back(1.05)], yaw: towardBack },
+    atTable(0.4 + Math.PI),
+  ];
+}
+
 function loungeProps(room: SpecialRoomLayout): PropPlacement[] {
   const list: PropPlacement[] = [];
   const frame = frameOf(room);
@@ -267,18 +293,18 @@ function loungeProps(room: SpecialRoomLayout): PropPlacement[] {
   const front = (offset: number) => frame.frontZ - frame.toward * (INSET + offset);
   // Kitchen along the back wall: the fridge in the windowless corner, the counter under the windows.
   place(list, 'fridge', [room.x0 + 0.45, 0, back(0.37)], frame.facingCorridor);
-  const counterX = room.x0 + 2.05;
+  const counterX = room.x0 + LOUNGE_COUNTER_X;
   place(list, 'kitchen_counter', [counterX, 0, back(0.33)], frame.facingCorridor);
   place(list, 'coffee_machine', [counterX - 0.3, 0.9, back(0.3)], frame.facingCorridor);
   place(list, 'microwave', [counterX + 0.25, 0.9, back(0.3)], frame.facingCorridor);
   place(list, 'trash_bin', [counterX + 1.5, 0, back(0.3)], 0);
-  place(list, 'high_table', [room.x0 + 2.2, 0, back(2.2)], 0);
-  place(list, 'fruit_bowl', [room.x0 + 2.2, 1.08, back(2.2)], 0);
+  place(list, 'high_table', [room.x0 + LOUNGE_TABLE[0], 0, back(LOUNGE_TABLE[1])], 0);
+  place(list, 'fruit_bowl', [room.x0 + LOUNGE_TABLE[0], 1.08, back(LOUNGE_TABLE[1])], 0);
   for (let i = 0; i < 3; i++) {
     const angle = (i / 3) * Math.PI * 2 + 0.4;
     const stool: [number, number] = [
-      room.x0 + 2.2 + Math.cos(angle) * 0.62,
-      back(2.2) + Math.sin(angle) * 0.62,
+      room.x0 + LOUNGE_TABLE[0] + Math.cos(angle) * 0.62,
+      back(LOUNGE_TABLE[1]) + Math.sin(angle) * 0.62,
     ];
     place(list, 'bar_stool', [stool[0], 0, stool[1]], 0);
   }
@@ -296,7 +322,7 @@ function loungeProps(room: SpecialRoomLayout): PropPlacement[] {
   place(list, 'floor_lamp', [room.x1 - 0.45, 0, back(0.45)], 0);
   place(list, 'plant_tall', [room.x1 - 0.55, 0, front(0.6)], 1.2);
   place(list, 'planter_box', [room.x0 + 0.85, 0, front(1.9)], Math.PI / 2);
-  place(list, 'water_cooler', [room.x1 - INSET - 0.22, 0, back(1.4)], -Math.PI / 2);
+  place(list, 'water_cooler', [room.x1 - INSET - 0.22, 0, back(LOUNGE_COOLER_BACK)], -Math.PI / 2);
   // Clock and poster on the inside of the two short wall returns along the corridor (always solid).
   const inward = frame.facingCorridor + Math.PI;
   place(list, 'wall_clock', [room.x0 + 0.6, 2.15, front(0.02)], inward);

@@ -38,6 +38,8 @@ CHARACTER_MATERIALS = {
     "shoes": "#1f2328",
     "eyes": "#15171a",
     "lips": "#b5655a",
+    "cup": "#ece8e1",
+    "coffee": "#3b2416",
 }
 
 
@@ -213,6 +215,27 @@ def build_hair(arm):
         _skin(part, "head", "eyes")
     objects.append(_join(glasses_parts, "glasses", arm))
     return objects
+
+
+def build_accessories(arm):
+    """Objects the web client shows only for some animations: a coffee cup held in the right hand.
+
+    Rigid on the hand bone. In the rest pose the hand hangs down, so the cup lies along -Y (opening
+    toward -Y): it stands upright whenever the hand points forward, as when holding it in front of
+    the chest.
+    """
+    from lib.kit import torus, vessel
+
+    wrist = Vector(BONES["hand.R"][0])
+    center = wrist + Vector((0.0, -0.05, -0.06))
+    # rotation (90, 0, 0) turns the vessel's +Z (its opening) toward -Y.
+    shell, coffee = vessel(0.036, 0.085, center, "plastic_gray", vertices=14, wall=0.004,
+                           fill=(0.07, "plastic_gray"), rotation=(90, 0, 0))
+    handle = torus(0.022, 0.006, center + Vector((0.04, 0, 0)), "plastic_gray", major_segments=10, minor_segments=4)
+    for part in (shell, handle):
+        _skin(part, "hand.R", "cup")
+    _skin(coffee, "hand.R", "coffee")
+    return [_join([shell, coffee, handle], "cup", arm)]
 
 
 # ---- posing ------------------------------------------------------------------------------------

@@ -41,4 +41,8 @@ files by hand.
 - `build_character.py`: pose functions (`t` from 0 to 1 over the loop) baked into one action per
   animation. Poses target real positions: the character root sits 0.64 m in front of the desk
   center, the keyboard is 0.5 m ahead at 0.78 m.
+- Seated animations (typing, idle, lean back, raise hand, drink, head in hands, sleep) and standing
+  ones for trips away from the desk (`Walk`, `Stand`, `StandDrink`, `Talk`). `Walk` is played in
+  place: the web client moves the character at 4 × `WALK_STRIDE` / `WALK_SECONDS` = 1.1 m/s.
+- A `cup` object held in the right hand, shown by the web client only while drinking.
 - Materials `skin`, `hair`, `shirt`, `pants`, `shoes` are recolored per desk by the web client.

@@ -23,6 +23,7 @@ from mathutils import Vector  # noqa: E402
 from character.rig import (  # noqa: E402
     aim,
     bone_head,
+    build_accessories,
     build_armature,
     build_body,
     build_hair,
@@ -142,6 +143,94 @@ def pose_sleep(arm, t):
         arm_to(arm, side, (0.13 * sign, -0.3, 0.63), (0.8 * sign, 0.3, -1), (0.2 * sign, -1, -0.6))
 
 
+# ---- standing animations (walks to the lounge, visits to colleagues) ------------------------------
+
+# One walk loop: each foot slides back WALK_STRIDE * 2 on the ground during half of the loop, so the
+# character moves forward at 4 * WALK_STRIDE / WALK_SECONDS m/s (1.1 m/s): the web client moves it
+# at that speed along its path.
+WALK_STRIDE = 0.22
+WALK_SECONDS = 0.8
+
+
+def stand(arm, lean=0.03, head_pitch=0.05, head_yaw=0.0, breathe=0.0, drop=-0.02):
+    """Standing base pose: slightly bent knees, feet under the hips."""
+    move(arm, "hips", (0, 0, drop))
+    aim(arm, "spine", direction(lean * 0.6 + breathe * 0.3))
+    aim(arm, "chest", direction(lean + breathe))
+    aim(arm, "neck", direction(lean * 0.5 + head_pitch * 0.4, head_yaw * 0.4))
+    aim(arm, "head", direction(head_pitch, head_yaw))
+    for side, sign in (("L", 1), ("R", -1)):
+        two_bone_ik(arm, f"thigh.{side}", f"shin.{side}", (0.1 * sign, 0.0, 0.09), (0, -1, 0.1))
+        aim(arm, f"foot.{side}", (0.03 * sign, -1, -0.4))
+
+
+def hang_arm(arm, side, sign, forward=0.0):
+    """Arm hanging along the body; `forward` swings the hand forward (-Y) or back (+Y)."""
+    shoulder = bone_head(arm, f"upper_arm.{side}")
+    hand = shoulder + Vector((0.07 * sign, -forward, -0.52 + 0.08 * abs(forward)))
+    arm_to(arm, side, hand, (0.3 * sign, 1, 0), (0.02 * sign, -forward * 0.6, -1))
+
+
+def pose_walk(arm, t):
+    bob = 0.015 * math.cos(t * math.tau * 2)
+    stand(arm, lean=0.06, head_pitch=0.06, drop=-0.07 + bob)
+    for side, sign, offset in (("L", 1, 0.0), ("R", -1, 0.5)):
+        phase = (t + offset) % 1.0
+        if phase < 0.5:
+            # Stance: the foot stays on the ground and slides from the front (-Y) to the back.
+            y = -WALK_STRIDE + 2 * WALK_STRIDE * (phase / 0.5)
+            z = 0.09
+            foot_pitch = -0.4
+        else:
+            # Swing: the foot comes back to the front, lifted.
+            swing = (phase - 0.5) / 0.5
+            y = WALK_STRIDE - 2 * WALK_STRIDE * (0.5 - 0.5 * math.cos(swing * math.pi))
+            z = 0.09 + 0.07 * math.sin(swing * math.pi)
+            foot_pitch = -0.4 + 0.25 * math.sin(swing * math.pi)
+        two_bone_ik(arm, f"thigh.{side}", f"shin.{side}", (0.1 * sign, y, z), (0, -1, 0.1))
+        aim(arm, f"foot.{side}", (0.03 * sign, -1, foot_pitch))
+        # Arms swing opposite to the leg on the same side.
+        hang_arm(arm, side, sign, forward=0.16 * math.cos((phase + 0.5) * math.tau) * -1)
+
+
+def pose_stand(arm, t):
+    look = 0.3 * math.sin(t * math.tau)
+    stand(arm, head_yaw=look, breathe=0.012 * math.sin(t * math.tau * 3))
+    hang_arm(arm, "L", 1, forward=0.02)
+    hang_arm(arm, "R", -1, forward=0.02)
+
+
+def pose_stand_drink(arm, t):
+    # 0-0.3 hold, 0.3-0.45 raise, 0.45-0.65 sip, 0.65-0.8 lower, 0.8-1 hold.
+    if t < 0.3 or t >= 0.8:
+        lift = 0.0
+    elif t < 0.45:
+        lift = (t - 0.3) / 0.15
+    elif t < 0.65:
+        lift = 1.0
+    else:
+        lift = 1 - (t - 0.65) / 0.15
+    lift = 0.5 - 0.5 * math.cos(lift * math.pi)
+    stand(arm, lean=0.02 - 0.06 * lift, head_pitch=0.1 - 0.35 * lift, head_yaw=0.15 * math.sin(t * math.tau))
+    hang_arm(arm, "L", 1, forward=0.03)
+    head = bone_head(arm, "head")
+    shoulder = bone_head(arm, "upper_arm.R")
+    hold = shoulder + Vector((0.02, -0.3, -0.3))
+    mouth = head + Vector((-0.02, -0.17, 0.05))
+    # Pointing the hand forward keeps the cup upright; raising it tilts the cup toward the mouth.
+    arm_to(arm, "R", hold.lerp(mouth, lift), (-1, 0.5, -1.2), (0.3 * lift - 0.05, -1, 0.6 * lift))
+
+
+def pose_talk(arm, t):
+    nod = 0.06 * math.sin(t * math.tau * 3)
+    stand(arm, lean=0.05, head_pitch=0.08 + nod, head_yaw=0.1 * math.sin(t * math.tau))
+    for side, sign, phase in (("L", 1, 0.0), ("R", -1, 0.35)):
+        shoulder = bone_head(arm, f"upper_arm.{side}")
+        gesture = math.sin((t + phase) * math.tau * 2)
+        hand = shoulder + Vector((0.1 * sign + 0.04 * gesture * sign, -0.3, -0.32 + 0.07 * gesture))
+        arm_to(arm, side, hand, (0.8 * sign, 0.4, -1), (0.2 * sign, -1, 0.3 + 0.3 * gesture))
+
+
 ANIMATIONS = {
     # name: (pose function, seconds per loop, key every N frames)
     "Typing": (pose_typing, 2.0, 2),
@@ -151,7 +240,15 @@ ANIMATIONS = {
     "Drink": (pose_drink, 6.0, 4),
     "HeadInHands": (pose_head_in_hands, 3.0, 6),
     "Sleep": (pose_sleep, 4.0, 6),
+    "Walk": (pose_walk, WALK_SECONDS, 1),
+    "Stand": (pose_stand, 5.0, 6),
+    "StandDrink": (pose_stand_drink, 6.0, 4),
+    "Talk": (pose_talk, 3.0, 3),
 }
+
+
+STANDING_ANIMATIONS = {"Walk", "Stand", "StandDrink", "Talk"}
+CUP_ANIMATIONS = {"Drink", "StandDrink"}
 
 
 def bake_animations(arm):
@@ -192,13 +289,13 @@ def render_previews(arm, meshes, directory):
 
     os.makedirs(directory, exist_ok=True)
     # Desk scene in the character's frame: the desk center is 0.64 m ahead (-Y).
+    furniture = []
     for builder, location, rotation in ((desk, (0, -0.64, 0), 0), (monitor, (0, -0.84, 0.74), 0),
                                         (keyboard, (0, -0.54, 0.74), 0), (office_chair, (0, 0.08, 0), 0)):
         obj = builder()
         obj.location = Vector(location)
         obj.rotation_euler.z = math.radians(rotation)
-    for mesh in meshes:
-        mesh.hide_render = mesh.name not in ("Body", "hair_short")
+        furniture.append(obj)
 
     scene = bpy.context.scene
     scene.render.engine = "BLENDER_EEVEE"
@@ -221,6 +318,16 @@ def render_previews(arm, meshes, directory):
     camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
 
     for name, (_, seconds, _) in ANIMATIONS.items():
+        # Standing animations happen away from the desk; the cup only shows while drinking.
+        standing = name in STANDING_ANIMATIONS
+        for obj in furniture:
+            obj.hide_render = standing
+        # Standing: full body, three-quarter front view.
+        camera.location = Vector((1.5, -2.6, 1.35)) if standing else Vector((1.9, 0.9, 1.7))
+        look_at = Vector((0, 0, 0.9)) if standing else target
+        camera.rotation_euler = (look_at - camera.location).to_track_quat("-Z", "Y").to_euler()
+        for mesh in meshes:
+            mesh.hide_render = mesh.name not in ("Body", "hair_short", "cup" if name in CUP_ANIMATIONS else "")
         arm.animation_data.action = bpy.data.actions[name]
         scene.frame_set(int(seconds * FPS * 0.45))
         scene.render.filepath = os.path.join(directory, f"{name}.png")
@@ -251,10 +358,11 @@ def main():
     arm = build_armature()
     body = build_body(arm)
     hair = build_hair(arm)
+    accessories = build_accessories(arm)
     bake_animations(arm)
-    export(arm, [body, *hair])
+    export(arm, [body, *hair, *accessories])
     if preview:
-        render_previews(arm, [body, *hair], preview)
+        render_previews(arm, [body, *hair, *accessories], preview)
 
 
 main()

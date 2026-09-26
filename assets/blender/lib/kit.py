@@ -174,8 +174,10 @@ def vessel(radius, height, location=(0, 0, 0), mat="plastic_gray", vertices=16, 
         level, fill_mat = fill
         outer = radius + (radius_top - radius) * level / height
         # The disk edge ends inside the wall, so no gap shows around it.
-        parts.append(cylinder(outer - wall / 2, 0.004, (location[0], location[1], location[2] - height / 2 + level),
-                              fill_mat, vertices=vertices, rotation=rotation))
+        offset = Vector((0, 0, level - height / 2))
+        offset.rotate(Euler([math.radians(angle) for angle in rotation]))
+        parts.append(cylinder(outer - wall / 2, 0.004, Vector(location) + offset, fill_mat, vertices=vertices,
+                              rotation=rotation))
     return parts
 
 

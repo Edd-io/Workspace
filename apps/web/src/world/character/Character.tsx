@@ -4,10 +4,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { HAIR_STYLES, seededRandom, type Appearance } from '../appearance';
+import type { TripClip } from '../trips';
 
 export const CHARACTER_URL = '/models/character.glb';
 
-type Clip = 'Typing' | 'Idle' | 'LeanBack' | 'RaiseHand' | 'Drink' | 'HeadInHands' | 'Sleep';
+type Clip = 'Typing' | 'Idle' | 'LeanBack' | 'RaiseHand' | 'Drink' | 'HeadInHands' | 'Sleep' | TripClip;
+
+/** Clips during which the character holds its coffee cup. */
+const CUP_CLIPS = new Set<Clip>(['Drink', 'StandDrink']);
 
 /** Idle desks alternate between these, so a quiet office still looks alive. */
 const IDLE_ROTATION: Clip[] = ['Idle', 'LeanBack', 'Idle', 'Drink'];
@@ -37,10 +41,13 @@ interface Props {
   appearance: Appearance;
   state: DeskState;
   seed: number;
+  /** Away from the desk (see trips.ts): the clip of the trip replaces the seated ones. */
+  tripClip?: TripClip | null;
+  timeScale?: number;
 }
 
 /** A seated office character (Blender rig) animated from its desk state. */
-export function Character({ appearance, state, seed }: Props) {
+export function Character({ appearance, state, seed, tripClip = null, timeScale = 1 }: Props) {
   const gltf = useGLTF(CHARACTER_URL);
   const group = useRef<THREE.Group>(null);
 
@@ -95,7 +102,7 @@ export function Character({ appearance, state, seed }: Props) {
     return () => window.clearTimeout(timer);
   }, [state, idleIndex, seed]);
 
-  const clip = clipFor(state, idleIndex);
+  const clip: Clip = tripClip ?? clipFor(state, idleIndex);
   const previous = useRef<THREE.AnimationAction | null>(null);
   useEffect(() => {
     const action = actions[clip];
@@ -108,6 +115,16 @@ export function Character({ appearance, state, seed }: Props) {
     if (previous.current && previous.current !== action) previous.current.fadeOut(FADE_SECONDS);
     previous.current = action;
   }, [actions, clip, seed]);
+
+  useEffect(() => {
+    actions[clip]?.setEffectiveTimeScale(timeScale);
+  }, [actions, clip, timeScale]);
+
+  useEffect(() => {
+    model.scene.traverse((object) => {
+      if (object.name === 'cup') object.visible = CUP_CLIPS.has(clip);
+    });
+  }, [model, clip]);
 
   return (
     <group ref={group}>

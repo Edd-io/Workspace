@@ -285,7 +285,7 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
       audio graph suspended when muted
 - [ ] Many-desk stress test (dozens of real sessions)
 
-### Phase 9 — Integration, usage & a living office
+### Phase 9 — Integration, usage & a living office ✅
 Integrate a desk's work:
 - [x] Record each worktree desk's base branch (the project's branch when the desk was created)
 - [x] Integration status: commits ahead/behind the target branch, changed files, uncommitted changes,
@@ -306,9 +306,9 @@ Subscription usage gauge:
 A living office:
 - [x] Day/night cycle following the local time: sun course, golden hour, night sky with stars, dim
       moonlight outside while the office lights stay on
-- [ ] Standing animations (walk, stand, stand with a coffee, talk) and a coffee cup
-- [ ] Navigation grid over the floor plan (A* between walls and furniture)
-- [ ] Idle characters take coffee breaks in the lounge; a desk sending a message walks to its
+- [x] Standing animations (walk, stand, stand with a coffee, talk) and a coffee cup
+- [x] Navigation grid over the floor plan (A* between walls and furniture)
+- [x] Idle characters take coffee breaks in the lounge; a desk sending a message walks to its
       colleague, a desk posting on the board walks to the whiteboard; everyone heads back to their
       desk as soon as their session needs them
 
