@@ -24,6 +24,8 @@ export interface PropPlacement {
   tilt?: number;
   /** Outside the building: darkened at night like the rest of the outdoors. */
   outdoor?: boolean;
+  /** An office chair the visitor may sit on (desk chairs belong to the desks' characters). */
+  seat?: boolean;
 }
 
 export const DESK_TOP = 0.74;
@@ -233,7 +235,7 @@ function masterRoomProps(room: SpecialRoomLayout): PropPlacement[] {
   // around so that both drawer pedestals end up at the outer ends.
   place(list, 'desk', at([-0.75, 0, 0]), pose.rotation + Math.PI);
   place(list, 'desk', at([0.75, 0, 0]), pose.rotation);
-  place(list, 'office_chair', at([0, 0, 0.75]), pose.rotation + Math.PI);
+  place(list, 'office_chair', at([0, 0, 0.75]), pose.rotation + Math.PI, { seat: true });
   for (const monitor of MASTER_MONITORS) {
     const local: [number, number, number] = [monitor.x, DESK_TOP, -0.2 + Math.abs(monitor.angle) * 0.35];
     place(list, 'monitor', at(local), pose.rotation + monitor.angle);

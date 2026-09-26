@@ -17,6 +17,7 @@ import { NotificationsDialog } from '../notifications/NotificationsDialog';
 import { SearchDialog } from '../search/SearchDialog';
 import { SEARCH_SHORTCUT } from '../search/shortcut';
 import { UsageGauge } from '../usage/UsageGauge';
+import { useWalk } from '../../world/walkState';
 import { Minimap } from './Minimap';
 import { SettingsMenu } from './SettingsMenu';
 import { Toasts } from './Toasts';
@@ -232,11 +233,16 @@ function WalkHints() {
     document.addEventListener('pointerlockchange', onChange);
     return () => document.removeEventListener('pointerlockchange', onChange);
   }, []);
+  const aim = useWalk((state) => state.aim);
+  const seated = useWalk((state) => state.seated);
   if (viewMode !== 'walk') return null;
   return (
     <>
       {locked && <div className="crosshair" aria-hidden="true" />}
-      <div className="walk-hints panel">{locked ? t('hud.walk.locked') : t('hud.walk.unlocked')}</div>
+      {locked && aim && <div className="crosshair-label">{t(`hud.walk.aim.${aim}`)}</div>}
+      <div className="walk-hints panel">
+        {!locked ? t('hud.walk.unlocked') : seated ? t('hud.walk.seated') : t('hud.walk.locked')}
+      </div>
     </>
   );
 }

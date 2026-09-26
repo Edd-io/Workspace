@@ -43,8 +43,15 @@
       }
     },
     "walk": {
-      "locked": "WASD / arrows to move · Shift to run · E or click to use a desk or whiteboard · Esc to free the mouse",
-      "unlocked": "Click the office to look around · V for the overview"
+      "locked": "WASD / arrows to move · Shift to run · E or click to use a desk, board or screen, or to sit down · Esc to free the mouse",
+      "unlocked": "Click the office to look around · V for the overview",
+      "seated": "Seated · E or click a screen to use it · WASD or E elsewhere to stand up · Esc to free the mouse",
+      "aim": {
+        "desk": "E · Open the terminal",
+        "board": "E · Open the board",
+        "screen": "E · Open the screen",
+        "seat": "E · Sit down"
+      }
     }
   },
   "connection": {

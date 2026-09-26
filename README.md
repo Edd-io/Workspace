@@ -49,7 +49,8 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
   it and open its terminal, a whiteboard to open the room board, `+` placeholders to add desks or
   rooms. `Esc` goes back to the overview.
 - **Walk** (`V` or the top bar): first-person visit. Click to look around, WASD / ZQSD / arrows to
-  move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you.
+  move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you, or to sit
+  down on a free seat (your chair at the master desk, sofas, stools, benches); walk away to stand up.
 - **Master office** (at the entrance): live map, Haiku briefing, inbox and the day's timeline.
 - **Activity** (top bar): the timeline of every desk's states, and statistics over 24 h / 7 / 30 days
   (working and waiting time, prompts, tools, lines written, tokens, context, integrations).

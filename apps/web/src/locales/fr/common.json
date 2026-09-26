@@ -43,8 +43,15 @@
       }
     },
     "walk": {
-      "locked": "ZQSD / flèches pour marcher · Maj pour courir · E ou clic pour utiliser un poste ou un tableau · Échap pour libérer la souris",
-      "unlocked": "Clique dans le bureau pour regarder autour · V pour la vue d'ensemble"
+      "locked": "ZQSD / flèches pour marcher · Maj pour courir · E ou clic pour utiliser un poste, un tableau ou un écran, ou pour t'asseoir · Échap pour libérer la souris",
+      "unlocked": "Clique dans le bureau pour regarder autour · V pour la vue d'ensemble",
+      "seated": "Tu es assis · E ou clic sur un écran pour l'utiliser · ZQSD ou E ailleurs pour te lever · Échap pour libérer la souris",
+      "aim": {
+        "desk": "E · Ouvrir le terminal",
+        "board": "E · Ouvrir le tableau",
+        "screen": "E · Ouvrir l'écran",
+        "seat": "E · S'asseoir"
+      }
     }
   },
   "connection": {

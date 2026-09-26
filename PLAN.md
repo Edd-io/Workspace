@@ -240,6 +240,8 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
 - [x] Overview camera (walls cut away, "dollhouse") + first-person walk (pointer lock, physical
       WASD/ZQSD keys, collisions against walls and furniture, E to use a desk or whiteboard), V to switch
 - [x] Minimap HUD with live desk states; click to fly/teleport; unit tests on the layout
+- [x] Sit down when walking (master desk chair, sofas, armchair, stools, benches, terrace chairs), with a
+      hint under the crosshair saying what E does
 - [ ] Post-processing (ambient occlusion, bloom) behind a quality setting — see IDEAS.md
 
 ### Phase 5 — Characters ✅
