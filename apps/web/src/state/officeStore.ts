@@ -51,6 +51,11 @@ interface OfficeState {
   focusedDeskId: string | null;
   /** Desk whose terminal overlay is open. */
   terminalDeskId: string | null;
+  /**
+   * With both a terminal and a panel open, whether the terminal was opened last (then it is drawn
+   * above the panel; closing it shows the panel again).
+   */
+  terminalOnTop: boolean;
   panel: Panel;
   viewMode: ViewMode;
   sidebarCollapsed: boolean;
@@ -71,6 +76,12 @@ interface OfficeState {
   setPanel: (panel: Panel) => void;
 }
 
+/** Whether the topmost window is the panel (dialog), not the terminal: Escape closes that one. */
+export function panelOnTop(): boolean {
+  const { panel, terminalDeskId, terminalOnTop } = useOffice.getState();
+  return panel !== null && !(terminalDeskId !== null && terminalOnTop);
+}
+
 export function picturesById(pictures: FramePicture[]): Record<string, string> {
   return Object.fromEntries(pictures.map((picture) => [picture.frameId, picture.url]));
 }
@@ -89,6 +100,7 @@ export const useOffice = create<OfficeState>((set) => ({
   toasts: [],
   focusedDeskId: null,
   terminalDeskId: null,
+  terminalOnTop: false,
   panel: null,
   viewMode: 'overview',
   sidebarCollapsed: false,
@@ -122,9 +134,9 @@ export const useOffice = create<OfficeState>((set) => ({
       viewTarget: { x, z, yaw, pitch, seq: (state.viewTarget?.seq ?? 0) + 1 },
       focusedDeskId: null,
     })),
-  openTerminal: (deskId) => set({ focusedDeskId: deskId, terminalDeskId: deskId }),
+  openTerminal: (deskId) => set({ focusedDeskId: deskId, terminalDeskId: deskId, terminalOnTop: true }),
   closeTerminal: () => set({ terminalDeskId: null }),
-  setPanel: (panel) => set({ panel }),
+  setPanel: (panel) => set(panel ? { panel, terminalOnTop: false } : { panel }),
 }));
 
 if (import.meta.env.DEV) {

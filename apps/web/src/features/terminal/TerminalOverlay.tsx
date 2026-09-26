@@ -30,6 +30,8 @@ function TerminalWindow({ deskId }: { deskId: string }) {
   const closeTerminal = useOffice((state) => state.closeTerminal);
   const setPanel = useOffice((state) => state.setPanel);
   const stats = useOffice((state) => (deskId ? state.deskStats[deskId] : undefined));
+  // Opened from a dialog (inbox, statistics, board...): drawn above it.
+  const onTop = useOffice((state) => state.terminalOnTop && state.panel !== null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [closedReason, setClosedReason] = useState<'offline' | 'removed' | null>(null);
 
@@ -89,8 +91,14 @@ function TerminalWindow({ deskId }: { deskId: string }) {
     });
     observer.observe(container);
     terminal.focus();
+    // A dialog opened above the terminal (e.g. Integrate) took the keyboard: give it back on close.
+    const offPanel = useOffice.subscribe((state, previous) => {
+      // After the dialog is gone, or focus goes back to whatever it left behind.
+      if (previous.panel && !state.panel) requestAnimationFrame(() => terminal.focus());
+    });
 
     return () => {
+      offPanel();
       observer.disconnect();
       dataListener.dispose();
       resizeListener.dispose();
@@ -108,7 +116,7 @@ function TerminalWindow({ deskId }: { deskId: string }) {
 
   return (
     <div
-      className="terminal-overlay"
+      className={`terminal-overlay${onTop ? ' terminal-overlay--top' : ''}`}
       onMouseDown={(event) => event.target === event.currentTarget && closeTerminal()}
     >
       <div className="terminal-window panel" onKeyDown={(event) => event.stopPropagation()}>

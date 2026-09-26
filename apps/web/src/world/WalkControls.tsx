@@ -65,6 +65,7 @@ function isTyping(event: KeyboardEvent): boolean {
  */
 export function WalkControls({ layout, props }: { layout: OfficeLayout; props: PropPlacement[] }) {
   const { camera, gl, scene } = useThree();
+  const setThree = useThree((state) => state.set);
   const colliders = useMemo(() => {
     // The neighboring buildings are solid too, for a walk outside.
     const buildings = computeOutdoor(layout).neighbors.flatMap(({ x, z, width, depth }): Segment[] => {
@@ -232,11 +233,21 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
         useOffice.getState().setPanel({ kind: 'frame', frameId: found.frameId, aspect: found.aspect });
       } else useOffice.getState().setPanel({ kind: found.panel });
     };
-    const onClick = () => {
+    const windowOpen = () => {
       const { terminalDeskId, panel } = useOffice.getState();
-      if (terminalDeskId || panel) return;
-      if (document.pointerLockElement === canvas) interact();
-      else void canvas.requestPointerLock();
+      return terminalDeskId !== null || panel !== null;
+    };
+    const onClick = () => {
+      if (windowOpen()) return;
+      if (document.pointerLockElement === canvas) {
+        interact();
+        return;
+      }
+      // The same click may open a desk, board or screen under the cursor (handled by the 3D
+      // scene after this listener): only take the mouse once it is clear that nothing opened.
+      setTimeout(() => {
+        if (!windowOpen() && document.pointerLockElement !== canvas) void canvas.requestPointerLock();
+      }, 0);
     };
     const onMouseMove = (event: MouseEvent) => {
       if (document.pointerLockElement !== canvas) return;
@@ -265,6 +276,25 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
   }); // Re-bound on every render: the handlers read the latest seats.
 
   useEffect(() => () => useWalk.setState({ aim: null, seated: false }), []);
+
+  useEffect(() => {
+    // Any window opening (terminal, dialog, whatever opened it: E, a shortcut, a notification)
+    // gives the mouse back.
+    const offWindows = useOffice.subscribe((state) => {
+      if ((state.terminalDeskId || state.panel) && document.pointerLockElement) document.exitPointerLock();
+    });
+    // While the mouse is captured, only the crosshair counts: the 3D scene's own pointer events
+    // would raycast from wherever the cursor was when it got captured.
+    const setSceneEvents = (enabled: boolean) =>
+      setThree((state) => ({ events: { ...state.events, enabled } }));
+    const onLockChange = () => setSceneEvents(document.pointerLockElement !== gl.domElement);
+    document.addEventListener('pointerlockchange', onLockChange);
+    return () => {
+      offWindows();
+      document.removeEventListener('pointerlockchange', onLockChange);
+      setSceneEvents(true);
+    };
+  }, [gl, setThree]);
 
   useFrame((_, delta) => {
     const step = Math.min(delta, 0.05);

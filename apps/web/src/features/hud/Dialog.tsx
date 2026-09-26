@@ -1,5 +1,6 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { panelOnTop } from '../../state/officeStore';
 
 interface Props {
   title: string;
@@ -10,10 +11,16 @@ interface Props {
 
 export function Dialog({ title, onClose, children, wide = false }: Props) {
   const { t } = useTranslation();
-  // Escape closes the dialog wherever the focus is.
+  const root = useRef<HTMLDivElement>(null);
+  // Take the keyboard (unless a field inside already has it, e.g. with autoFocus): otherwise it
+  // stays where the dialog was opened from, such as the terminal, which keeps every key for itself.
+  useEffect(() => {
+    if (root.current && !root.current.contains(document.activeElement)) root.current.focus();
+  }, []);
+  // Escape closes the dialog wherever the focus is, unless a terminal was opened above it.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape' && panelOnTop()) onClose();
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
@@ -24,6 +31,8 @@ export function Dialog({ title, onClose, children, wide = false }: Props) {
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
       <div
+        ref={root}
+        tabIndex={-1}
         className={`dialog panel${wide ? ' dialog--wide' : ''}`}
         role="dialog"
         aria-modal="true"
