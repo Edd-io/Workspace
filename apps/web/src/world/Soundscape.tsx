@@ -40,8 +40,13 @@ export function Soundscape({ layout }: { layout: OfficeLayout }) {
   useEffect(() => {
     ears.add(listener);
     scene.add(ears);
-    listener.setMasterVolume(soundEnabled() ? MASTER_VOLUME : 0);
-    const off = onSoundEnabledChange((enabled) => listener.setMasterVolume(enabled ? MASTER_VOLUME : 0));
+    listener.setMasterVolume(MASTER_VOLUME);
+    // Muted: suspend the whole audio graph rather than playing it at volume 0 (it costs CPU).
+    if (!soundEnabled()) void context.suspend();
+    const off = onSoundEnabledChange((enabled) => {
+      if (enabled) void context.resume().then(startTone);
+      else void context.suspend();
+    });
 
     const tone = new THREE.Audio(listener);
     tone.setBuffer(buffers.tone);
@@ -52,7 +57,7 @@ export function Soundscape({ layout }: { layout: OfficeLayout }) {
     };
     startTone();
     const unlock = () => {
-      void context.resume().then(startTone);
+      if (soundEnabled()) void context.resume().then(startTone);
     };
     window.addEventListener('pointerdown', unlock);
 
@@ -117,6 +122,8 @@ export function Soundscape({ layout }: { layout: OfficeLayout }) {
     for (const { entry } of candidates) {
       if (typists.current.has(entry.desk.id)) continue;
       const sound = new THREE.PositionalAudio(listener);
+      // Plain stereo panning: the default HRTF spatialization is much heavier on the CPU.
+      sound.panner.panningModel = 'equalpower';
       const buffer = buffers.typing[entry.desk.appearanceSeed % TYPING_BUFFERS]!;
       sound.setBuffer(buffer);
       sound.setLoop(true);

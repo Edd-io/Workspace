@@ -279,7 +279,11 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
       survive restarts, HTTPS reverse proxy, Claude authentication, backups
 - [x] Tests: server unit tests (state machine, attention, timeline), client unit tests (layout,
       locales, markdown), browser smoke test (`pnpm smoke`)
-- [ ] Many-desk stress test (dozens of real sessions) and a graphics quality setting
+- [x] Graphics quality setting (Eco / Normal / Max, per viewer): frames scheduled on demand (full
+      rate only while the camera or pointer moves, lower when idle, a trickle behind an open terminal
+      or an unfocused window), capped pixel ratio, sun shadows recomputed a few times per second;
+      audio graph suspended when muted
+- [ ] Many-desk stress test (dozens of real sessions)
 
 ## 4. Risks & open points
 

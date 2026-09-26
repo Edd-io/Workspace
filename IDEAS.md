@@ -31,7 +31,7 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 - 💡 **Character life**: an agent idle for a long time goes to the coffee machine, stretches, chats at the water cooler.
 - 💡 **Master office customization** (decoration, posters, plants).
 - 💡 **More realistic rendering**: PBR materials, lightmaps baked in Blender, post-processing (SSAO, bloom), more detailed characters.
-- 💡 **Graphics quality setting** (low / high): ambient occlusion (N8AO), bloom on lamps and screens, shadow resolution, preview frame rate.
+- 💡 **Post-processing on the Max graphics level**: ambient occlusion (N8AO), bloom on lamps and screens.
 - 💡 **Meeting room** as a real room type (meeting table + chairs + TV props already exist).
 - 💡 **Animated doors**, elevator if the office grows beyond one floor (one floor per project group?).
 - 💡 **Easter eggs**: a plant wilting when a desk has been in error for a long time, confetti when a long task finishes.
@@ -39,6 +39,9 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 ## Performance
 - 💡 **Character LOD**: simplified or frozen characters far from the camera; share materials between characters with the same colors.
 - 💡 **Smaller assets**: meshopt compression of the GLBs, code-splitting the 3D bundle (1.8 MB today).
+- 💡 **Lighter props**: fewer bevel segments on small repeated parts (a bookshelf is ~5k triangles
+  because of its books, a keyboard ~1k because of its keys).
+- 💡 **Adaptive quality**: lower the pixel ratio automatically when frames take too long.
 - 💡 **Adaptive preview rate**: server-side frame rate per subscriber (focused desk faster, others slower).
 
 ## Platform

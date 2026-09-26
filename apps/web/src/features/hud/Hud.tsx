@@ -7,6 +7,7 @@ import { InboxPanel } from '../inbox/InboxPanel';
 import { MapPanel } from '../map/MapPanel';
 import { browserNotificationsEnabled, setBrowserNotifications } from '../notifications/useAttentionAlerts';
 import { onSoundEnabledChange, setSoundEnabled, soundEnabled } from '../sound/soundSettings';
+import { GRAPHICS_QUALITIES, setGraphicsQuality, useGraphicsQuality } from '../../world/graphicsSettings';
 import { SummaryPanel } from '../summary/SummaryPanel';
 import { TimelinePanel } from '../timeline/TimelinePanel';
 import { attentionDesks, desksOfRoom, sortedRooms, useOffice } from '../../state/officeStore';
@@ -76,6 +77,7 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
         </button>
         <NotificationToggle />
         <SoundToggle />
+        <GraphicsToggle />
         <ViewModeSwitch />
         <LanguageSwitcher />
         <button className="button button--ghost" onClick={() => void logout()}>
@@ -219,6 +221,25 @@ function SoundToggle() {
       aria-pressed={enabled}
     >
       {enabled ? '🔊' : '🔇'}
+    </button>
+  );
+}
+
+function GraphicsToggle() {
+  const { t } = useTranslation();
+  const quality = useGraphicsQuality();
+  const next = GRAPHICS_QUALITIES[(GRAPHICS_QUALITIES.indexOf(quality) + 1) % GRAPHICS_QUALITIES.length]!;
+  return (
+    <button
+      className="button button--ghost"
+      onClick={() => setGraphicsQuality(next)}
+      title={t('graphics.hint', {
+        level: t(`graphics.levels.${quality}`),
+        description: t(`graphics.descriptions.${quality}`),
+      })}
+      aria-label={t('graphics.label')}
+    >
+      <span aria-hidden="true">🖥️</span> {t(`graphics.levels.${quality}`)}
     </button>
   );
 }

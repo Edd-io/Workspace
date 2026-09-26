@@ -217,5 +217,19 @@
   "sound": {
     "mute": "Couper le son du bureau",
     "unmute": "Activer le son du bureau"
+  },
+  "graphics": {
+    "label": "Qualité graphique",
+    "hint": "Qualité graphique : {{level}} ({{description}}). Cliquer pour changer.",
+    "levels": {
+      "eco": "Éco",
+      "normal": "Normal",
+      "max": "Max"
+    },
+    "descriptions": {
+      "eco": "chauffe le moins, économise la batterie",
+      "normal": "bon compromis",
+      "max": "le plus fluide, le plus gourmand"
+    }
   }
 }

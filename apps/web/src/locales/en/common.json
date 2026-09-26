@@ -217,5 +217,19 @@
   "sound": {
     "mute": "Mute the office",
     "unmute": "Turn the office sound on"
+  },
+  "graphics": {
+    "label": "Graphics quality",
+    "hint": "Graphics quality: {{level}} ({{description}}). Click to change.",
+    "levels": {
+      "eco": "Eco",
+      "normal": "Normal",
+      "max": "Max"
+    },
+    "descriptions": {
+      "eco": "coolest, saves battery",
+      "normal": "balanced",
+      "max": "smoothest, most demanding"
+    }
   }
 }

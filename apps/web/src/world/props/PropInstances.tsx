@@ -20,7 +20,7 @@ export function PropInstances({ placements }: { placements: PropPlacement[] }) {
     <>
       {[...byModel].map(([name, list]) => {
         const model = library.get(name);
-        return model ? <PropModelInstances key={name} model={model} placements={list} /> : null;
+        return model ? <PropModelInstances key={name} name={name} model={model} placements={list} /> : null;
       })}
     </>
   );
@@ -28,7 +28,15 @@ export function PropInstances({ placements }: { placements: PropPlacement[] }) {
 
 const dummy = new THREE.Object3D();
 
-function PropModelInstances({ model, placements }: { model: PropModel; placements: PropPlacement[] }) {
+function PropModelInstances({
+  name,
+  model,
+  placements,
+}: {
+  name: PropName;
+  model: PropModel;
+  placements: PropPlacement[];
+}) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   // Capacity grows by powers of two, so adding a desk rarely recreates the instanced mesh.
   const capacity = 2 ** Math.ceil(Math.log2(Math.max(8, placements.length)));
@@ -52,6 +60,7 @@ function PropModelInstances({ model, placements }: { model: PropModel; placement
     <instancedMesh
       key={capacity}
       ref={mesh}
+      name={name}
       args={[model.geometry, model.material, capacity]}
       castShadow
       receiveShadow

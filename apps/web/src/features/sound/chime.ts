@@ -5,7 +5,8 @@ import { sharedAudioContext, soundEnabled } from './soundSettings';
 export function audioContext(): AudioContext | null {
   try {
     const context = sharedAudioContext();
-    if (context.state === 'suspended') void context.resume();
+    // Muted, the audio graph stays suspended (see Soundscape).
+    if (context.state === 'suspended' && soundEnabled()) void context.resume();
     return context;
   } catch {
     return null;

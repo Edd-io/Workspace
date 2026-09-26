@@ -1,9 +1,13 @@
 import { Sky } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
-import { Suspense, useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
+import * as THREE from 'three';
 import { desksOfRoom, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
 import type { PropPlacement } from './decor';
+import { FrameScheduler } from './FrameScheduler';
+import { GRAPHICS_PROFILES, useGraphicsQuality } from './graphicsSettings';
+import type { OfficeLayout } from './layout';
 import { DeskStation } from './DeskStation';
 import { MasterScreens } from './MasterScreens';
 import { Soundscape } from './Soundscape';
@@ -32,6 +36,49 @@ const HIDDEN_IN_CUTAWAY = new Set<PropPlacement['model']>([
  * so a larger near plane there keeps close surfaces (screens on monitors, boards on frames) from
  * z-fighting at a distance.
  */
+/** Handle for automated browser checks during development (frame and draw-call counts). */
+function DevHandles() {
+  const gl = useThree((state) => state.gl);
+  const scene = useThree((state) => state.scene);
+  const camera = useThree((state) => state.camera);
+  useEffect(() => {
+    (window as unknown as { __three?: unknown }).__three = { gl, scene, camera };
+  }, [gl, scene, camera]);
+  return null;
+}
+
+/** Sun light; its shadow map is rebuilt when the graphics quality changes its size. */
+function Sun({ layout, size }: { layout: OfficeLayout; size: number }) {
+  const light = useRef<THREE.DirectionalLight>(null);
+  const { bounds } = layout;
+  const centerX = (bounds.x0 + bounds.x1) / 2;
+  useEffect(() => {
+    const shadow = light.current?.shadow;
+    if (!shadow || shadow.mapSize.x === size) return;
+    shadow.mapSize.set(size, size);
+    shadow.map?.dispose();
+    shadow.map = null;
+  }, [size]);
+  return (
+    <directionalLight
+      ref={light}
+      position={[centerX + 18, 30, 22]}
+      target-position={[centerX, 0, 0]}
+      intensity={2.2}
+      color="#fff4e2"
+      castShadow
+      shadow-mapSize={[size, size]}
+      shadow-camera-left={-(bounds.x1 - bounds.x0) / 2 - 10}
+      shadow-camera-right={(bounds.x1 - bounds.x0) / 2 + 10}
+      shadow-camera-top={30}
+      shadow-camera-bottom={-30}
+      shadow-camera-far={120}
+      shadow-bias={-0.0003}
+      shadow-normalBias={0.02}
+    />
+  );
+}
+
 function CameraClipping({ walking }: { walking: boolean }) {
   const camera = useThree((state) => state.camera);
   useEffect(() => {
@@ -56,15 +103,15 @@ export function World() {
     () => (walking ? props : props.filter((prop) => !HIDDEN_IN_CUTAWAY.has(prop.model))),
     [props, walking],
   );
-  const { bounds } = layout;
-  const centerX = (bounds.x0 + bounds.x1) / 2;
-  const sunTarget: [number, number, number] = [centerX, 0, 0];
+  const profile = GRAPHICS_PROFILES[useGraphicsQuality()];
 
   return (
     <Canvas
       className="world"
       shadows="percentage"
-      dpr={[1, 2]}
+      // Frames are scheduled by FrameScheduler, not on every display refresh.
+      frameloop="never"
+      dpr={[1, profile.maxDpr]}
       camera={{ fov: 50, near: 0.2, far: 400, position: [10, 20, 20] }}
       onPointerMissed={() => {
         if (!walking) focusDesk(null);
@@ -75,21 +122,7 @@ export function World() {
       {/* Indoors (walk mode) the ceiling blocks the sun: ambient light stands in for the ceiling lights. */}
       <hemisphereLight args={['#f6f1e8', '#8a8478', walking ? 1.5 : 0.95]} />
       <ambientLight intensity={walking ? 0.55 : 0.15} />
-      <directionalLight
-        position={[centerX + 18, 30, 22]}
-        target-position={sunTarget}
-        intensity={2.2}
-        color="#fff4e2"
-        castShadow
-        shadow-mapSize={[4096, 4096]}
-        shadow-camera-left={-(bounds.x1 - bounds.x0) / 2 - 10}
-        shadow-camera-right={(bounds.x1 - bounds.x0) / 2 + 10}
-        shadow-camera-top={30}
-        shadow-camera-bottom={-30}
-        shadow-camera-far={120}
-        shadow-bias={-0.0003}
-        shadow-normalBias={0.02}
-      />
+      <Sun layout={layout} size={profile.shadowMapSize} />
 
       <Suspense fallback={null}>
         <Structure layout={layout} cutaway={!walking} />
@@ -120,6 +153,8 @@ export function World() {
           .filter((room) => room.kind === 'master')
           .map((room) => <TimelineTV key="timeline-tv" room={room} />)}
 
+      <FrameScheduler walking={walking} />
+      {import.meta.env.DEV && <DevHandles />}
       <CameraClipping walking={walking} />
       {walking ? <WalkControls layout={layout} props={props} /> : <CameraRig layout={layout} />}
       <Soundscape layout={layout} />
