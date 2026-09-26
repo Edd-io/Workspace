@@ -195,6 +195,12 @@ pnpm build
 - The repository is written in English; the only other language is in the web client's locale files
   (`apps/web/src/locales/<lang>/`), and every user-facing string goes through them.
 
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. [`CONTRIBUTING.md`](CONTRIBUTING.md) explains how
+to set up a test instance, the rules the codebase follows and what a pull request should contain;
+pull requests target the `dev` branch.
+
 ## Credits
 
 - Sounds: [BigSoundBank](https://bigsoundbank.com) (Joseph Sardin) and
