@@ -2,7 +2,8 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useOffice } from '../state/officeStore';
-import { buildColliders, resolveCollisions } from './collision';
+import { buildColliders, resolveCollisions, type Segment } from './collision';
+import { computeOutdoor } from './outdoor';
 import type { PropPlacement } from './decor';
 import type { OfficeLayout, Vec2 } from './layout';
 import { playerPose } from './playerPose';
@@ -34,7 +35,19 @@ function isTyping(event: KeyboardEvent): boolean {
  */
 export function WalkControls({ layout, props }: { layout: OfficeLayout; props: PropPlacement[] }) {
   const { camera, gl, scene } = useThree();
-  const colliders = useMemo(() => buildColliders(layout, props), [layout, props]);
+  const colliders = useMemo(() => {
+    // The neighboring buildings are solid too, for a walk outside.
+    const buildings = computeOutdoor(layout).neighbors.flatMap(({ x, z, width, depth }): Segment[] => {
+      const corners: Vec2[] = [
+        [x - width / 2, z - depth / 2],
+        [x + width / 2, z - depth / 2],
+        [x + width / 2, z + depth / 2],
+        [x - width / 2, z + depth / 2],
+      ];
+      return corners.map((a, index) => ({ a, b: corners[(index + 1) % 4]! }));
+    });
+    return buildColliders(layout, props, buildings);
+  }, [layout, props]);
   const keys = useRef(new Set<string>());
   const yaw = useRef(-Math.PI / 2);
   const pitch = useRef(0);

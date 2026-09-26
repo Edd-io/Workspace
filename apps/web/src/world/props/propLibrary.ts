@@ -58,6 +58,26 @@ export const PROP_NAMES = [
   'bean_bag',
   'fruit_bowl',
   'planter_box',
+  // Outdoors.
+  'tree_round',
+  'tree_birch',
+  'tree_conifer',
+  'bush',
+  'hedge',
+  'flower_bed',
+  'bench',
+  'street_lamp',
+  'bollard',
+  'bike_rack',
+  'outdoor_bin',
+  'car_red',
+  'car_blue',
+  'car_white',
+  'outdoor_table',
+  'outdoor_chair',
+  'parasol',
+  'entrance_canopy',
+  'sign_monolith',
 ] as const;
 
 export type PropName = (typeof PROP_NAMES)[number];
@@ -69,6 +89,9 @@ export interface PropModel {
   material: THREE.Material | THREE.Material[];
 }
 
+/** Outdoor light materials (street lamps, bollards): lit at night only, see OutdoorLights. */
+export const LAMP_MATERIALS = new Set<THREE.MeshStandardMaterial>();
+
 /** Adapts the exported class materials (colors come from vertex colors) to the scene. */
 function tuneMaterial(material: THREE.Material): THREE.Material {
   const standard = material as THREE.MeshStandardMaterial;
@@ -77,6 +100,12 @@ function tuneMaterial(material: THREE.Material): THREE.Material {
     standard.emissive = new THREE.Color('#fff1d6');
     standard.emissiveIntensity = 1.6;
     standard.toneMapped = false;
+  }
+  if (material.name === 'class_lamp') {
+    standard.emissive = new THREE.Color('#ffe2a8');
+    standard.emissiveIntensity = 0;
+    standard.toneMapped = false;
+    LAMP_MATERIALS.add(standard);
   }
   if (material.name === 'class_glass') {
     standard.transparent = true;

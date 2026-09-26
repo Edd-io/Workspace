@@ -4,6 +4,7 @@ import { useOffice } from '../state/officeStore';
 import { loungeSpots, SEAT, type PropPlacement } from './decor';
 import { deskToWorld, type OfficeLayout, type Vec2 } from './layout';
 import { NavGrid } from './navigation';
+import { terraceSpots } from './outdoor';
 import {
   interruptTrip,
   planTrip,
@@ -55,7 +56,8 @@ export function CharacterLife({ layout, props }: { layout: OfficeLayout; props: 
 
   useEffect(() => {
     const lounge = layout.rooms.find((room) => room.kind === 'lounge');
-    const spots = lounge ? loungeSpots(lounge) : [];
+    // The lounge and its terrace, outside.
+    const spots = [...(lounge ? loungeSpots(lounge) : []), ...terraceSpots(layout)];
 
     const start = (
       deskId: string,
@@ -98,12 +100,14 @@ export function CharacterLife({ layout, props }: { layout: OfficeLayout; props: 
       const desk = candidates[Math.floor(Math.random() * candidates.length)];
       if (!desk || Math.random() > BREAK_CHANCE) return;
       const taken = Object.values(trips).map((trip) => trip.destination);
-      const spot = spots.find(
-        (candidate) =>
-          !taken.some(
-            (point) => Math.hypot(point[0] - candidate.position[0], point[1] - candidate.position[1]) < 0.6,
-          ),
-      );
+      const spot = [...spots]
+        .sort(() => Math.random() - 0.5)
+        .find(
+          (candidate) =>
+            !taken.some(
+              (point) => Math.hypot(point[0] - candidate.position[0], point[1] - candidate.position[1]) < 0.6,
+            ),
+        );
       if (spot) start(desk.id, 'coffee', spot, 'StandDrink', 25 + Math.random() * 25);
     };
     const timer = window.setInterval(takeBreaks, BREAK_CHECK_MS);

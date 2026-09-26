@@ -312,6 +312,19 @@ A living office:
       colleague, a desk posting on the board walks to the whiteboard; everyone heads back to their
       desk as soon as their session needs them
 
+### Phase 10 — Surroundings ✅
+- [x] Outdoor props generated in Blender (trees, bushes, hedges, flower beds, benches, street lamps,
+      bollards, bike rack, cars, terrace furniture, entrance canopy, sign) with a `lamp` material
+      class lit at night only
+- [x] Layout computed from the floor plan (`outdoor.ts`): entrance plaza with the office sign, three
+      streets with sidewalks, lamps, street trees and parked cars, car park, hedges along the facades,
+      a park to the east, tall things kept off the overview camera's side
+- [x] The lounge gets a door to a terrace (tables, parasols) where characters can take their coffee
+      break; the navigation grid reaches outside
+- [x] Neighboring buildings (merged boxes, window facades lit at night, rooftop equipment)
+- [x] Procedural lawn, paving, asphalt and road textures; street lamp light pools computed in the
+      ground shaders instead of point lights; walk mode lit as outdoors when the visitor is outside
+
 ## 4. Risks & open points
 
 - **Subscription limits**: many parallel sessions drain the usage windows fast → the `limited` state

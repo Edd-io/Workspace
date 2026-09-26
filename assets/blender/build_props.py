@@ -13,9 +13,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 from lib.kit import export_glb, find_coplanar_overlaps, render_preview, reset_scene  # noqa: E402
-from props import desk_set, lounge, room  # noqa: E402
+from props import desk_set, lounge, outdoor, room  # noqa: E402
 
-MODULES = [desk_set, room, lounge]
+MODULES = [desk_set, room, lounge, outdoor]
 OUTPUT = os.path.normpath(os.path.join(HERE, "..", "..", "apps", "web", "public", "models", "props.glb"))
 
 

@@ -11,6 +11,7 @@ import {
   type SpecialRoomLayout,
 } from './layout';
 import type { PropName } from './props/propLibrary';
+import { computeOutdoor } from './outdoor';
 
 /** One prop instance in the world. `rotation` is around Y; the prop's front faces +Z at 0. */
 export interface PropPlacement {
@@ -395,5 +396,6 @@ export function officeProps(layout: OfficeLayout): PropPlacement[] {
   }
   list.push(...corridorProps(layout));
   list.push(...doorProps(layout));
+  list.push(...computeOutdoor(layout).props);
   return list;
 }

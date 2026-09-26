@@ -12,13 +12,14 @@ import { GRAPHICS_PROFILES, useGraphicsQuality } from './graphicsSettings';
 import type { OfficeLayout } from './layout';
 import { DeskStation } from './DeskStation';
 import { MasterScreens } from './MasterScreens';
+import { OutdoorScene } from './OutdoorScene';
 import { Soundscape } from './Soundscape';
 import { TimelineTV } from './TimelineTV';
 import { PropInstances } from './props/PropInstances';
 import { RoomView } from './RoomView';
 import { Structure } from './structure/Structure';
 import { useOfficeLayout, useOfficeProps } from './useOfficeLayout';
-import { useDaylight } from './useDaylight';
+import { useDaylight, useViewerIndoors } from './useDaylight';
 import { WalkControls } from './WalkControls';
 import { Whiteboard } from './Whiteboard';
 
@@ -108,7 +109,7 @@ export function World() {
     [props, walking],
   );
   const profile = GRAPHICS_PROFILES[useGraphicsQuality()];
-  const light = useDaylight(walking);
+  const light = useDaylight(useViewerIndoors(layout, walking));
   const [sunX, sunY, sunZ] = light.skySun;
 
   return (
@@ -138,7 +139,8 @@ export function World() {
       <Sun layout={layout} size={profile.shadowMapSize} sky={light.light} />
 
       <Suspense fallback={null}>
-        <Structure layout={layout} cutaway={!walking} groundColor={light.ground} />
+        <Structure layout={layout} cutaway={!walking} />
+        <OutdoorScene layout={layout} light={light} />
         <PropInstances placements={visibleProps} />
       </Suspense>
 

@@ -177,16 +177,8 @@ function CorridorFloor({ layout }: { layout: OfficeLayout }) {
   );
 }
 
-/** Walls, floors, ceiling and the ground around the building. */
-export function Structure({
-  layout,
-  cutaway,
-  groundColor,
-}: {
-  layout: OfficeLayout;
-  cutaway: boolean;
-  groundColor: string;
-}) {
+/** Walls, floors, slab and ceiling of the building. */
+export function Structure({ layout, cutaway }: { layout: OfficeLayout; cutaway: boolean }) {
   const walls = useWallGeometries(layout, cutaway ? 1.15 : WALL_HEIGHT);
   // The slab top stays 3 cm under the floors, so floors never fight with it.
   const slab = useSlabGeometry(layout, -0.15, 0.12, 0.12);
@@ -214,17 +206,9 @@ export function Structure({
       ))}
       <CorridorFloor layout={layout} />
 
-      {/* Building slab, ground and the path to the entrance. */}
+      {/* Building slab (the ground and everything outside: Outdoor). */}
       <mesh geometry={slab} receiveShadow>
         <meshStandardMaterial color="#8d877d" roughness={0.9} />
-      </mesh>
-      <mesh position={[centerX, -0.2, centerZ]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[width + 160, depth + 160]} />
-        <meshStandardMaterial color={groundColor} roughness={1} />
-      </mesh>
-      <mesh position={[bounds.x0 - 6, -0.17, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[12, 3]} />
-        <meshStandardMaterial color="#b8b2a6" roughness={0.9} />
       </mesh>
 
       {!cutaway && (

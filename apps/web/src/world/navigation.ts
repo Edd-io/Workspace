@@ -9,6 +9,8 @@ import type { OfficeLayout, Vec2 } from './layout';
  */
 
 const CELL = 0.15;
+/** The grid reaches this far outside the building (the lounge's terrace). */
+const MARGIN = 7;
 /** Half the width of a character, plus a little margin. */
 const CLEARANCE = 0.27;
 
@@ -77,10 +79,10 @@ export class NavGrid {
 
   constructor(layout: OfficeLayout, props: PropPlacement[]) {
     const { bounds } = layout;
-    this.x0 = bounds.x0 - 1;
-    this.z0 = bounds.z0 - 1;
-    this.cols = Math.ceil((bounds.x1 - bounds.x0 + 2) / CELL);
-    this.rows = Math.ceil((bounds.z1 - bounds.z0 + 2) / CELL);
+    this.x0 = bounds.x0 - MARGIN;
+    this.z0 = bounds.z0 - MARGIN;
+    this.cols = Math.ceil((bounds.x1 - bounds.x0 + 2 * MARGIN) / CELL);
+    this.rows = Math.ceil((bounds.z1 - bounds.z0 + 2 * MARGIN) / CELL);
     const blocked = new Uint8Array(this.cols * this.rows);
     for (const segment of buildColliders(layout, props)) this.block(blocked, segment);
 

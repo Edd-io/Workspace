@@ -25,6 +25,9 @@ const MIN_ROOM_DEPTH = 7.5;
 const SPECIAL_ROOM_WIDTH = 9;
 const SPECIAL_ROOM_DEPTH = 8;
 const WINDOW_WIDTH = 1.4;
+const TERRACE_DOOR_WIDTH = 1.2;
+/** The lounge's terrace door starts this far from the east end of its back wall. */
+const LOUNGE_TERRACE_DOOR_FROM_END = 3.4;
 const WEST_X = -SPECIAL_ROOM_WIDTH;
 const PLACEHOLDER_WIDTH = 7.5;
 
@@ -42,6 +45,8 @@ export interface RoomRect {
   towardCorridor: 1 | -1;
   /** Windows of the back wall, as offsets from x0 (filled when walls are built). */
   backWindows: { offset: number; width: number }[];
+  /** Door of the back wall to the outside (the lounge's terrace), as an offset from x0. */
+  backDoor: { offset: number; width: number } | null;
 }
 
 export interface ProjectRoomLayout extends RoomRect {
@@ -155,6 +160,7 @@ export function computeLayout(rooms: Room[], desks: Desk[]): OfficeLayout {
       side,
       towardCorridor,
       backWindows: [],
+      backDoor: null,
     };
   };
 
@@ -235,8 +241,23 @@ export function computeLayout(rooms: Room[], desks: Desk[]): OfficeLayout {
       const backZ = backOf(room);
       const width = room.x1 - room.x0;
       const [solidStart, solidEnd] = BACK_WALL_SOLID[room.kind];
-      room.backWindows = windowsBetween(solidStart + 0.1, width - solidEnd);
-      addWall([room.x0, backZ], [room.x1, backZ], 'exterior', [], room.backWindows);
+      if (room.kind === 'lounge') {
+        // A glass door to the terrace, between the windows.
+        room.backDoor = { offset: width - LOUNGE_TERRACE_DOOR_FROM_END, width: TERRACE_DOOR_WIDTH };
+        room.backWindows = [
+          ...windowsBetween(solidStart + 0.1, room.backDoor.offset - 0.3),
+          ...windowsBetween(room.backDoor.offset + TERRACE_DOOR_WIDTH + 0.3, width - solidEnd),
+        ];
+      } else {
+        room.backWindows = windowsBetween(solidStart + 0.1, width - solidEnd);
+      }
+      addWall(
+        [room.x0, backZ],
+        [room.x1, backZ],
+        'exterior',
+        room.backDoor ? [room.backDoor] : [],
+        room.backWindows,
+      );
 
       // West side: gable for the first room.
       if (index === 0) exterior([room.x0, corridorZ], [room.x0, backZ]);

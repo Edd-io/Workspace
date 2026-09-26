@@ -71,7 +71,8 @@ export interface Daylight {
   hemisphere: { sky: string; ground: string; intensity: number };
   ambient: number;
   fog: string;
-  ground: string;
+  /** Multiplies the colors of the outdoor surfaces: white by day, dark blue at night. */
+  outdoorTint: string;
 }
 
 /** Moonlight comes from a fixed point of the southern sky. */
@@ -107,6 +108,6 @@ export function daylight(sun: SunPosition, indoors: boolean): Daylight {
         },
     ambient: indoors ? 0.55 : 0.15 + 0.05 * night,
     fog: mix(mix('#cfd8e0', '#e8b890', smoothstep(12, 0, elevation) * day), '#0b1020', night),
-    ground: mix('#7e9a62', '#1c2620', night * 0.85),
+    outdoorTint: mix('#ffffff', '#2f3844', night * 0.9),
   };
 }

@@ -60,6 +60,19 @@ PALETTE = {
     "rubber": ("#15171a", 0.9, 0.0),
     "concrete": ("#9a9690", 0.95, 0.0),
     "wall_white": ("#ecebe7", 0.9, 0.0),
+    # Outdoors.
+    "lamp_glow": ("#fff1c9", 0.5, 0.0),
+    "bark": ("#5b4332", 0.95, 0.0),
+    "birch_bark": ("#e3ded4", 0.9, 0.0),
+    "concrete_light": ("#bdb8ae", 0.95, 0.0),
+    "car_red": ("#b8352d", 0.3, 0.2),
+    "car_blue": ("#2f5d8a", 0.3, 0.2),
+    "car_white": ("#e6e6e1", 0.3, 0.2),
+    "headlight": ("#f4f1e6", 0.3, 0.0),
+    "tail_light": ("#a3201a", 0.3, 0.0),
+    "flower_pink": ("#e87ea1", 0.8, 0.0),
+    "flower_purple": ("#8e6cc4", 0.8, 0.0),
+    "flower_white": ("#f3efe6", 0.8, 0.0),
 }
 
 EMISSIVE = {"light_warm": 4.0}
@@ -333,12 +346,20 @@ def mirror_x(builder, offset):
 
 # Palette colors are baked into vertex colors and faces are regrouped into a handful of material
 # classes, so each prop renders in 1-3 draw calls and can be instanced cheaply in the browser.
-CLASS_OF = {"light_warm": "emissive", "glass": "glass", "water": "glass", "screen_black": "glossy"}
+# `lamp`: outdoor lights, which the web client only switches on at night.
+CLASS_OF = {
+    "light_warm": "emissive",
+    "lamp_glow": "lamp",
+    "glass": "glass",
+    "water": "glass",
+    "screen_black": "glossy",
+}
 CLASS_PARAMS = {
     "matte": (0.85, 0.0),
     "glossy": (0.35, 0.0),
     "metal": (0.35, 0.75),
     "emissive": (0.5, 0.0),
+    "lamp": (0.5, 0.0),
     "glass": (0.05, 0.0),
 }
 
@@ -368,7 +389,7 @@ def class_material(class_name):
     attribute = nodes.new("ShaderNodeVertexColor")
     attribute.layer_name = "Color"
     mat.node_tree.links.new(attribute.outputs["Color"], bsdf.inputs["Base Color"])
-    if class_name == "emissive":
+    if class_name in ("emissive", "lamp"):
         mat.node_tree.links.new(attribute.outputs["Color"], bsdf.inputs["Emission Color"])
         bsdf.inputs["Emission Strength"].default_value = 3.0
     if class_name == "glass":

@@ -31,6 +31,24 @@ const FOOTPRINTS: Partial<Record<PropName, [number, number]>> = {
   floor_lamp: [0.3, 0.3],
   meeting_table: [2.4, 1.1],
   umbrella_stand: [0.24, 0.24],
+  // Outdoors (trees: the trunk only).
+  tree_round: [0.4, 0.4],
+  tree_birch: [0.3, 0.3],
+  tree_conifer: [0.5, 0.5],
+  bush: [1.1, 0.9],
+  hedge: [2.0, 0.7],
+  flower_bed: [1.24, 1.24],
+  bench: [1.6, 0.55],
+  street_lamp: [0.3, 0.3],
+  bollard: [0.22, 0.22],
+  bike_rack: [1.4, 1.3],
+  outdoor_bin: [0.5, 0.5],
+  car_red: [1.8, 4.3],
+  car_blue: [1.8, 4.3],
+  car_white: [1.8, 4.3],
+  outdoor_table: [0.9, 0.9],
+  outdoor_chair: [0.45, 0.45],
+  sign_monolith: [2.6, 0.36],
 };
 
 function subtract(span: [number, number], holes: [number, number][]): [number, number][] {
