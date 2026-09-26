@@ -179,7 +179,7 @@ export function World() {
       {import.meta.env.DEV && <DevHandles />}
       <CameraClipping walking={walking} />
       {walking ? <WalkControls layout={layout} props={props} /> : <CameraRig layout={layout} />}
-      <Soundscape layout={layout} />
+      <Soundscape layout={layout} night={light.night} />
       <CharacterLife layout={layout} props={props} />
     </Canvas>
   );

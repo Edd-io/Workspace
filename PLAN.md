@@ -273,6 +273,9 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
       office showing the last hours
 - [x] Synthesized soundscape (no audio files): room tone, positional keyboard typing at the desks
       that are actually working (nearest 8), footsteps when walking, alert chimes; mute toggle
+- [x] Recorded soundscape replacing the synthesized one (CC0 recordings, `assets/audio/`): room tone
+      indoors, birds by day and insects by night outdoors (cross-faded when walking out), real
+      keyboards typing in bursts, footsteps matching the floor (parquet, paving, grass); volume sliders
 
 ### Phase 8 — Hardening & Linux ✅ (first pass)
 - [x] Performance: instanced props, layout rebuilt only on structural changes, screen previews

@@ -10,3 +10,4 @@ coverage/
 *.tsbuildinfo
 __pycache__/
 *.pyc
+assets/audio/.cache/

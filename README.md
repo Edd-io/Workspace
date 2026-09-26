@@ -59,7 +59,8 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
 - **Search** (🔍 in the top bar, ⌘K / Ctrl+K): every desk's prompts and answers, ignoring case and
   accents; a hit opens the desk.
 - **Settings** (⚙ in the top bar): graphics quality (Eco / Normal / Max — the office only redraws at
-  full rate while you move around; Eco keeps laptops cool), sound, browser notifications, language.
+  full rate while you move around; Eco keeps laptops cool), sound (with ambience and footstep
+  volumes), browser notifications, language. Sounds are CC0 recordings, see `assets/audio/CREDITS.md`.
 - **Subscription gauge** (top bar and master office map): 5-hour and weekly usage of the Claude
   subscription, relayed by the desks' status lines, with alerts at 80 % and 95 %.
 - **Integrate a desk's work** (desk menu or terminal header): diff, merge into a branch, or pull

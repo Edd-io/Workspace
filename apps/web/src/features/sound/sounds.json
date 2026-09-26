@@ -1,0 +1,62 @@
+{
+  "loops": {
+    "ambience-indoor": {
+      "url": "/sounds/ambience-indoor.mp3",
+      "loopStart": 0.2,
+      "loopEnd": 40.2
+    },
+    "ambience-day": {
+      "url": "/sounds/ambience-day.mp3",
+      "loopStart": 0.2,
+      "loopEnd": 45.2
+    },
+    "ambience-night": {
+      "url": "/sounds/ambience-night.mp3",
+      "loopStart": 0.2,
+      "loopEnd": 40.2
+    },
+    "typing-1": {
+      "url": "/sounds/typing-1.mp3",
+      "loopStart": 0.2,
+      "loopEnd": 16.2
+    },
+    "typing-2": {
+      "url": "/sounds/typing-2.mp3",
+      "loopStart": 0.2,
+      "loopEnd": 16.2
+    },
+    "typing-3": {
+      "url": "/sounds/typing-3.mp3",
+      "loopStart": 0.2,
+      "loopEnd": 14.2
+    },
+    "typing-4": {
+      "url": "/sounds/typing-4.mp3",
+      "loopStart": 0.2,
+      "loopEnd": 16.2
+    }
+  },
+  "steps": {
+    "wood": [
+      "/sounds/step-wood-1.mp3",
+      "/sounds/step-wood-2.mp3",
+      "/sounds/step-wood-3.mp3",
+      "/sounds/step-wood-4.mp3",
+      "/sounds/step-wood-5.mp3"
+    ],
+    "concrete": [
+      "/sounds/step-concrete-1.mp3",
+      "/sounds/step-concrete-2.mp3",
+      "/sounds/step-concrete-3.mp3",
+      "/sounds/step-concrete-4.mp3",
+      "/sounds/step-concrete-5.mp3"
+    ],
+    "grass": [
+      "/sounds/step-grass-1.mp3",
+      "/sounds/step-grass-2.mp3",
+      "/sounds/step-grass-3.mp3",
+      "/sounds/step-grass-4.mp3",
+      "/sounds/step-grass-5.mp3"
+    ]
+  }
+}

@@ -16,6 +16,9 @@ const WALK_SPEED = 2.4;
 const RUN_SPEED = 4.6;
 const RADIUS = 0.28;
 const LOOK_SENSITIVITY = 0.0022;
+/** Distance between two footsteps, walking and running (about 2.2 and 3 steps a second). */
+const WALK_STRIDE = 1.1;
+const RUN_STRIDE = 1.55;
 const INTERACT_DISTANCE = 3.2;
 /** Sitting down or standing up takes that long (seconds). */
 const SIT_DURATION = 0.45;
@@ -82,6 +85,7 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const viewTarget = useOffice((state) => state.viewTarget);
   const stride = useRef(0);
+  const walked = useRef(false);
   const seats = useMemo(() => seatsOf(props), [props]);
   /** The seat in use, and where the visitor stood before sitting down (free of colliders). */
   const seated = useRef<{ seat: Seat; standing: Vec2 } | null>(null);
@@ -290,7 +294,12 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
       camera.position.set(x, y, z);
     } else {
       if ((forward || strafe) && !blocked) {
-        const speed = pressed.has('ShiftLeft') || pressed.has('ShiftRight') ? RUN_SPEED : WALK_SPEED;
+        const running = pressed.has('ShiftLeft') || pressed.has('ShiftRight');
+        const speed = running ? RUN_SPEED : WALK_SPEED;
+        const strideLength = running ? RUN_STRIDE : WALK_STRIDE;
+        // Setting off: the first step comes quickly.
+        if (!walked.current) stride.current = strideLength * 0.7;
+        walked.current = true;
         const length = Math.hypot(forward, strafe);
         const sin = Math.sin(yaw.current);
         const cos = Math.cos(yaw.current);
@@ -303,12 +312,14 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
           RADIUS,
           colliders,
         );
-        // One footstep every ~0.75 m actually walked.
+        // One footstep per stride actually walked (not when pushing against a wall).
         stride.current += Math.hypot(position.current[0] - before[0], position.current[1] - before[1]);
-        if (stride.current > 0.75) {
+        if (stride.current > strideLength) {
           stride.current = 0;
           footsteps.step();
         }
+      } else {
+        walked.current = false;
       }
       camera.position.set(position.current[0], EYE_HEIGHT, position.current[1]);
     }

@@ -377,7 +377,11 @@
     "sound": "Son du bureau",
     "notifications": "Notifications du navigateur",
     "on": "Activé",
-    "off": "Coupé"
+    "off": "Coupé",
+    "volumes": {
+      "ambience": "Ambiance (bureau, extérieur, claviers)",
+      "steps": "Bruits de pas"
+    }
   },
   "roles": {
     "lead": {

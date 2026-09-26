@@ -1267,6 +1267,18 @@ textarea.input {
   font-size: 12px;
   color: var(--text-muted);
 }
+.settings__slider {
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.settings__slider input {
+  width: 100%;
+  accent-color: var(--accent);
+}
 .settings__logout {
   align-self: stretch;
 }

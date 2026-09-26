@@ -3,7 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../api/http';
 import { GRAPHICS_QUALITIES, setGraphicsQuality, useGraphicsQuality } from '../../world/graphicsSettings';
 import { browserNotificationsEnabled, setBrowserNotifications } from '../notifications/useAttentionAlerts';
-import { onSoundEnabledChange, setSoundEnabled, soundEnabled } from '../sound/soundSettings';
+import {
+  onSoundEnabledChange,
+  onSoundVolumeChange,
+  setSoundEnabled,
+  setSoundVolume,
+  SOUND_CATEGORIES,
+  soundEnabled,
+  soundVolume,
+} from '../sound/soundSettings';
 import { useOffice } from '../../state/officeStore';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
@@ -41,7 +49,12 @@ export function SettingsMenu({ onLoggedOut }: { onLoggedOut: () => void }) {
   const quality = useGraphicsQuality();
   const [sound, setSound] = useState(soundEnabled);
   const [notifications, setNotifications] = useState(browserNotificationsEnabled);
+  const [volumes, setVolumes] = useState(() => ({
+    ambience: soundVolume('ambience'),
+    steps: soundVolume('steps'),
+  }));
   useEffect(() => onSoundEnabledChange(setSound), []);
+  useEffect(() => onSoundVolumeChange(setVolumes), []);
 
   // Closes on a click elsewhere or on Escape.
   useEffect(() => {
@@ -97,6 +110,20 @@ export function SettingsMenu({ onLoggedOut }: { onLoggedOut: () => void }) {
           <div className="settings__row">
             <span className="settings__label">{t('settings.sound')}</span>
             <Toggle value={sound} onChange={setSoundEnabled} label={t('settings.sound')} />
+            {sound &&
+              SOUND_CATEGORIES.map((category) => (
+                <label key={category} className="settings__slider">
+                  <span>{t(`settings.volumes.${category}`)}</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={5}
+                    value={Math.round(volumes[category] * 100)}
+                    onChange={(event) => setSoundVolume(category, Number(event.target.value) / 100)}
+                  />
+                </label>
+              ))}
           </div>
           <div className="settings__row">
             <span className="settings__label">{t('settings.notifications')}</span>

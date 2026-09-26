@@ -377,7 +377,11 @@
     "sound": "Office sound",
     "notifications": "Browser notifications",
     "on": "On",
-    "off": "Off"
+    "off": "Off",
+    "volumes": {
+      "ambience": "Ambience (office, outdoors, keyboards)",
+      "steps": "Footsteps"
+    }
   },
   "roles": {
     "lead": {
