@@ -228,12 +228,19 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
 - Verified with two real sessions: Ken declared his task and asked Grace not to touch `math.js`;
   Grace knew it without any tool call; a human message posted mid-turn reached Ken through PostToolUse.
 
-### Phase 4 — The office (3D world)
-- [ ] Procedural floor plan (corridor, master room, project rooms, lounge), walls/doors/windows
-- [ ] Blender prop library (scripted) exported to GLB, instanced placement, lots of props
-- [ ] Lighting (sun, ceiling lights, lamp glows), soft shadows, light post-processing
-- [ ] Overview camera + first-person mode with collisions, minimap HUD
-- Demo: walk through a furnished office with several rooms.
+### Phase 4 — The office (3D world) ✅
+- [x] Procedural floor plan: corridor, master office and lounge at the entrance, project rooms on
+      both sides (same depth per side), an empty "new room" shell, walls with windows, glass
+      partitions, doors, baseboards, procedural floor textures (carpet tinted by room, wood, tiles)
+- [x] Blender prop library (54 scripted props) exported to one GLB; palette baked to vertex colors
+      + 5 class materials; instanced rendering (one instanced mesh per prop model)
+- [x] Seeded decoration: desk clutter, bookshelves, plants, printers, posters, radiators, clocks,
+      kitchen, sofas, bar table, ceiling lights, open doors
+- [x] Lighting: sky, sun with shadows (through windows only when walking), ambient indoor light
+- [x] Overview camera (walls cut away, "dollhouse") + first-person walk (pointer lock, physical
+      WASD/ZQSD keys, collisions against walls and furniture, E to use a desk or whiteboard), V to switch
+- [x] Minimap HUD with live desk states; click to fly/teleport; unit tests on the layout
+- [ ] Post-processing (ambient occlusion, bloom) behind a quality setting — see IDEAS.md
 
 ### Phase 5 — Characters
 - [ ] Blender script: rigged low-poly character + variations

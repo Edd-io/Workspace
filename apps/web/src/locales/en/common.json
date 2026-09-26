@@ -29,7 +29,23 @@
     }
   },
   "hud": {
-    "language": "Language"
+    "language": "Language",
+    "viewMode": "View",
+    "minimap": "Office map",
+    "viewModes": {
+      "overview": {
+        "label": "Overview",
+        "hint": "See the whole office from above (V)"
+      },
+      "walk": {
+        "label": "Walk",
+        "hint": "Walk through the office (V)"
+      }
+    },
+    "walk": {
+      "locked": "WASD / arrows to move · Shift to run · E or click to use a desk or whiteboard · Esc to free the mouse",
+      "unlocked": "Click the office to look around · V for the overview"
+    }
   },
   "connection": {
     "connecting": "Connecting…",
@@ -126,7 +142,10 @@
     "removed": "This desk was deleted."
   },
   "world": {
-    "addDesk": "+ Add a desk"
+    "addDesk": "+ Add a desk",
+    "masterRoom": "My office",
+    "lounge": "Lounge",
+    "newRoom": "+ New room"
   },
   "whiteboard": {
     "title": "{{room}} — board",

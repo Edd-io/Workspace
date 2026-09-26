@@ -6,110 +6,129 @@ import { useOffice } from '../state/officeStore';
 import { FONT_TEXT_BOLD } from './fonts';
 import type { RoomLayout } from './layout';
 
-const WALL_HEIGHT = 1.2;
-const WALL_THICKNESS = 0.12;
-const DOOR_WIDTH = 1.4;
-const WALL_COLOR = '#d9d4cc';
-
-function Wall({ position, size }: { position: [number, number, number]; size: [number, number, number] }) {
-  return (
-    <mesh position={position} castShadow receiveShadow>
-      <boxGeometry args={size} />
-      <meshStandardMaterial color={WALL_COLOR} roughness={0.9} />
-    </mesh>
-  );
+function useHoverCursor() {
+  const [hovered, setHovered] = useState(false);
+  return {
+    hovered,
+    handlers: {
+      onPointerOver: (event: ThreeEvent<PointerEvent>) => {
+        event.stopPropagation();
+        setHovered(true);
+        document.body.style.cursor = 'pointer';
+      },
+      onPointerOut: () => {
+        setHovered(false);
+        document.body.style.cursor = '';
+      },
+    },
+  };
 }
 
+/** Names painted on the corridor floor, plus the clickable "add desk" / "new room" placeholders. */
 export function RoomView({ layout }: { layout: RoomLayout }) {
   const { t } = useTranslation();
   const setPanel = useOffice((state) => state.setPanel);
-  const [hoverSlot, setHoverSlot] = useState(false);
-  const { room, x, z, width, depth, towardCorridor, nextSlot } = layout;
-  const frontZ = z + (depth / 2) * towardCorridor;
-  const backZ = z - (depth / 2) * towardCorridor;
-  const sideLength = (width - DOOR_WIDTH) / 2;
+  const slot = useHoverCursor();
+  const newRoom = useHoverCursor();
+  const toward = layout.towardCorridor;
+  const frontZ = toward === 1 ? layout.z1 : layout.z0;
+  const cx = (layout.x0 + layout.x1) / 2;
+  const cz = (layout.z0 + layout.z1) / 2;
+  // Floor labels face the overview camera (south of the building) whatever the room side.
+  const labelRotation: [number, number, number] = [-Math.PI / 2, 0, 0];
 
-  const addDesk = (event: ThreeEvent<MouseEvent>) => {
-    event.stopPropagation();
-    setPanel({ kind: 'createDesk', roomId: room.id });
-  };
+  const name =
+    layout.kind === 'project'
+      ? layout.room.name
+      : layout.kind === 'master'
+        ? t('world.masterRoom')
+        : layout.kind === 'lounge'
+          ? t('world.lounge')
+          : null;
+  const color = layout.kind === 'project' ? layout.room.accentColor : '#d9d3c7';
 
   return (
     <group>
-      {/* Floor with the room's accent color as a border */}
-      <mesh position={[x, 0.005, z]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[width, depth]} />
-        <meshStandardMaterial color={room.accentColor} roughness={0.95} />
-      </mesh>
-      <mesh position={[x, 0.01, z]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[width - 0.3, depth - 0.3]} />
-        <meshStandardMaterial color="#8f877c" roughness={0.95} />
-      </mesh>
-
-      {/* Walls: back, sides, and the corridor side with a door */}
-      <Wall position={[x, WALL_HEIGHT / 2, backZ]} size={[width, WALL_HEIGHT, WALL_THICKNESS]} />
-      <Wall position={[x - width / 2, WALL_HEIGHT / 2, z]} size={[WALL_THICKNESS, WALL_HEIGHT, depth]} />
-      <Wall position={[x + width / 2, WALL_HEIGHT / 2, z]} size={[WALL_THICKNESS, WALL_HEIGHT, depth]} />
-      <Wall
-        position={[x - width / 2 + sideLength / 2, WALL_HEIGHT / 2, frontZ]}
-        size={[sideLength, WALL_HEIGHT, WALL_THICKNESS]}
-      />
-      <Wall
-        position={[x + width / 2 - sideLength / 2, WALL_HEIGHT / 2, frontZ]}
-        size={[sideLength, WALL_HEIGHT, WALL_THICKNESS]}
-      />
-
-      {/* Room name painted on the corridor floor, in front of the door */}
-      <Text
-        font={FONT_TEXT_BOLD}
-        position={[x, 0.02, frontZ + towardCorridor * 0.7]}
-        rotation={[-Math.PI / 2, 0, towardCorridor === 1 ? 0 : Math.PI]}
-        fontSize={0.42}
-        color={room.accentColor}
-        anchorX="center"
-        anchorY="middle"
-        maxWidth={width - 0.5}
-      >
-        {room.name}
-      </Text>
-
-      {/* "Add a desk" placeholder in the next free slot */}
-      <group
-        position={[nextSlot.x, 0, nextSlot.z]}
-        rotation={[0, nextSlot.rotation, 0]}
-        onClick={addDesk}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setHoverSlot(true);
-          document.body.style.cursor = 'pointer';
-        }}
-        onPointerOut={() => {
-          setHoverSlot(false);
-          document.body.style.cursor = '';
-        }}
-      >
-        <mesh position={[0, 0.37, 0]}>
-          <boxGeometry args={[1.5, 0.74, 0.75]} />
-          <meshStandardMaterial
-            color="#ffffff"
-            transparent
-            opacity={hoverSlot ? 0.35 : 0.12}
-            depthWrite={false}
-          />
-        </mesh>
+      {name && (
         <Text
           font={FONT_TEXT_BOLD}
-          position={[0, 0.76, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={0.14}
-          color="#ffffff"
-          fillOpacity={hoverSlot ? 1 : 0.6}
-          anchorX="center"
+          position={[layout.x0 + 1.5, 0.012, frontZ + toward * 0.55]}
+          rotation={labelRotation}
+          fontSize={0.34}
+          color={color}
+          anchorX="left"
           anchorY="middle"
+          maxWidth={layout.x1 - layout.x0 - 1.8}
         >
-          {t('world.addDesk')}
+          {name}
         </Text>
-      </group>
+      )}
+
+      {layout.kind === 'project' && (
+        <group
+          position={[layout.nextSlot.x, 0, layout.nextSlot.z]}
+          rotation={[0, layout.nextSlot.rotation, 0]}
+          onClick={(event) => {
+            event.stopPropagation();
+            setPanel({ kind: 'createDesk', roomId: layout.room.id });
+          }}
+          {...slot.handlers}
+        >
+          <mesh position={[0, 0.37, 0]}>
+            <boxGeometry args={[1.5, 0.74, 0.75]} />
+            <meshStandardMaterial
+              color="#ffffff"
+              transparent
+              opacity={slot.hovered ? 0.35 : 0.12}
+              depthWrite={false}
+            />
+          </mesh>
+          <Text
+            font={FONT_TEXT_BOLD}
+            position={[0, 0.76, 0]}
+            rotation={[-Math.PI / 2, 0, 0]}
+            fontSize={0.13}
+            color="#ffffff"
+            fillOpacity={slot.hovered ? 1 : 0.7}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {t('world.addDesk')}
+          </Text>
+        </group>
+      )}
+
+      {layout.kind === 'placeholder' && (
+        <group
+          onClick={(event) => {
+            event.stopPropagation();
+            setPanel({ kind: 'createRoom' });
+          }}
+          {...newRoom.handlers}
+        >
+          <mesh position={[cx, 0.01, cz]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[layout.x1 - layout.x0 - 1, layout.z1 - layout.z0 - 1]} />
+            <meshStandardMaterial
+              color="#ffffff"
+              transparent
+              opacity={newRoom.hovered ? 0.18 : 0.06}
+              depthWrite={false}
+            />
+          </mesh>
+          <Text
+            font={FONT_TEXT_BOLD}
+            position={[cx, 0.02, cz]}
+            rotation={labelRotation}
+            fontSize={0.5}
+            color="#ffffff"
+            fillOpacity={newRoom.hovered ? 1 : 0.65}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {t('world.newRoom')}
+          </Text>
+        </group>
+      )}
     </group>
   );
 }

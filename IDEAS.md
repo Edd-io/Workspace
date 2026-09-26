@@ -31,6 +31,8 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 - 💡 **Character life**: an agent idle for a long time goes to the coffee machine, stretches, chats at the water cooler.
 - 💡 **Master office customization** (decoration, posters, plants).
 - 💡 **More realistic rendering**: PBR materials, lightmaps baked in Blender, post-processing (SSAO, bloom), more detailed characters.
+- 💡 **Graphics quality setting** (low / high): ambient occlusion (N8AO), bloom on lamps and screens, shadow resolution, preview frame rate.
+- 💡 **Meeting room** as a real room type (meeting table + chairs + TV props already exist).
 - 💡 **Animated doors**, elevator if the office grows beyond one floor (one floor per project group?).
 - 💡 **Easter eggs**: a plant wilting when a desk has been in error for a long time, confetti when a long task finishes.
 

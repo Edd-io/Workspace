@@ -9,12 +9,17 @@ export function Office({ onLoggedOut }: { onLoggedOut: () => void }) {
     startOfficeSync();
   }, []);
 
-  // Escape leaves the focused desk and returns to the overview (terminal and dialogs handle their own keys).
+  // Keyboard shortcuts outside the terminal and dialogs (which handle their own keys):
+  // Escape leaves the focused desk, V switches between the overview and the walk.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      const { terminalDeskId, panel, focusDesk } = useOffice.getState();
-      if (!terminalDeskId && !panel) focusDesk(null);
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable))
+        return;
+      const { terminalDeskId, panel, focusDesk, viewMode, setViewMode } = useOffice.getState();
+      if (terminalDeskId || panel) return;
+      if (event.key === 'Escape' && viewMode === 'overview') focusDesk(null);
+      if (event.code === 'KeyV') setViewMode(viewMode === 'walk' ? 'overview' : 'walk');
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);

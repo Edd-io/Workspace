@@ -29,7 +29,23 @@
     }
   },
   "hud": {
-    "language": "Langue"
+    "language": "Langue",
+    "viewMode": "Vue",
+    "minimap": "Plan du bureau",
+    "viewModes": {
+      "overview": {
+        "label": "Vue d'ensemble",
+        "hint": "Voir tout le bureau d'en haut (V)"
+      },
+      "walk": {
+        "label": "Visite",
+        "hint": "Se promener dans le bureau (V)"
+      }
+    },
+    "walk": {
+      "locked": "ZQSD / flèches pour marcher · Maj pour courir · E ou clic pour utiliser un poste ou un tableau · Échap pour libérer la souris",
+      "unlocked": "Clique dans le bureau pour regarder autour · V pour la vue d'ensemble"
+    }
   },
   "connection": {
     "connecting": "Connexion…",
@@ -126,7 +142,10 @@
     "removed": "Ce poste a été supprimé."
   },
   "world": {
-    "addDesk": "+ Ajouter un poste"
+    "addDesk": "+ Ajouter un poste",
+    "masterRoom": "Mon bureau",
+    "lounge": "Espace détente",
+    "newRoom": "+ Nouvelle salle"
   },
   "whiteboard": {
     "title": "{{room}} — tableau",

@@ -1,72 +1,99 @@
+import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { useMemo } from 'react';
-import { desksOfRoom, sortedRooms, useOffice } from '../state/officeStore';
+import { Suspense, useMemo } from 'react';
+import { desksOfRoom, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
+import type { PropPlacement } from './decor';
 import { DeskStation } from './DeskStation';
-import { computeLayout, CORRIDOR_HALF_WIDTH } from './layout';
+import { PropInstances } from './props/PropInstances';
 import { RoomView } from './RoomView';
+import { Structure } from './structure/Structure';
+import { useOfficeLayout, useOfficeProps } from './useOfficeLayout';
+import { WalkControls } from './WalkControls';
 import { Whiteboard } from './Whiteboard';
 
+/** Props hanging above the cut walls of the overview would float in the air: hide them there. */
+const HIDDEN_IN_CUTAWAY = new Set<PropPlacement['model']>([
+  'ceiling_light',
+  'wall_clock',
+  'poster_a',
+  'poster_b',
+  'poster_c',
+  'wall_shelf',
+  'door',
+]);
+
 export function World() {
-  const rooms = useOffice((state) => state.rooms);
+  const layout = useOfficeLayout();
+  const props = useOfficeProps();
   const desks = useOffice((state) => state.desks);
   const boards = useOffice((state) => state.boards);
+  const viewMode = useOffice((state) => state.viewMode);
   const focusDesk = useOffice((state) => state.focusDesk);
-  const layout = useMemo(() => computeLayout(sortedRooms(rooms), Object.values(desks)), [rooms, desks]);
-  const corridorLength = layout.corridor.maxX - layout.corridor.minX;
-  const corridorCenter = (layout.corridor.maxX + layout.corridor.minX) / 2;
+  const walking = viewMode === 'walk';
+  const visibleProps = useMemo(
+    () => (walking ? props : props.filter((prop) => !HIDDEN_IN_CUTAWAY.has(prop.model))),
+    [props, walking],
+  );
+  const { bounds } = layout;
+  const centerX = (bounds.x0 + bounds.x1) / 2;
+  const sunTarget: [number, number, number] = [centerX, 0, 0];
 
   return (
     <Canvas
       className="world"
       shadows="percentage"
       dpr={[1, 2]}
-      camera={{ fov: 45, near: 0.05, far: 300, position: [10, 14, 14] }}
-      onPointerMissed={() => focusDesk(null)}
+      camera={{ fov: 50, near: 0.05, far: 600, position: [10, 20, 20] }}
+      onPointerMissed={() => {
+        if (!walking) focusDesk(null);
+      }}
     >
-      <color attach="background" args={['#1a1d22']} />
-      <fog attach="fog" args={['#1a1d22', 40, 120]} />
-      <hemisphereLight args={['#f5efe6', '#3a3530', 0.9]} />
+      <Sky distance={450} sunPosition={[60, 45, 80]} turbidity={6} rayleigh={1.2} mieCoefficient={0.004} />
+      <fog attach="fog" args={['#cfd8e0', 60, 260]} />
+      {/* Indoors (walk mode) the ceiling blocks the sun: ambient light stands in for the ceiling lights. */}
+      <hemisphereLight args={['#f6f1e8', '#8a8478', walking ? 1.5 : 0.95]} />
+      <ambientLight intensity={walking ? 0.55 : 0.15} />
       <directionalLight
-        position={[corridorCenter + 10, 25, 12]}
-        intensity={1.6}
+        position={[centerX + 18, 30, 22]}
+        target-position={sunTarget}
+        intensity={2.2}
+        color="#fff4e2"
         castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-left={-40}
-        shadow-camera-right={40}
-        shadow-camera-top={40}
-        shadow-camera-bottom={-40}
-        shadow-bias={-0.0004}
+        shadow-mapSize={[4096, 4096]}
+        shadow-camera-left={-(bounds.x1 - bounds.x0) / 2 - 10}
+        shadow-camera-right={(bounds.x1 - bounds.x0) / 2 + 10}
+        shadow-camera-top={30}
+        shadow-camera-bottom={-30}
+        shadow-camera-far={120}
+        shadow-bias={-0.0003}
+        shadow-normalBias={0.02}
       />
 
-      {/* Ground and corridor */}
-      <mesh position={[corridorCenter, -0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[corridorLength + 60, 80]} />
-        <meshStandardMaterial color="#2a2e34" roughness={1} />
-      </mesh>
-      <mesh position={[corridorCenter, 0.004, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[corridorLength, CORRIDOR_HALF_WIDTH * 2]} />
-        <meshStandardMaterial color="#b9b2a7" roughness={0.8} />
-      </mesh>
+      <Suspense fallback={null}>
+        <Structure layout={layout} cutaway={!walking} />
+        <PropInstances placements={visibleProps} />
+      </Suspense>
 
       {layout.rooms.map((room) => (
-        <group key={room.room.id}>
-          <RoomView layout={room} />
-          <Whiteboard
-            roomId={room.room.id}
-            roomName={room.room.name}
-            board={boards[room.room.id]}
-            desks={desksOfRoom(desks, room.room.id)}
-            position={[room.whiteboard.x, 0, room.whiteboard.z]}
-            rotation={room.whiteboard.rotation}
-          />
-        </group>
+        <RoomView key={`${room.kind}-${room.side}-${room.x0}`} layout={room} />
+      ))}
+      {layout.projectRooms.map((room) => (
+        <Whiteboard
+          key={room.room.id}
+          roomId={room.room.id}
+          roomName={room.room.name}
+          board={boards[room.room.id]}
+          desks={desksOfRoom(desks, room.room.id)}
+          position={[room.whiteboard.x, 0, room.whiteboard.z]}
+          rotation={room.whiteboard.rotation}
+        />
       ))}
       {layout.desks.map((desk) => (
-        <DeskStation key={desk.desk.id} layout={desk} />
+        <DeskStation key={desk.desk.id} layout={desk} showLabel={!walking} />
       ))}
 
-      <CameraRig layout={layout} />
+      {walking ? <WalkControls layout={layout} props={props} /> : <CameraRig layout={layout} />}
     </Canvas>
   );
 }

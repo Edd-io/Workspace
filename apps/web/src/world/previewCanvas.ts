@@ -6,8 +6,8 @@ import {
 } from '@workspace/shared';
 import type { PreviewFrameMessage } from '../state/previews';
 
-export const PREVIEW_WIDTH = 768;
-export const PREVIEW_HEIGHT = 480;
+export const PREVIEW_WIDTH = 864;
+export const PREVIEW_HEIGHT = 491;
 const BACKGROUND = '#0d1117';
 const FOREGROUND = '#d0d7de';
 const FONT_FAMILY = '"JetBrains Mono", ui-monospace, monospace';

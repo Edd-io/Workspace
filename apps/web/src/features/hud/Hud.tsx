@@ -1,5 +1,5 @@
 import { ATTENTION_STATES, DESK_STATES, type DeskState } from '@workspace/shared';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../api/http';
 import { deskTopic } from '../../lib/desk';
@@ -9,6 +9,7 @@ import { CreateDeskDialog } from './CreateDeskDialog';
 import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { Minimap } from './Minimap';
 import { StateDot } from './StateBadge';
 
 export function Hud({ onLoggedOut }: { onLoggedOut: () => void }) {
@@ -16,6 +17,8 @@ export function Hud({ onLoggedOut }: { onLoggedOut: () => void }) {
     <>
       <TopBar onLoggedOut={onLoggedOut} />
       <OfficeSidebar />
+      <Minimap />
+      <WalkHints />
       <Dialogs />
     </>
   );
@@ -55,6 +58,7 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
         ))}
       </div>
       <div className="topbar__actions">
+        <ViewModeSwitch />
         <LanguageSwitcher />
         <button className="button button--ghost" onClick={() => void logout()}>
           {t('login.signOut')}
@@ -72,7 +76,8 @@ function OfficeSidebar() {
   const focusedDeskId = useOffice((state) => state.focusedDeskId);
   const openTerminal = useOffice((state) => state.openTerminal);
   const setPanel = useOffice((state) => state.setPanel);
-  const [collapsed, setCollapsed] = useState(false);
+  const collapsed = useOffice((state) => state.sidebarCollapsed);
+  const setCollapsed = useOffice((state) => state.setSidebarCollapsed);
   const [menuDeskId, setMenuDeskId] = useState<string | null>(null);
   const roomList = sortedRooms(rooms);
 
@@ -150,6 +155,46 @@ function OfficeSidebar() {
         {t('sidebar.newRoom')}
       </button>
     </aside>
+  );
+}
+
+function ViewModeSwitch() {
+  const { t } = useTranslation();
+  const viewMode = useOffice((state) => state.viewMode);
+  const setViewMode = useOffice((state) => state.setViewMode);
+  return (
+    <div className="segmented" role="group" aria-label={t('hud.viewMode')}>
+      {(['overview', 'walk'] as const).map((mode) => (
+        <button
+          key={mode}
+          className={`segmented__item${viewMode === mode ? ' segmented__item--active' : ''}`}
+          onClick={() => setViewMode(mode)}
+          aria-pressed={viewMode === mode}
+          title={t(`hud.viewModes.${mode}.hint`)}
+        >
+          {t(`hud.viewModes.${mode}.label`)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Crosshair and controls reminder in walk mode. */
+function WalkHints() {
+  const { t } = useTranslation();
+  const viewMode = useOffice((state) => state.viewMode);
+  const [locked, setLocked] = useState(false);
+  useEffect(() => {
+    const onChange = () => setLocked(document.pointerLockElement !== null);
+    document.addEventListener('pointerlockchange', onChange);
+    return () => document.removeEventListener('pointerlockchange', onChange);
+  }, []);
+  if (viewMode !== 'walk') return null;
+  return (
+    <>
+      {locked && <div className="crosshair" aria-hidden="true" />}
+      <div className="walk-hints panel">{locked ? t('hud.walk.locked') : t('hud.walk.unlocked')}</div>
+    </>
   );
 }
 
