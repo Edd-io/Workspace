@@ -1179,6 +1179,13 @@ textarea.input {
 }
 .usage-gauge__label {
   color: var(--text-muted);
+  white-space: nowrap;
+}
+@media (max-width: 1150px) {
+  /* Narrow windows: percentages only, so the top bar stays on one line. */
+  .usage-gauge__bar {
+    display: none;
+  }
 }
 .usage-gauge__bar {
   position: relative;

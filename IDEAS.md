@@ -24,6 +24,12 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 
 ## 3D world / ambience
 - 💡 **Real weather** behind the windows (rain, sun) through a weather API.
+- 💡 **Surroundings of the building** (discussed 2026-09-26): entrance forecourt with a lit sign, benches
+  and bike racks; hedges, flower beds and trees along the facades; an outdoor terrace by the lounge for
+  coffee breaks; a car park and street lamps that light up at night; a street and simple neighboring
+  buildings on the horizon with lit windows at night. Generated in Blender, instanced, and laid out from
+  the floor plan so it follows the building as it grows.
+- 💡 **Seasons** following the real date: autumn leaves, snow in winter, blossoms in spring.
 - 💡 **More character life** (beyond phase 9): stretching, chatting at the water cooler in pairs, lunch breaks.
 - 💡 **Master office customization** (decoration, posters, plants).
 - 💡 **More realistic rendering**: PBR materials, lightmaps baked in Blender, post-processing (SSAO, bloom), more detailed characters.

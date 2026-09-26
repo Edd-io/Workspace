@@ -24,6 +24,9 @@ const GLASS_TOP = 2.45;
 const MULLION_PITCH = 1.3;
 const FRAME = 0.05;
 const TRIM_HEIGHT = 0.08;
+/** Baseboards stand this far out of each wall face, and wrap around the free ends of walls. */
+const TRIM_OUTSET = 0.012;
+const TRIM_DEPTH = WALL_THICKNESS + 2 * TRIM_OUTSET;
 /** Window frames stand 5 mm proud of both wall faces and cover the sides of the opening. */
 const WINDOW_FRAME_DEPTH = WALL_THICKNESS + 0.01;
 
@@ -131,9 +134,9 @@ export function buildWallBoxes(walls: Wall[], cut: number): WallBox[] {
       } else {
         add(d0, d1, DOOR_HEIGHT, WALL_HEIGHT, 'wall', WALL_THICKNESS, [false, false]);
       }
-      // Door jambs, which also cover the sides of the opening.
-      add(d0 - FRAME / 2, d0 + FRAME / 2, 0, DOOR_HEIGHT, 'frame', WALL_THICKNESS + 0.02);
-      add(d1 - FRAME / 2, d1 + FRAME / 2, 0, DOOR_HEIGHT, 'frame', WALL_THICKNESS + 0.02);
+      // Door jambs, which also cover the sides of the opening and the ends of the baseboards.
+      add(d0 - FRAME / 2, d0 + FRAME / 2, 0, DOOR_HEIGHT, 'frame', TRIM_DEPTH + 0.006);
+      add(d1 - FRAME / 2, d1 + FRAME / 2, 0, DOOR_HEIGHT, 'frame', TRIM_DEPTH + 0.006);
     }
 
     for (const [p0, p1] of solidParts) {
@@ -170,8 +173,18 @@ export function buildWallBoxes(walls: Wall[], cut: number): WallBox[] {
         add(w1 - FRAME, w1, SILL, WINDOW_HEAD, 'frame', WINDOW_FRAME_DEPTH);
         add((w0 + w1) / 2 - FRAME / 2, (w0 + w1) / 2 + FRAME / 2, SILL, WINDOW_HEAD, 'frame', 0.05);
       }
-      // Baseboards on both faces.
-      add(p0, p1, 0, TRIM_HEIGHT, 'trim', WALL_THICKNESS + 0.024);
+      // Baseboards on both faces. At a free end of the wall they turn the corner: stopping flush with
+      // the wall, their end face would be coplanar with the wall's and flicker.
+      const freeStart = p0 < 0.001 && !startContinued;
+      const freeEnd = p1 > length - 0.001 && !endContinued;
+      add(
+        p0 - (freeStart ? TRIM_OUTSET : 0),
+        p1 + (freeEnd ? TRIM_OUTSET : 0),
+        0,
+        TRIM_HEIGHT,
+        'trim',
+        TRIM_DEPTH,
+      );
     }
   }
   return boxes;
