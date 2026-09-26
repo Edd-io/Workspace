@@ -48,6 +48,8 @@ interface OfficeState {
   panel: Panel;
   viewMode: ViewMode;
   sidebarCollapsed: boolean;
+  /** Development only: hour of the day forced for the day/night cycle (null: the real clock). */
+  clockOverride: number | null;
   /** Pending request to move the view to a floor point (minimap clicks, teleports). */
   viewTarget: { x: number; z: number; yaw?: number; seq: number } | null;
   focusDesk: (deskId: string | null) => void;
@@ -72,6 +74,7 @@ export const useOffice = create<OfficeState>((set) => ({
   summary: null,
   usage: null,
   deskStats: {},
+  clockOverride: null,
   toasts: [],
   focusedDeskId: null,
   terminalDeskId: null,
@@ -117,6 +120,7 @@ if (import.meta.env.DEV) {
   // Handle for automated browser checks during development.
   (window as unknown as { __office?: unknown }).__office = {
     goTo: (x: number, z: number, yaw?: number) => useOffice.getState().goTo(x, z, yaw),
+    setHour: (hour: number | null) => useOffice.setState({ clockOverride: hour }),
   };
 }
 

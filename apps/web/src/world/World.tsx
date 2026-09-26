@@ -1,10 +1,11 @@
-import { Sky } from '@react-three/drei';
+import { Sky, Stars } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { Suspense, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { desksOfRoom, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
 import type { PropPlacement } from './decor';
+import type { Daylight } from './daylight';
 import { FrameScheduler } from './FrameScheduler';
 import { GRAPHICS_PROFILES, useGraphicsQuality } from './graphicsSettings';
 import type { OfficeLayout } from './layout';
@@ -16,6 +17,7 @@ import { PropInstances } from './props/PropInstances';
 import { RoomView } from './RoomView';
 import { Structure } from './structure/Structure';
 import { useOfficeLayout, useOfficeProps } from './useOfficeLayout';
+import { useDaylight } from './useDaylight';
 import { WalkControls } from './WalkControls';
 import { Whiteboard } from './Whiteboard';
 
@@ -47,11 +49,12 @@ function DevHandles() {
   return null;
 }
 
-/** Sun light; its shadow map is rebuilt when the graphics quality changes its size. */
-function Sun({ layout, size }: { layout: OfficeLayout; size: number }) {
+/** Sun (or moon) light; its shadow map is rebuilt when the graphics quality changes its size. */
+function Sun({ layout, size, sky }: { layout: OfficeLayout; size: number; sky: Daylight['light'] }) {
   const light = useRef<THREE.DirectionalLight>(null);
   const { bounds } = layout;
   const centerX = (bounds.x0 + bounds.x1) / 2;
+  const [dx, dy, dz] = sky.direction;
   useEffect(() => {
     const shadow = light.current?.shadow;
     if (!shadow || shadow.mapSize.x === size) return;
@@ -62,10 +65,10 @@ function Sun({ layout, size }: { layout: OfficeLayout; size: number }) {
   return (
     <directionalLight
       ref={light}
-      position={[centerX + 18, 30, 22]}
+      position={[centerX + dx * 60, dy * 60, dz * 60]}
       target-position={[centerX, 0, 0]}
-      intensity={2.2}
-      color="#fff4e2"
+      intensity={sky.intensity}
+      color={sky.color}
       castShadow
       shadow-mapSize={[size, size]}
       shadow-camera-left={-(bounds.x1 - bounds.x0) / 2 - 10}
@@ -104,6 +107,8 @@ export function World() {
     [props, walking],
   );
   const profile = GRAPHICS_PROFILES[useGraphicsQuality()];
+  const light = useDaylight(walking);
+  const [sunX, sunY, sunZ] = light.skySun;
 
   return (
     <Canvas
@@ -117,15 +122,22 @@ export function World() {
         if (!walking) focusDesk(null);
       }}
     >
-      <Sky distance={450} sunPosition={[60, 45, 80]} turbidity={6} rayleigh={1.2} mieCoefficient={0.004} />
-      <fog attach="fog" args={['#cfd8e0', 60, 260]} />
+      <Sky
+        distance={450}
+        sunPosition={[sunX * 100, sunY * 100, sunZ * 100]}
+        turbidity={6}
+        rayleigh={1.2}
+        mieCoefficient={0.004}
+      />
+      {light.night > 0.4 && <Stars radius={180} depth={40} count={2500} factor={5} saturation={0} fade />}
+      <fog attach="fog" args={[light.fog, 60, 260]} />
       {/* Indoors (walk mode) the ceiling blocks the sun: ambient light stands in for the ceiling lights. */}
-      <hemisphereLight args={['#f6f1e8', '#8a8478', walking ? 1.5 : 0.95]} />
-      <ambientLight intensity={walking ? 0.55 : 0.15} />
-      <Sun layout={layout} size={profile.shadowMapSize} />
+      <hemisphereLight args={[light.hemisphere.sky, light.hemisphere.ground, light.hemisphere.intensity]} />
+      <ambientLight intensity={light.ambient} />
+      <Sun layout={layout} size={profile.shadowMapSize} sky={light.light} />
 
       <Suspense fallback={null}>
-        <Structure layout={layout} cutaway={!walking} />
+        <Structure layout={layout} cutaway={!walking} groundColor={light.ground} />
         <PropInstances placements={visibleProps} />
       </Suspense>
 

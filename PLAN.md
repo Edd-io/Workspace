@@ -304,7 +304,7 @@ Subscription usage gauge:
 - [x] Per-desk context usage and model in the terminal header; usage included in the Haiku briefing
 
 A living office:
-- [ ] Day/night cycle following the local time: sun course, golden hour, night sky with stars, dim
+- [x] Day/night cycle following the local time: sun course, golden hour, night sky with stars, dim
       moonlight outside while the office lights stay on
 - [ ] Standing animations (walk, stand, stand with a coffee, talk) and a coffee cup
 - [ ] Navigation grid over the floor plan (A* between walls and furniture)
