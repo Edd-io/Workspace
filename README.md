@@ -209,3 +209,7 @@ pull requests target the `dev` branch.
 - Fonts: [Inter](https://rsms.me/inter/), [JetBrains Mono](https://www.jetbrains.com/lp/mono/) and
   [Caveat](https://fonts.google.com/specimen/Caveat) (SIL Open Font License), bundled through
   Fontsource.
+
+## License
+
+[MIT](LICENSE). The sounds are CC0 and the fonts are under the SIL Open Font License (see Credits).

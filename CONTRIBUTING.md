@@ -92,3 +92,5 @@ README screenshots show, retake them with `pnpm screenshots` (see the README).
 - Commit messages: a short summary in the imperative mood ("Fix…", "Add…"), then a body explaining
   why when it is not obvious.
 - Describe what changed and how you tested it; add screenshots for anything visual.
+- By contributing, you agree that your contribution is licensed under the project's
+  [MIT License](LICENSE).
