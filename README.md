@@ -166,7 +166,7 @@ graphics quality **Eco** keeps laptops cool.
 
 ```
 apps/server         Fastify server: sessions (tmux, hooks, state machine), office, git, notifications
-apps/web            React client: 3D world (react-three-fiber), HUD, terminal, locales (fr, en)
+apps/web            React client: 3D world (react-three-fiber), HUD, terminal, locales (10 languages)
 packages/shared     Protocol types and zod schemas shared by the server and the client
 packages/office-mcp MCP server started by each desk's session
 assets/blender      Blender scripts generating every 3D model (apps/web/public/models)
@@ -192,8 +192,8 @@ pnpm build
   `python3 assets/audio/build_sounds.py`.
 - The README screenshots (`docs/images/`) are taken from the Vite dev client of an isolated
   instance: `SHOTS_URL=http://localhost:5318 SHOTS_PASSWORD=... pnpm screenshots`.
-- The repository is written in English; the only other language is in the web client's locale files
-  (`apps/web/src/locales/<lang>/`), and every user-facing string goes through them.
+- The repository is written in English; the only other languages are in the web client's locale
+  files (`apps/web/src/locales/<lang>/`), and every user-facing string goes through them.
 
 ## Contributing
 

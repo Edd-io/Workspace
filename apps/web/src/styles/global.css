@@ -1262,8 +1262,12 @@ textarea.input {
   flex-direction: column;
   gap: 6px;
 }
-.settings__row .segmented {
+.settings__row .segmented,
+.settings__row .language-select {
   align-self: flex-start;
+}
+.language-select {
+  width: auto;
 }
 .settings__label {
   font-size: 12px;

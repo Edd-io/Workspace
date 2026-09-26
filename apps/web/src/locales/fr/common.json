@@ -9,10 +9,6 @@
     "close": "Fermer",
     "cancel": "Annuler"
   },
-  "languages": {
-    "fr": "FR",
-    "en": "EN"
-  },
   "login": {
     "subtitle": "Ton bureau de sessions Claude Code",
     "password": "Mot de passe",

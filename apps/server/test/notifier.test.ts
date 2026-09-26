@@ -1,6 +1,6 @@
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import type { DeskState } from '@workspace/shared';
+import { LANGUAGES, type DeskState } from '@workspace/shared';
 import { openDatabase } from '../src/db/database.ts';
 import { AWAY_MS, loadLocales, Notifier, Presence, translate } from '../src/office/notifier.ts';
 import { OfficeStore, type DeskRecord } from '../src/store/officeStore.ts';
@@ -83,8 +83,13 @@ describe('translate', () => {
   });
 
   it('finds the same keys in every language', () => {
-    for (const key of ['notifications.discord.waiting', 'notifications.discord.attentionTitle']) {
-      expect(translate(locales.fr, 'fr', key, { count: 2, desk: 'Ken', room: 'Demo' })).not.toBe(key);
+    for (const language of LANGUAGES) {
+      for (const key of ['notifications.discord.waiting', 'notifications.discord.attentionTitle']) {
+        for (const count of [1, 2, 5]) {
+          const text = translate(locales[language], language, key, { count, desk: 'Ken', room: 'Demo' });
+          expect(text, `${language} ${key}`).not.toBe(key);
+        }
+      }
     }
   });
 });

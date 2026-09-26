@@ -1,0 +1,499 @@
+{
+  "app": {
+    "name": "Workspace",
+    "loading": "正在加载办公室…",
+    "serverUnreachable": "无法连接到服务器。"
+  },
+  "common": {
+    "retry": "重试",
+    "close": "关闭",
+    "cancel": "取消"
+  },
+  "login": {
+    "subtitle": "你的 Claude Code 会话办公室",
+    "password": "密码",
+    "signIn": "登录",
+    "signingIn": "正在登录…",
+    "signOut": "退出登录",
+    "noPassword": "尚未设置密码。请在服务器上运行以下命令，然后重新加载页面：",
+    "errors": {
+      "invalid": "密码错误。",
+      "rate_limited": "尝试次数过多，请几分钟后再试。",
+      "no_password": "服务器上尚未设置密码。",
+      "invalid_input": "请输入密码。",
+      "unknown_error": "登录失败。"
+    }
+  },
+  "hud": {
+    "language": "语言",
+    "viewMode": "视图",
+    "minimap": "办公室地图",
+    "viewModes": {
+      "overview": {
+        "label": "总览",
+        "hint": "从上方俯瞰整个办公室（V）"
+      },
+      "walk": {
+        "label": "漫步",
+        "hint": "在办公室里四处走走（V）"
+      }
+    },
+    "walk": {
+      "locked": "WASD / 方向键移动 · Shift 奔跑 · 按 E 或点击以使用工位、白板或屏幕，或坐下 · Esc 返回总览",
+      "unlocked": "点击继续漫步 · 按 V 返回总览",
+      "seated": "已坐下 · 按 E 或点击屏幕以使用 · 在其他地方按 WASD 或 E 起身 · Esc 返回总览",
+      "aim": {
+        "desk": "E · 打开终端",
+        "board": "E · 打开白板",
+        "screen": "E · 打开屏幕",
+        "seat": "E · 坐下",
+        "frame": "E · 放入图片",
+        "picture": "E · 更换图片"
+      }
+    }
+  },
+  "connection": {
+    "connecting": "正在连接…",
+    "open": "已连接",
+    "closed": "连接已断开 — 正在重连"
+  },
+  "states": {
+    "starting": "启动中",
+    "idle": "空闲",
+    "working": "工作中",
+    "question": "等你处理",
+    "compacting": "压缩中",
+    "limited": "用量上限",
+    "error": "出错",
+    "offline": "离线"
+  },
+  "sidebar": {
+    "title": "办公室",
+    "show": "办公室",
+    "hide": "隐藏",
+    "empty": "还没有房间。为你的第一个项目创建一个吧。",
+    "addDesk": "添加工位",
+    "newRoom": "新建房间",
+    "board": "白板",
+    "openBoard": "打开房间白板"
+  },
+  "desk": {
+    "menu": "工位操作",
+    "actions": {
+      "start": "启动",
+      "stop": "停止",
+      "restart": "重启",
+      "delete": "删除工位",
+      "confirmDelete": "删除",
+      "integrate": "集成工作…",
+      "editRole": "角色…"
+    },
+    "confirmDelete": "会话将停止，其 worktree 会被删除。分支 {{branch}} 会保留。",
+    "confirmDeleteUncommitted": "这个工位有未提交的更改。删除后这些更改将会丢失。",
+    "saveRole": "保存"
+  },
+  "errors": {
+    "path_not_found": "服务器上不存在这个文件夹。",
+    "path_not_absolute": "项目路径必须是绝对路径。",
+    "not_a_git_repo": "这个项目不是 git 仓库：请使用共享文件夹模式。",
+    "repo_without_commits": "仓库还没有任何提交。请先进行一次提交，才能使用 worktree。",
+    "worktree_failed": "无法创建 worktree。",
+    "room_not_empty": "这个房间里还有工位。",
+    "uncommitted_changes": "这个工位有未提交的更改。",
+    "invalid_input": "部分字段无效。",
+    "cannot_read_directory": "无法读取这个文件夹。",
+    "room_not_found": "这个房间已不存在。",
+    "desk_not_found": "这个工位已不存在。",
+    "unknown_error": "出了点问题。"
+  },
+  "createRoom": {
+    "title": "新建房间",
+    "name": "房间名称",
+    "project": "服务器上的项目文件夹",
+    "parent": "上级文件夹",
+    "hint": "这个房间的所有工位都在此项目上工作。",
+    "submit": "创建房间",
+    "templates": {
+      "label": "初始团队",
+      "empty": {
+        "label": "空房间",
+        "description": "由你自己添加工位。"
+      },
+      "solo": {
+        "label": "单人",
+        "description": "一个开发工位。"
+      },
+      "duo": {
+        "label": "双人",
+        "description": "一名开发者和一名审查者。"
+      },
+      "team": {
+        "label": "团队",
+        "description": "一名负责分配工作的团队负责人，外加前端、后端和测试。"
+      }
+    },
+    "creatingDesks": "正在创建工位…"
+  },
+  "createDesk": {
+    "title": "在 {{room}} 中新建工位",
+    "name": "名称",
+    "namePlaceholder": "随机名称",
+    "mode": "工作副本",
+    "modes": {
+      "worktree": {
+        "label": "独立 worktree",
+        "description": "专属的 git 分支和文件夹，不会与其他工位冲突。"
+      },
+      "shared": {
+        "label": "共享文件夹",
+        "description": "直接在项目文件夹中工作，与其他共享工位一样。"
+      }
+    },
+    "notGit": "该项目不是 git 仓库，因此只能使用共享文件夹模式。",
+    "model": "模型",
+    "permissionMode": "权限",
+    "defaultOption": "默认",
+    "initialPrompt": "第一条指令（可选）",
+    "initialPromptPlaceholder": "这个工位要做什么？",
+    "submit": "创建工位",
+    "creating": "正在创建…",
+    "role": "角色（可选）",
+    "rolePlaceholder": "这个工位在房间中负责什么"
+  },
+  "permissionModes": {
+    "default": "每次都询问",
+    "acceptEdits": "自动接受编辑",
+    "auto": "自动",
+    "plan": "计划模式",
+    "bypassPermissions": "跳过所有权限检查"
+  },
+  "terminal": {
+    "offline": "此会话已停止。",
+    "removed": "此工位已被删除。"
+  },
+  "world": {
+    "addDesk": "+ 添加工位",
+    "masterRoom": "我的办公室",
+    "lounge": "休息区",
+    "newRoom": "+ 新建房间"
+  },
+  "whiteboard": {
+    "title": "{{room}} — 白板",
+    "whoDoesWhat": "分工",
+    "notes": "置顶笔记",
+    "messages": "消息",
+    "nobody": "这里还没有人",
+    "noNotes": "还没有笔记",
+    "human": "你",
+    "room": "所有人",
+    "autoWake": "有人给空闲的工位发消息时唤醒它们",
+    "autoWakeHint": "发给空闲工位的消息会作为指令输入（每 10 分钟最多 4 次）。"
+  },
+  "board": {
+    "formerDesk": "已删除的工位",
+    "removeNote": "移除这条笔记",
+    "notePlaceholder": "一个决定、一条约定、一个警告…",
+    "pin": "置顶",
+    "noMessages": "还没有消息。",
+    "toRoom": "整个房间",
+    "messagePlaceholder": "给工位发消息…",
+    "send": "发送",
+    "deliveryHint": "正在工作的工位会在下一次使用工具时收到消息；开启唤醒后，空闲的工位会被立即唤醒。"
+  },
+  "inbox": {
+    "title": "收件箱",
+    "button": "收件箱",
+    "empty": "没有人在等你。",
+    "answer": "打开终端",
+    "count_other": "{{count}} 个工位在等你"
+  },
+  "attention": {
+    "question": "提问",
+    "permission": "权限请求",
+    "plan": "待批准的计划",
+    "message": "找你",
+    "error": "错误",
+    "limit": "用量上限",
+    "trust": "信任此文件夹"
+  },
+  "summary": {
+    "title": "简报",
+    "button": "简报",
+    "generated": "生成于 {{ago}} · 涵盖 {{since}} 至今",
+    "screenGenerated": "生成于 {{ago}}",
+    "none": "还没有简报。",
+    "generating": "Haiku 正在撰写简报…",
+    "refresh": "刷新",
+    "error": "无法生成简报，请稍后再试。"
+  },
+  "map": {
+    "title": "办公室地图",
+    "hint": "点击工位可打开其终端，点击其他位置可前往该处。"
+  },
+  "notifications": {
+    "title": "{{desk}}（{{room}}）需要你",
+    "discord": {
+      "waiting_other": "{{count}} 个工位在等你",
+      "attentionTitle": "{{desk}}（{{room}}）需要你",
+      "finishedTitle": "{{desk}}（{{room}}）已完成",
+      "finishedBody": "工作已完成，耗时 {{minutes}} 分钟。",
+      "test": "Workspace 测试：通知会发送到这里。👋"
+    }
+  },
+  "timeline": {
+    "title": "活动",
+    "button": "活动",
+    "range": "时间段",
+    "hours_other": "{{count}} 小时",
+    "hint": "白色刻度表示工位收到的指令。点击某一行可打开对应的工位。",
+    "empty": "此时间段内没有工位活动。",
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}}（{{minutes}} 分钟）",
+    "tabs": {
+      "timeline": "时间线",
+      "stats": "统计"
+    }
+  },
+  "graphics": {
+    "levels": {
+      "eco": "节能",
+      "normal": "标准",
+      "max": "最高"
+    },
+    "descriptions": {
+      "eco": "发热最少，节省电量",
+      "normal": "均衡",
+      "max": "最流畅，也最耗性能"
+    }
+  },
+  "integration": {
+    "title": "集成 {{desk}} 的工作",
+    "loading": "加载中…",
+    "target": "合并到",
+    "base": "起始分支",
+    "nothingToMerge": "无需集成：{{target}} 已包含该工位所有已提交的工作。",
+    "ahead_other": "{{count}} 个提交待集成 · 变更文件：{{files}}（+{{additions}} −{{deletions}}）",
+    "behind_other": "{{target}} 有 {{count}} 个该工位没有的提交",
+    "uncommitted": {
+      "title_other": "工位中有 {{count}} 个未提交的文件",
+      "hint": "只有已提交的工作会被集成。你可以在这里提交这些更改，或让工位自己提交。",
+      "placeholder": "{{desk}} 进行中的工作",
+      "commit": "提交这些更改",
+      "done": "更改已提交。",
+      "tag": "未提交"
+    },
+    "busy": "工位正在工作：请等它完成。",
+    "notIdle": "工位等待指令时可用。",
+    "conflicts": {
+      "title": "预计与 {{target}} 存在冲突",
+      "hint": "{{desk}} 可以把目标分支合并到自己的分支中，并自行解决冲突。",
+      "ask": "让 {{desk}} 合并 {{target}}",
+      "prompt": "把分支 `{{target}}` 合并到你的分支 `{{branch}}`，解决冲突，检查一切是否正常（如果有测试就运行测试），然后提交结果。",
+      "asked": "已向 {{desk}} 发送请求。"
+    },
+    "commits": "提交",
+    "moreCommits": "… 还有 {{count}} 个",
+    "files": "文件",
+    "binary": "二进制",
+    "untracked": "新文件，尚未被 git 跟踪。",
+    "noDiff": "没有可显示的差异。",
+    "truncated": "diff 过长，已被截断。",
+    "moreLines": "… 还有 {{count}} 行",
+    "targetDirty": "{{path}}（{{target}} 已在此检出）有未提交的更改：合并前请先提交或 stash 这些更改。",
+    "mergeInCheckout": "合并将在 {{path}} 中进行（{{target}} 已在此检出）。",
+    "mergeWithoutCheckout": "{{target}} 没有在任何地方检出：将直接更新该分支，不会改动任何文件。",
+    "update": "从 {{target}} 更新工位",
+    "updateHint": "将 {{target}} 的新提交合并到工位的分支中。",
+    "merge": "合并到 {{target}}",
+    "merging": "正在合并…",
+    "merged_other": "已将 {{count}} 个提交集成到 {{target}}。",
+    "upToDate": "已是最新。",
+    "conflictsFound": "以下文件存在冲突：{{files}}。未做任何更改。",
+    "pr": {
+      "start": "创建拉取请求",
+      "open": "打开拉取请求",
+      "title": "新建拉取请求",
+      "titleField": "标题",
+      "body": "描述",
+      "create": "创建拉取请求",
+      "creating": "正在创建…",
+      "created": "拉取请求已创建：",
+      "defaultBody": "工位 {{desk}} 的工作（Workspace）。\n\n提交：\n{{commits}}",
+      "unavailable": {
+        "no_remote": "仓库没有配置远程仓库。",
+        "no_gh": "服务器上未安装 GitHub CLI（gh）。",
+        "gh_not_authenticated": "GitHub CLI（gh）尚未登录：请在服务器上运行 `gh auth login`。"
+      }
+    },
+    "errors": {
+      "generic": "失败：{{message}}",
+      "desk_busy": "工位正在工作：请等它完成。",
+      "desk_not_idle": "工位当前没有在等待指令。",
+      "target_dirty": "{{path}} 有未提交的更改：请先提交或 stash 这些更改。",
+      "desk_dirty": "工位有未提交的更改：请先提交。",
+      "target_missing": "分支 {{target}} 不存在。",
+      "branch_missing": "工位的分支已不存在。",
+      "not_a_worktree_desk": "这个工位直接在项目文件夹中工作：没有需要集成的内容。",
+      "push_failed": "推送失败：{{message}}",
+      "pr_failed": "创建拉取请求失败：{{message}}",
+      "commit_failed": "提交失败：{{message}}",
+      "merge_failed": "合并失败：{{message}}",
+      "no_remote": "仓库没有配置远程仓库。",
+      "no_gh": "服务器上未安装 GitHub CLI（gh）。",
+      "gh_not_authenticated": "GitHub CLI（gh）尚未登录。"
+    },
+    "open": "集成…"
+  },
+  "usage": {
+    "title": "Claude 订阅",
+    "fiveHour": "5 小时窗口",
+    "fiveHourShort": "5小时",
+    "sevenDay": "每周窗口",
+    "sevenDayShort": "7天",
+    "windowDetail": "{{window}}：已用 {{percent}}%（{{reset}} 重置）",
+    "reported": "更新于 {{ago}}",
+    "screen": "订阅",
+    "alert": {
+      "title": "Claude 订阅已用 {{percent}}%",
+      "body": "{{window}} 将于 {{reset}} 重置。超出上限后，工位会暂停工作直到那时。"
+    },
+    "context": "上下文 {{percent}}%"
+  },
+  "settings": {
+    "title": "设置",
+    "graphics": "画质",
+    "sound": "办公室音效",
+    "notifications": "浏览器通知",
+    "on": "开",
+    "off": "关",
+    "volumes": {
+      "ambience": "环境音（办公室、户外、键盘）",
+      "steps": "脚步声"
+    }
+  },
+  "roles": {
+    "lead": {
+      "label": "团队负责人",
+      "description": "接收需求，将其拆分为清晰的任务，用 delegate 工具分派给同事，跟进进度并检查集成情况。自己很少写代码。"
+    },
+    "developer": {
+      "label": "开发",
+      "description": "实现所需的功能并编写测试，边做边提交。"
+    },
+    "frontend": {
+      "label": "前端",
+      "description": "用户界面：组件、样式、无障碍以及与 API 的对接。"
+    },
+    "backend": {
+      "label": "后端",
+      "description": "API、数据、服务器逻辑和性能。"
+    },
+    "tests": {
+      "label": "测试与质量",
+      "description": "编写并运行测试，审查同事的工作并报告回归问题。"
+    },
+    "reviewer": {
+      "label": "代码审查",
+      "description": "审查同事的更改，提出修复建议，并检查测试是否通过。"
+    },
+    "docs": {
+      "label": "文档",
+      "description": "README、指南和有用的注释，并与代码保持同步。"
+    }
+  },
+  "phoneNotifications": {
+    "title": "手机通知",
+    "intro": "Workspace 会把通知发送到一个 Discord 频道：在手机上的 Discord 应用中开启该频道的通知即可。",
+    "steps": {
+      "channel": "在 Discord 中创建一个私密频道（例如在你自己的服务器上）。",
+      "webhook": "频道设置 → 整合 → Webhook → 新 Webhook → 复制 Webhook URL。",
+      "paste": "将 URL 粘贴到下方，保存，然后发送一条测试通知。"
+    },
+    "webhook": "Discord Webhook URL",
+    "webhookSet": "Webhook 已保存（{{hint}}）— 粘贴新的 URL 即可替换",
+    "removeWebhook": "移除 Webhook",
+    "events": "在以下情况通知我",
+    "eventLabels": {
+      "attention": "有工位需要我处理（提问、权限、错误、用量上限）",
+      "usage": "订阅用量达到 80%，以及之后达到 95%",
+      "finished": "有工位完成了一项耗时超过 5 分钟的任务"
+    },
+    "hideContent": "隐藏内容（仅显示工位名称）",
+    "whenAway": "只要有 Workspace 标签页处于打开且可见状态，就不会发送任何通知；你离开 30 秒后才会发出通知。",
+    "publicUrl": "手机访问 Workspace 的地址",
+    "publicUrlHint": "让通知能直接打开工位的终端（例如 Tailscale 地址）。留空则不附带链接。",
+    "save": "保存",
+    "saved": "设置已保存。",
+    "test": "发送测试",
+    "testSent": "测试已发送：请查看你的 Discord 频道。",
+    "testFailed": "发送失败：{{error}}",
+    "lastSent": "上次通知发送于 {{ago}}。",
+    "menu": "手机通知…",
+    "errors": {
+      "invalid_input": "URL 无效：需要一个 Discord Webhook URL（https://discord.com/api/webhooks/…）和一个 http(s) 地址。",
+      "no_webhook": "请先保存一个 Webhook URL。"
+    }
+  },
+  "search": {
+    "title": "搜索对话",
+    "button": "搜索对话（{{shortcut}}）",
+    "placeholder": "一个词、一条错误、一个文件名…",
+    "allRooms": "所有房间",
+    "hint": "搜索所有工位的指令和回答（忽略大小写和重音符号）。",
+    "searching": "正在搜索…",
+    "none": "没有结果。",
+    "count_other": "{{count}} 条结果，最新的在前。",
+    "countTruncated_other": "最近的 {{count}} 条结果：细化搜索条件以查看其余结果。",
+    "you": "指令",
+    "answer": "回答"
+  },
+  "stats": {
+    "periods": {
+      "day": "24 小时",
+      "week": "7 天",
+      "month": "30 天"
+    },
+    "hint": "点击列标题可排序，点击工位可打开它。",
+    "columns": {
+      "desk": "工位",
+      "workingMs": "工作",
+      "waitingMs": "等你",
+      "prompts": "指令",
+      "toolCalls": "工具",
+      "lines": "行数",
+      "outputTokens": "输出 token",
+      "contextTokens": "上下文",
+      "integrations": "集成"
+    },
+    "columnHints": {
+      "workingMs": "工作所用的时间（含压缩上下文）",
+      "waitingMs": "等待回答、权限或用量上限解除所用的时间",
+      "prompts": "你输入的指令（不含自动唤醒）",
+      "toolCalls": "工具调用（读取、编辑、命令…）",
+      "lines": "成功编辑文件时增加和删除的行数",
+      "outputTokens": "Claude 生成的 token 数",
+      "contextTokens": "对话上下文当前的占用程度",
+      "integrations": "合并 · 拉取请求"
+    },
+    "teamwork": "唤醒 · 委派",
+    "teamworkHint": "收到消息时的自动唤醒 · 同事委派的任务",
+    "integrationsHint": "合并 · 拉取请求",
+    "compactions": "压缩次数",
+    "minutes_other": "{{count}} 分钟",
+    "hoursMinutes": "{{hours}} 小时 {{minutes}} 分",
+    "lessThanMinute": "< 1 分钟",
+    "idleDesks_other": "{{count}} 个工位在此期间没有活动。"
+  },
+  "frames": {
+    "title": "相框",
+    "choose": "选择图片…",
+    "replace": "更换图片…",
+    "remove": "移除图片",
+    "drop": "点击选择图片，或将图片拖放到这里，或粘贴（{{shortcut}}）。",
+    "uploading": "正在上传…",
+    "hint": "图片会以中心为基准裁剪以填满相框，并保存在 Workspace 服务器上。",
+    "errors": {
+      "not_image": "这个文件不是可读取的图片。",
+      "upload_failed": "无法保存图片，请重试。"
+    }
+  }
+}

@@ -70,14 +70,16 @@ export function drawUsageBadge(
   context.textBaseline = 'middle';
   context.textAlign = 'left';
   context.fillText(labels.title, x + 12, y + 17);
+  context.font = '500 15px Inter, sans-serif';
+  // The bar starts after the widest label (window names are longer in some languages).
+  const labelWidth = Math.max(0, ...windows.map(({ label }) => context.measureText(label).width));
+  const barX = x + Math.max(56, 12 + Math.ceil(labelWidth) + 10);
+  const barWidth = x + 166 - barX;
   windows.forEach(({ label, window }, index) => {
     const rowY = y + 38 + index * rowHeight;
     const percent = Math.round(window.usedPercentage);
     context.fillStyle = '#c9d1d9';
-    context.font = '500 15px Inter, sans-serif';
     context.fillText(label, x + 12, rowY);
-    const barX = x + 56;
-    const barWidth = 110;
     context.fillStyle = 'rgba(255, 255, 255, 0.12)';
     context.fillRect(barX, rowY - 4, barWidth, 8);
     context.fillStyle = USAGE_COLORS[usageLevel(percent)];

@@ -1,0 +1,499 @@
+{
+  "app": {
+    "name": "Workspace",
+    "loading": "オフィスを読み込み中…",
+    "serverUnreachable": "サーバーに接続できません。"
+  },
+  "common": {
+    "retry": "再試行",
+    "close": "閉じる",
+    "cancel": "キャンセル"
+  },
+  "login": {
+    "subtitle": "Claude Code セッションが働くあなたのオフィス",
+    "password": "パスワード",
+    "signIn": "ログイン",
+    "signingIn": "ログイン中…",
+    "signOut": "ログアウト",
+    "noPassword": "パスワードがまだ設定されていません。サーバーで次のコマンドを実行してから、ページを再読み込みしてください：",
+    "errors": {
+      "invalid": "パスワードが正しくありません。",
+      "rate_limited": "試行回数が多すぎます。数分後にもう一度お試しください。",
+      "no_password": "サーバーにパスワードが設定されていません。",
+      "invalid_input": "パスワードを入力してください。",
+      "unknown_error": "ログインに失敗しました。"
+    }
+  },
+  "hud": {
+    "language": "言語",
+    "viewMode": "表示",
+    "minimap": "オフィスマップ",
+    "viewModes": {
+      "overview": {
+        "label": "俯瞰",
+        "hint": "オフィス全体を上から見る（V）"
+      },
+      "walk": {
+        "label": "散策",
+        "hint": "オフィスを歩き回る（V）"
+      }
+    },
+    "walk": {
+      "locked": "WASD / 矢印キー：移動 · Shift：走る · E / クリック：デスク・ボード・画面を使う、座る · Esc：俯瞰表示",
+      "unlocked": "クリック：散策を再開 · V：俯瞰表示",
+      "seated": "着席中 · E / 画面をクリック：画面を使う · WASD / 画面以外で E：立ち上がる · Esc：俯瞰表示",
+      "aim": {
+        "desk": "E · ターミナルを開く",
+        "board": "E · ボードを開く",
+        "screen": "E · 画面を開く",
+        "seat": "E · 座る",
+        "frame": "E · 画像を飾る",
+        "picture": "E · 画像を変更"
+      }
+    }
+  },
+  "connection": {
+    "connecting": "接続中…",
+    "open": "接続済み",
+    "closed": "切断 — 再接続中"
+  },
+  "states": {
+    "starting": "起動中",
+    "idle": "待機中",
+    "working": "作業中",
+    "question": "要対応",
+    "compacting": "圧縮中",
+    "limited": "使用上限",
+    "error": "エラー",
+    "offline": "オフライン"
+  },
+  "sidebar": {
+    "title": "オフィス",
+    "show": "オフィス",
+    "hide": "非表示",
+    "empty": "ルームはまだありません。最初のプロジェクト用に作成しましょう。",
+    "addDesk": "デスクを追加",
+    "newRoom": "新しいルーム",
+    "board": "ボード",
+    "openBoard": "ルームのボードを開く"
+  },
+  "desk": {
+    "menu": "デスクの操作",
+    "actions": {
+      "start": "起動",
+      "stop": "停止",
+      "restart": "再起動",
+      "delete": "デスクを削除",
+      "confirmDelete": "削除",
+      "integrate": "作業を統合…",
+      "editRole": "役割…"
+    },
+    "confirmDelete": "セッションが停止し、worktree が削除されます。ブランチ {{branch}} は残ります。",
+    "confirmDeleteUncommitted": "このデスクには未コミットの変更があります。削除すると失われます。",
+    "saveRole": "保存"
+  },
+  "errors": {
+    "path_not_found": "このフォルダーはサーバー上に存在しません。",
+    "path_not_absolute": "プロジェクトのパスは絶対パスで指定してください。",
+    "not_a_git_repo": "このプロジェクトは git リポジトリではありません。共有フォルダーモードを使用してください。",
+    "repo_without_commits": "リポジトリにまだコミットがありません。worktree を使うには、最初のコミットを作成してください。",
+    "worktree_failed": "worktree を作成できませんでした。",
+    "room_not_empty": "このルームにはまだデスクがあります。",
+    "uncommitted_changes": "このデスクには未コミットの変更があります。",
+    "invalid_input": "入力内容に誤りがあります。",
+    "cannot_read_directory": "このフォルダーを読み取れません。",
+    "room_not_found": "このルームはもう存在しません。",
+    "desk_not_found": "このデスクはもう存在しません。",
+    "unknown_error": "問題が発生しました。"
+  },
+  "createRoom": {
+    "title": "新しいルーム",
+    "name": "ルーム名",
+    "project": "サーバー上のプロジェクトフォルダー",
+    "parent": "親フォルダー",
+    "hint": "このルームのすべてのデスクが、このプロジェクトで作業します。",
+    "submit": "ルームを作成",
+    "templates": {
+      "label": "初期チーム",
+      "empty": {
+        "label": "空のルーム",
+        "description": "デスクは自分で追加します。"
+      },
+      "solo": {
+        "label": "ソロ",
+        "description": "開発デスクが1台。"
+      },
+      "duo": {
+        "label": "デュオ",
+        "description": "開発者とレビュアー。"
+      },
+      "team": {
+        "label": "チーム",
+        "description": "作業を割り振るチームリーダー、フロントエンド、バックエンド、テスト。"
+      }
+    },
+    "creatingDesks": "デスクを作成中…"
+  },
+  "createDesk": {
+    "title": "{{room}} の新しいデスク",
+    "name": "名前",
+    "namePlaceholder": "ランダムな名前",
+    "mode": "作業コピー",
+    "modes": {
+      "worktree": {
+        "label": "専用 worktree",
+        "description": "専用の git ブランチとフォルダー。他のデスクとコンフリクトしません。"
+      },
+      "shared": {
+        "label": "共有フォルダー",
+        "description": "他の共有デスクと同じく、プロジェクトフォルダーで直接作業します。"
+      }
+    },
+    "notGit": "プロジェクトが git リポジトリではないため、共有フォルダーモードのみ利用できます。",
+    "model": "モデル",
+    "permissionMode": "権限",
+    "defaultOption": "デフォルト",
+    "initialPrompt": "最初の指示（任意）",
+    "initialPromptPlaceholder": "このデスクに何をしてもらいますか？",
+    "submit": "デスクを作成",
+    "creating": "作成中…",
+    "role": "役割（任意）",
+    "rolePlaceholder": "このルームでこのデスクが担当すること"
+  },
+  "permissionModes": {
+    "default": "毎回確認",
+    "acceptEdits": "編集を自動承認",
+    "auto": "自動",
+    "plan": "プランモード",
+    "bypassPermissions": "すべての権限確認をスキップ"
+  },
+  "terminal": {
+    "offline": "このセッションは停止しています。",
+    "removed": "このデスクは削除されました。"
+  },
+  "world": {
+    "addDesk": "+ デスクを追加",
+    "masterRoom": "マイオフィス",
+    "lounge": "ラウンジ",
+    "newRoom": "+ 新しいルーム"
+  },
+  "whiteboard": {
+    "title": "{{room}} — ボード",
+    "whoDoesWhat": "役割分担",
+    "notes": "ピン留めメモ",
+    "messages": "メッセージ",
+    "nobody": "まだ誰もいません",
+    "noNotes": "メモはまだありません",
+    "human": "あなた",
+    "room": "全員",
+    "autoWake": "メッセージが届いたら待機中のデスクを起こす",
+    "autoWakeHint": "待機中のデスクへのメッセージは、プロンプトとして入力されます（10分あたり最大4回）。"
+  },
+  "board": {
+    "formerDesk": "削除済みのデスク",
+    "removeNote": "このメモを削除",
+    "notePlaceholder": "決定事項、規約、注意点…",
+    "pin": "ピン留め",
+    "noMessages": "メッセージはまだありません。",
+    "toRoom": "ルーム全体",
+    "messagePlaceholder": "デスクへのメッセージ…",
+    "send": "送信",
+    "deliveryHint": "作業中のデスクは、次にツールを使うときにメッセージを受け取ります。待機中のデスクは、起こす設定がオンならすぐに起こされます。"
+  },
+  "inbox": {
+    "title": "受信トレイ",
+    "button": "受信トレイ",
+    "empty": "あなたを待っているデスクはありません。",
+    "answer": "ターミナルを開く",
+    "count_other": "{{count}}台のデスクがあなたを待っています"
+  },
+  "attention": {
+    "question": "質問",
+    "permission": "許可リクエスト",
+    "plan": "プランの承認",
+    "message": "確認依頼",
+    "error": "エラー",
+    "limit": "使用上限",
+    "trust": "フォルダーの信頼"
+  },
+  "summary": {
+    "title": "ブリーフィング",
+    "button": "ブリーフィング",
+    "generated": "作成：{{ago}} · 対象：{{since}}以降",
+    "screenGenerated": "作成：{{ago}}",
+    "none": "ブリーフィングはまだありません。",
+    "generating": "Haiku がブリーフィングを作成中…",
+    "refresh": "更新",
+    "error": "ブリーフィングを作成できませんでした。しばらくしてからもう一度お試しください。"
+  },
+  "map": {
+    "title": "オフィスマップ",
+    "hint": "デスクをクリックするとターミナルが開き、それ以外の場所をクリックするとそこへ移動します。"
+  },
+  "notifications": {
+    "title": "{{desk}}（{{room}}）があなたを待っています",
+    "discord": {
+      "waiting_other": "{{count}}台のデスクがあなたを待っています",
+      "attentionTitle": "{{desk}}（{{room}}）があなたを待っています",
+      "finishedTitle": "{{desk}}（{{room}}）の作業が完了しました",
+      "finishedBody": "{{minutes}}分で作業が完了しました。",
+      "test": "Workspace のテスト：通知はここに届きます。👋"
+    }
+  },
+  "timeline": {
+    "title": "アクティビティ",
+    "button": "アクティビティ",
+    "range": "期間",
+    "hours_other": "{{count}}時間",
+    "hint": "白い縦線は、デスクが受け取った指示です。行をクリックするとデスクを開きます。",
+    "empty": "この期間のデスクのアクティビティはありません。",
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}}（{{minutes}}分）",
+    "tabs": {
+      "timeline": "タイムライン",
+      "stats": "統計"
+    }
+  },
+  "graphics": {
+    "levels": {
+      "eco": "エコ",
+      "normal": "標準",
+      "max": "最高"
+    },
+    "descriptions": {
+      "eco": "発熱が少なく、バッテリーを節約",
+      "normal": "バランス重視",
+      "max": "最も滑らか、負荷も最大"
+    }
+  },
+  "integration": {
+    "title": "{{desk}} の作業を統合",
+    "loading": "読み込み中…",
+    "target": "統合先",
+    "base": "起点ブランチ",
+    "nothingToMerge": "統合するものはありません。{{target}} には、デスクのコミット済みの作業がすべて含まれています。",
+    "ahead_other": "統合するコミット：{{count}}件 · 変更ファイル：{{files}}件（+{{additions}} −{{deletions}}）",
+    "behind_other": "{{target}} には、デスクにないコミットが{{count}}件あります",
+    "uncommitted": {
+      "title_other": "デスクに未コミットのファイルが{{count}}件あります",
+      "hint": "統合されるのはコミット済みの作業だけです。ここでこれらの変更をコミットするか、デスクにコミットを依頼してください。",
+      "placeholder": "{{desk}} の作業途中の変更",
+      "commit": "これらの変更をコミット",
+      "done": "変更をコミットしました。",
+      "tag": "未コミット"
+    },
+    "busy": "デスクが作業中です。完了するまでお待ちください。",
+    "notIdle": "デスクが指示を待っているときに利用できます。",
+    "conflicts": {
+      "title": "{{target}} とのコンフリクトが予想されます",
+      "hint": "{{desk}} は、統合先を自分のブランチにマージして、コンフリクトを自分で解決できます。",
+      "ask": "{{desk}} に {{target}} のマージを依頼",
+      "prompt": "ブランチ `{{target}}` をあなたのブランチ `{{branch}}` にマージし、コンフリクトを解決して、すべてが正しく動作することを確認してから（テストがあれば実行してください）、結果をコミットしてください。",
+      "asked": "{{desk}} に依頼を送信しました。"
+    },
+    "commits": "コミット",
+    "moreCommits": "…ほか{{count}}件",
+    "files": "ファイル",
+    "binary": "バイナリ",
+    "untracked": "新しいファイルです。まだ git で追跡されていません。",
+    "noDiff": "表示する差分はありません。",
+    "truncated": "差分が長すぎるため、途中で切り詰められました。",
+    "moreLines": "…ほか{{count}}行",
+    "targetDirty": "{{target}} がチェックアウトされている {{path}} に未コミットの変更があります。マージする前にコミットまたは stash してください。",
+    "mergeInCheckout": "マージは、{{target}} がチェックアウトされている {{path}} で行われます。",
+    "mergeWithoutCheckout": "{{target}} はどこにもチェックアウトされていません。ファイルには一切触れずに、ブランチが直接更新されます。",
+    "update": "{{target}} からデスクを更新",
+    "updateHint": "{{target}} の新しいコミットを、デスクのブランチにマージします。",
+    "merge": "{{target}} にマージ",
+    "merging": "マージ中…",
+    "merged_other": "{{count}}件のコミットを {{target}} に統合しました。",
+    "upToDate": "すでに最新です。",
+    "conflictsFound": "コンフリクトのあるファイル：{{files}}。何も変更されていません。",
+    "pr": {
+      "start": "プルリクエストを作成",
+      "open": "プルリクエストを開く",
+      "title": "新しいプルリクエスト",
+      "titleField": "タイトル",
+      "body": "説明",
+      "create": "プルリクエストを作成",
+      "creating": "作成中…",
+      "created": "プルリクエストを作成しました：",
+      "defaultBody": "デスク {{desk}} の作業（Workspace）。\n\nコミット：\n{{commits}}",
+      "unavailable": {
+        "no_remote": "リポジトリにリモートがありません。",
+        "no_gh": "サーバーに GitHub CLI（gh）がインストールされていません。",
+        "gh_not_authenticated": "GitHub CLI（gh）が認証されていません。サーバーで `gh auth login` を実行してください。"
+      }
+    },
+    "errors": {
+      "generic": "失敗しました：{{message}}",
+      "desk_busy": "デスクが作業中です。完了するまでお待ちください。",
+      "desk_not_idle": "デスクは現在、指示を待っていません。",
+      "target_dirty": "{{path}} に未コミットの変更があります。先にコミットまたは stash してください。",
+      "desk_dirty": "デスクに未コミットの変更があります。先にコミットしてください。",
+      "target_missing": "ブランチ {{target}} は存在しません。",
+      "branch_missing": "デスクのブランチはもう存在しません。",
+      "not_a_worktree_desk": "このデスクはプロジェクトフォルダーで直接作業しているため、統合するものはありません。",
+      "push_failed": "プッシュに失敗しました：{{message}}",
+      "pr_failed": "プルリクエストの作成に失敗しました：{{message}}",
+      "commit_failed": "コミットに失敗しました：{{message}}",
+      "merge_failed": "マージに失敗しました：{{message}}",
+      "no_remote": "リポジトリにリモートがありません。",
+      "no_gh": "サーバーに GitHub CLI（gh）がインストールされていません。",
+      "gh_not_authenticated": "GitHub CLI（gh）が認証されていません。"
+    },
+    "open": "統合…"
+  },
+  "usage": {
+    "title": "Claude サブスクリプション",
+    "fiveHour": "5時間枠",
+    "fiveHourShort": "5時間",
+    "sevenDay": "週間枠",
+    "sevenDayShort": "7日",
+    "windowDetail": "{{window}}：{{percent}}% 使用（{{reset}}にリセット）",
+    "reported": "更新：{{ago}}",
+    "screen": "サブスクリプション",
+    "alert": {
+      "title": "Claude サブスクリプション使用率 {{percent}}%",
+      "body": "{{window}}は{{reset}}にリセットされます。上限に達すると、それまでデスクは停止します。"
+    },
+    "context": "コンテキスト {{percent}}%"
+  },
+  "settings": {
+    "title": "設定",
+    "graphics": "グラフィック品質",
+    "sound": "オフィスのサウンド",
+    "notifications": "ブラウザー通知",
+    "on": "オン",
+    "off": "オフ",
+    "volumes": {
+      "ambience": "環境音（オフィス、屋外、キーボード）",
+      "steps": "足音"
+    }
+  },
+  "roles": {
+    "lead": {
+      "label": "チームリーダー",
+      "description": "依頼を受け取って明確なタスクに分割し、delegate ツールで同僚に割り振り、進捗を追って統合を確認します。自分ではあまりコードを書きません。"
+    },
+    "developer": {
+      "label": "開発",
+      "description": "依頼された機能をテスト付きで実装し、こまめにコミットします。"
+    },
+    "frontend": {
+      "label": "フロントエンド",
+      "description": "ユーザーインターフェース（コンポーネント、スタイル、アクセシビリティ、API との連携）を担当します。"
+    },
+    "backend": {
+      "label": "バックエンド",
+      "description": "API、データ、サーバーロジック、パフォーマンスを担当します。"
+    },
+    "tests": {
+      "label": "テストと品質",
+      "description": "テストを書いて実行し、同僚の作業をレビューして、リグレッションを報告します。"
+    },
+    "reviewer": {
+      "label": "レビュー",
+      "description": "同僚の変更をレビューし、修正を提案して、テストが通ることを確認します。"
+    },
+    "docs": {
+      "label": "ドキュメント",
+      "description": "README、ガイド、役立つコメントを担当し、コードに合わせて常に最新に保ちます。"
+    }
+  },
+  "phoneNotifications": {
+    "title": "スマートフォン通知",
+    "intro": "Workspace は Discord のチャンネルに通知を投稿します。スマートフォンの Discord アプリで、そのチャンネルの通知をオンにしてください。",
+    "steps": {
+      "channel": "Discord でプライベートチャンネルを作成します（たとえば自分のサーバーに）。",
+      "webhook": "チャンネルの編集 → 連携サービス → ウェブフック → 新しいウェブフック → ウェブフックURLをコピー。",
+      "paste": "下に URL を貼り付けて保存し、テストを送信します。"
+    },
+    "webhook": "Discord Webhook URL",
+    "webhookSet": "Webhook を保存済み（{{hint}}）— 置き換えるには新しい URL を貼り付けてください",
+    "removeWebhook": "Webhook を削除",
+    "events": "通知するタイミング",
+    "eventLabels": {
+      "attention": "デスクがあなたを待っているとき（質問、許可、エラー、上限）",
+      "usage": "サブスクリプションの使用率が80%、次いで95%に達したとき",
+      "finished": "デスクが5分以上かかったタスクを終えたとき"
+    },
+    "hideContent": "内容を隠す（デスク名のみ）",
+    "whenAway": "Workspace のタブが開いていて表示されている間は、何も送信されません。通知はあなたが離れてから30秒後に送信されます。",
+    "publicUrl": "スマートフォンから見た Workspace のアドレス",
+    "publicUrlHint": "通知からデスクのターミナルを直接開けるようにします（例：Tailscale のアドレス）。リンクが不要なら空欄のままにしてください。",
+    "save": "保存",
+    "saved": "設定を保存しました。",
+    "test": "テストを送信",
+    "testSent": "テストを送信しました。Discord のチャンネルを確認してください。",
+    "testFailed": "送信に失敗しました：{{error}}",
+    "lastSent": "前回の通知：{{ago}}",
+    "menu": "スマートフォン通知…",
+    "errors": {
+      "invalid_input": "無効な URL です。Discord の Webhook URL（https://discord.com/api/webhooks/…）と http(s) のアドレスが必要です。",
+      "no_webhook": "先に Webhook URL を保存してください。"
+    }
+  },
+  "search": {
+    "title": "会話を検索",
+    "button": "会話を検索（{{shortcut}}）",
+    "placeholder": "単語、エラー、ファイル名…",
+    "allRooms": "すべてのルーム",
+    "hint": "すべてのデスクのプロンプトと回答を検索します（大文字・小文字やアクセントは区別しません）。",
+    "searching": "検索中…",
+    "none": "結果はありません。",
+    "count_other": "{{count}}件の結果（新しい順）",
+    "countTruncated_other": "最新の{{count}}件の結果です。ほかの結果を見るには、検索条件を絞り込んでください。",
+    "you": "プロンプト",
+    "answer": "回答"
+  },
+  "stats": {
+    "periods": {
+      "day": "24時間",
+      "week": "7日間",
+      "month": "30日間"
+    },
+    "hint": "列をクリックすると並べ替え、デスクをクリックすると開きます。",
+    "columns": {
+      "desk": "デスク",
+      "workingMs": "作業",
+      "waitingMs": "対応待ち",
+      "prompts": "プロンプト",
+      "toolCalls": "ツール",
+      "lines": "行数",
+      "outputTokens": "出力トークン",
+      "contextTokens": "コンテキスト",
+      "integrations": "統合"
+    },
+    "columnHints": {
+      "workingMs": "作業に費やした時間（圧縮を含む）",
+      "waitingMs": "回答、許可、または上限の解除を待っていた時間",
+      "prompts": "あなたが入力したプロンプト（自動ウェイクを除く）",
+      "toolCalls": "ツール呼び出し（読み取り、編集、コマンド…）",
+      "lines": "成功したファイル編集で追加・削除された行数",
+      "outputTokens": "Claude が生成したトークン",
+      "contextTokens": "現在の会話コンテキストの使用量",
+      "integrations": "マージ · プルリクエスト"
+    },
+    "teamwork": "ウェイク · 委任",
+    "teamworkHint": "メッセージによる自動ウェイク · 同僚から任されたタスク",
+    "integrationsHint": "マージ · プルリクエスト",
+    "compactions": "圧縮回数",
+    "minutes_other": "{{count}}分",
+    "hoursMinutes": "{{hours}}時間{{minutes}}分",
+    "lessThanMinute": "1分未満",
+    "idleDesks_other": "この期間にアクティビティのないデスクが{{count}}台あります。"
+  },
+  "frames": {
+    "title": "額縁",
+    "choose": "画像を選択…",
+    "replace": "画像を変更…",
+    "remove": "画像を外す",
+    "drop": "クリックして画像を選択するか、ここにドロップまたは貼り付け（{{shortcut}}）してください。",
+    "uploading": "アップロード中…",
+    "hint": "画像は中央を基準に切り抜かれ、額縁いっぱいに表示されます。画像は Workspace サーバーに保存されます。",
+    "errors": {
+      "not_image": "このファイルは読み込める画像ではありません。",
+      "upload_failed": "画像を保存できませんでした。もう一度お試しください。"
+    }
+  }
+}

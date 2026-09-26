@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { Language } from './languages.ts';
+import { languageSchema } from './models.ts';
 
 /** What can be sent to the phone. */
 export const NOTIFICATION_EVENTS = ['attention', 'usage', 'finished'] as const;
@@ -14,7 +16,7 @@ export interface NotificationSettings {
   hideContent: boolean;
   /** Address of Workspace from the phone (e.g. through Tailscale), for links in notifications. */
   publicUrl: string | null;
-  language: 'fr' | 'en';
+  language: Language;
   lastSentAt: number | null;
   lastError: string | null;
 }
@@ -34,6 +36,6 @@ export const updateNotificationSettingsSchema = z.object({
     .url({ protocol: /^https?$/ })
     .nullable()
     .optional(),
-  language: z.enum(['fr', 'en']).optional(),
+  language: languageSchema.optional(),
 });
 export type UpdateNotificationSettings = z.infer<typeof updateNotificationSettingsSchema>;

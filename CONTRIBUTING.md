@@ -44,9 +44,10 @@ it, kill the process listening on its port and its tmux server (`tmux -L workspa
 The codebase follows a few rules; pull requests are expected to keep them.
 
 - **English everywhere**: code, identifiers, comments, docs, commit messages and log lines. The only
-  other language lives in the web client's locale files (`apps/web/src/locales/<lang>/`).
+  other languages live in the web client's locale files (`apps/web/src/locales/<lang>/`).
 - **No hardcoded user-facing strings** in the web client: every text goes through i18n (`t('…')`),
-  including text drawn on 3D textures, and every key exists in both `fr` and `en`.
+  including text drawn on 3D textures, and every key exists in every locale (the languages are
+  listed in `packages/shared/src/languages.ts`). A new key needs a translation in each of them.
 - **Generated assets**: 3D models come from the Blender scripts in `assets/blender/`, sounds from
   `assets/audio/build_sounds.py` (CC0 recordings only, credited in `assets/audio/CREDITS.md`). Never
   commit a binary asset edited by hand: change the script and regenerate.

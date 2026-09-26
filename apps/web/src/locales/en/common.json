@@ -9,10 +9,6 @@
     "close": "Close",
     "cancel": "Cancel"
   },
-  "languages": {
-    "fr": "FR",
-    "en": "EN"
-  },
   "login": {
     "subtitle": "Your office of Claude Code sessions",
     "password": "Password",

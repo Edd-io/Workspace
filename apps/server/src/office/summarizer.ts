@@ -3,7 +3,13 @@ import { EventEmitter } from 'node:events';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import type { OfficeSummary, SubscriptionUsage, UsageWindow } from '@workspace/shared';
+import {
+  LANGUAGE_TAGS,
+  type Language,
+  type OfficeSummary,
+  type SubscriptionUsage,
+  type UsageWindow,
+} from '@workspace/shared';
 import type { Config } from '../config.ts';
 import type { DeskRecord, OfficeStore } from '../store/officeStore.ts';
 import type { BoardStore } from './boardStore.ts';
@@ -18,8 +24,6 @@ const VISIT_REUSE_MS = 10 * 60 * 1000;
 const DEFAULT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const GENERATION_TIMEOUT_MS = 120_000;
 const MAX_FIELD = 700;
-
-const LANGUAGE_NAMES: Record<string, string> = { fr: 'French', en: 'English' };
 
 function clip(text: string | null | undefined, max = MAX_FIELD): string {
   if (!text) return '';
@@ -96,7 +100,7 @@ export class Summarizer extends EventEmitter<{ update: [OfficeSummary] }> {
   }
 
   /** Called when the owner opens the office: summarizes what happened since the previous visit. */
-  visit(language: string): OfficeSummary {
+  visit(language: Language): OfficeSummary {
     const now = Date.now();
     const previousVisit = Number(this.store.getSetting(LAST_VISIT_SETTING) ?? 0) || now - DEFAULT_WINDOW_MS;
     this.store.setSetting(LAST_VISIT_SETTING, String(now));
@@ -107,13 +111,13 @@ export class Summarizer extends EventEmitter<{ update: [OfficeSummary] }> {
   }
 
   /** On-demand refresh, covering the same period as the latest summary. */
-  refresh(language: string): OfficeSummary {
+  refresh(language: Language): OfficeSummary {
     const since = this.current().since ?? Date.now() - DEFAULT_WINDOW_MS;
     void this.generate(language, since);
     return this.current();
   }
 
-  private generate(language: string, since: number): Promise<void> {
+  private generate(language: Language, since: number): Promise<void> {
     if (this.generating) return this.generating;
     this.status = 'generating';
     this.lastError = null;
@@ -218,10 +222,11 @@ export class Summarizer extends EventEmitter<{ update: [OfficeSummary] }> {
     return lines.join('\n');
   }
 
-  private askHaiku(digest: string, language: string): Promise<string> {
+  private askHaiku(digest: string, language: Language): Promise<string> {
     const workdir = join(this.config.dataDir, 'summarizer');
     mkdirSync(workdir, { recursive: true });
-    const prompt = `Write the briefing in ${LANGUAGE_NAMES[language] ?? 'English'}.\n\n${digest}`;
+    const name = new Intl.DisplayNames('en', { type: 'language' }).of(LANGUAGE_TAGS[language]);
+    const prompt = `Write the briefing in ${name ?? 'English'}.\n\n${digest}`;
     return new Promise((resolve, reject) => {
       const child = spawn(
         this.config.claudeBin,

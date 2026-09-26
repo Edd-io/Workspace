@@ -9,7 +9,9 @@ The full design and roadmap live in `PLAN.md`; the idea backlog lives in `IDEAS.
   messages, log lines. The only non-English content is in the web UI locale files
   (`apps/web/src/locales/<lang>/*.json`).
 - **Never hardcode user-facing strings** in the web client — always go through i18n (`t('...')`),
-  including text drawn on 3D textures. Every key must exist in both `fr` and `en`.
+  including text drawn on 3D textures. Every key must exist in every locale (the languages are
+  listed in `packages/shared/src/languages.ts`); `locales.test.ts` checks keys, plural forms and
+  `{{variables}}`.
 - **Keep `IDEAS.md` alive**: any idea that is discussed but not scheduled goes there. When an idea is
   scheduled, move it to `PLAN.md`.
 - **Keep `PLAN.md` checkboxes up to date** as phases progress.

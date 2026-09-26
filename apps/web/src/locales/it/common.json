@@ -1,0 +1,510 @@
+{
+  "app": {
+    "name": "Workspace",
+    "loading": "Caricamento dell'ufficio…",
+    "serverUnreachable": "Impossibile raggiungere il server."
+  },
+  "common": {
+    "retry": "Riprova",
+    "close": "Chiudi",
+    "cancel": "Annulla"
+  },
+  "login": {
+    "subtitle": "Il tuo ufficio di sessioni Claude Code",
+    "password": "Password",
+    "signIn": "Accedi",
+    "signingIn": "Accesso…",
+    "signOut": "Esci",
+    "noPassword": "Non è ancora impostata nessuna password. Esegui questo comando sul server, poi ricarica la pagina:",
+    "errors": {
+      "invalid": "Password errata.",
+      "rate_limited": "Troppi tentativi. Riprova tra qualche minuto.",
+      "no_password": "Sul server non è impostata nessuna password.",
+      "invalid_input": "Inserisci la password.",
+      "unknown_error": "Accesso non riuscito."
+    }
+  },
+  "hud": {
+    "language": "Lingua",
+    "viewMode": "Vista",
+    "minimap": "Mappa dell'ufficio",
+    "viewModes": {
+      "overview": {
+        "label": "Panoramica",
+        "hint": "Guarda tutto l'ufficio dall'alto (V)"
+      },
+      "walk": {
+        "label": "Passeggiata",
+        "hint": "Passeggia per l'ufficio (V)"
+      }
+    },
+    "walk": {
+      "locked": "WASD / frecce per muoverti · Maiusc per correre · E o clic per usare una postazione, una lavagna o uno schermo, o per sederti · Esc per la panoramica",
+      "unlocked": "Clicca per riprendere la passeggiata · V per la panoramica",
+      "seated": "Seduto · E o clic su uno schermo per usarlo · WASD o E altrove per alzarti · Esc per la panoramica",
+      "aim": {
+        "desk": "E · Apri il terminale",
+        "board": "E · Apri la lavagna",
+        "screen": "E · Apri lo schermo",
+        "seat": "E · Siediti",
+        "frame": "E · Metti un'immagine",
+        "picture": "E · Cambia l'immagine"
+      }
+    }
+  },
+  "connection": {
+    "connecting": "Connessione…",
+    "open": "Connesso",
+    "closed": "Disconnesso — riconnessione in corso"
+  },
+  "states": {
+    "starting": "Avvio",
+    "idle": "A riposo",
+    "working": "Al lavoro",
+    "question": "Ti aspetta",
+    "compacting": "Compattazione",
+    "limited": "Limite d'uso",
+    "error": "Errore",
+    "offline": "Offline"
+  },
+  "sidebar": {
+    "title": "Ufficio",
+    "show": "Ufficio",
+    "hide": "Nascondi",
+    "empty": "Ancora nessuna stanza. Creane una per il tuo primo progetto.",
+    "addDesk": "Aggiungi una postazione",
+    "newRoom": "Nuova stanza",
+    "board": "Lavagna",
+    "openBoard": "Apri la lavagna della stanza"
+  },
+  "desk": {
+    "menu": "Azioni della postazione",
+    "actions": {
+      "start": "Avvia",
+      "stop": "Ferma",
+      "restart": "Riavvia",
+      "delete": "Elimina la postazione",
+      "confirmDelete": "Elimina",
+      "integrate": "Integra il lavoro…",
+      "editRole": "Ruolo…"
+    },
+    "confirmDelete": "La sessione si ferma e il suo worktree viene rimosso. Il branch {{branch}} viene conservato.",
+    "confirmDeleteUncommitted": "Questa postazione ha modifiche non committate. Andranno perse se la elimini.",
+    "saveRole": "Salva"
+  },
+  "errors": {
+    "path_not_found": "Questa cartella non esiste sul server.",
+    "path_not_absolute": "Il percorso del progetto deve essere assoluto.",
+    "not_a_git_repo": "Questo progetto non è un repository git: usa la modalità cartella condivisa.",
+    "repo_without_commits": "Il repository non ha ancora nessun commit. Fai un primo commit per usare i worktree.",
+    "worktree_failed": "Impossibile creare il worktree.",
+    "room_not_empty": "Questa stanza ha ancora delle postazioni.",
+    "uncommitted_changes": "Questa postazione ha modifiche non committate.",
+    "invalid_input": "Alcuni campi non sono validi.",
+    "cannot_read_directory": "Impossibile leggere questa cartella.",
+    "room_not_found": "Questa stanza non esiste più.",
+    "desk_not_found": "Questa postazione non esiste più.",
+    "unknown_error": "Qualcosa è andato storto."
+  },
+  "createRoom": {
+    "title": "Nuova stanza",
+    "name": "Nome della stanza",
+    "project": "Cartella del progetto sul server",
+    "parent": "Cartella superiore",
+    "hint": "Tutte le postazioni di questa stanza lavorano su questo progetto.",
+    "submit": "Crea la stanza",
+    "templates": {
+      "label": "Team iniziale",
+      "empty": {
+        "label": "Stanza vuota",
+        "description": "Le postazioni le aggiungi tu."
+      },
+      "solo": {
+        "label": "Solo",
+        "description": "Una postazione di sviluppo."
+      },
+      "duo": {
+        "label": "Duo",
+        "description": "Uno sviluppatore e un revisore."
+      },
+      "team": {
+        "label": "Team",
+        "description": "Un team leader che distribuisce il lavoro, più front end, back end e test."
+      }
+    },
+    "creatingDesks": "Creazione delle postazioni…"
+  },
+  "createDesk": {
+    "title": "Nuova postazione in {{room}}",
+    "name": "Nome",
+    "namePlaceholder": "Nome casuale",
+    "mode": "Copia di lavoro",
+    "modes": {
+      "worktree": {
+        "label": "Worktree dedicato",
+        "description": "Un branch git e una cartella tutti suoi. Nessun conflitto con le altre postazioni."
+      },
+      "shared": {
+        "label": "Cartella condivisa",
+        "description": "Lavora direttamente nella cartella del progetto, come le altre postazioni condivise."
+      }
+    },
+    "notGit": "Il progetto non è un repository git, quindi è disponibile solo la modalità cartella condivisa.",
+    "model": "Modello",
+    "permissionMode": "Permessi",
+    "defaultOption": "Predefinito",
+    "initialPrompt": "Primo prompt (facoltativo)",
+    "initialPromptPlaceholder": "Su cosa deve lavorare questa postazione?",
+    "submit": "Crea la postazione",
+    "creating": "Creazione…",
+    "role": "Ruolo (facoltativo)",
+    "rolePlaceholder": "Di cosa si occupa questa postazione nella stanza"
+  },
+  "permissionModes": {
+    "default": "Chiedi ogni volta",
+    "acceptEdits": "Accetta le modifiche",
+    "auto": "Auto",
+    "plan": "Modalità piano",
+    "bypassPermissions": "Ignora tutti i permessi"
+  },
+  "terminal": {
+    "offline": "Questa sessione è ferma.",
+    "removed": "Questa postazione è stata eliminata."
+  },
+  "world": {
+    "addDesk": "+ Nuova postazione",
+    "masterRoom": "Il mio ufficio",
+    "lounge": "Area relax",
+    "newRoom": "+ Nuova stanza"
+  },
+  "whiteboard": {
+    "title": "{{room}} — lavagna",
+    "whoDoesWhat": "Chi fa cosa",
+    "notes": "Note fissate",
+    "messages": "Messaggi",
+    "nobody": "Ancora nessuno qui",
+    "noNotes": "Ancora nessuna nota",
+    "human": "Tu",
+    "room": "tutti",
+    "autoWake": "Sveglia le postazioni inattive quando qualcuno scrive loro",
+    "autoWakeHint": "Un messaggio a una postazione inattiva le viene digitato come prompt (al massimo 4 volte ogni 10 minuti)."
+  },
+  "board": {
+    "formerDesk": "Ex postazione",
+    "removeNote": "Rimuovi questa nota",
+    "notePlaceholder": "Una decisione, una convenzione, un avvertimento…",
+    "pin": "Fissa",
+    "noMessages": "Ancora nessun messaggio.",
+    "toRoom": "Tutta la stanza",
+    "messagePlaceholder": "Scrivi alle postazioni…",
+    "send": "Invia",
+    "deliveryHint": "Una postazione al lavoro riceve i messaggi al prossimo uso di uno strumento; una postazione inattiva viene svegliata subito se il risveglio è attivo."
+  },
+  "inbox": {
+    "title": "Posta in arrivo",
+    "button": "Posta in arrivo",
+    "empty": "Nessuno ti sta aspettando.",
+    "answer": "Apri il terminale",
+    "count_one": "{{count}} postazione ti aspetta",
+    "count_other": "{{count}} postazioni ti aspettano"
+  },
+  "attention": {
+    "question": "Domanda",
+    "permission": "Permesso",
+    "plan": "Piano da approvare",
+    "message": "Ti chiede",
+    "error": "Errore",
+    "limit": "Limite d'uso",
+    "trust": "Fiducia nella cartella"
+  },
+  "summary": {
+    "title": "Briefing",
+    "button": "Briefing",
+    "generated": "Scritto {{ago}} · copre da {{since}}",
+    "screenGenerated": "Scritto {{ago}}",
+    "none": "Ancora nessun briefing.",
+    "generating": "Haiku sta scrivendo il briefing…",
+    "refresh": "Aggiorna",
+    "error": "Impossibile scrivere il briefing. Riprova tra un momento."
+  },
+  "map": {
+    "title": "Mappa dell'ufficio",
+    "hint": "Clicca su una postazione per aprirne il terminale, altrove per andarci."
+  },
+  "notifications": {
+    "title": "{{desk}} ({{room}}) ti aspetta",
+    "discord": {
+      "waiting_one": "{{count}} postazione ti aspetta",
+      "waiting_other": "{{count}} postazioni ti aspettano",
+      "attentionTitle": "{{desk}} ({{room}}) ti aspetta",
+      "finishedTitle": "{{desk}} ({{room}}) ha finito",
+      "finishedBody": "Lavoro terminato dopo {{minutes}} min.",
+      "test": "Test di Workspace: le notifiche arrivano qui. 👋"
+    }
+  },
+  "timeline": {
+    "title": "Attività",
+    "button": "Attività",
+    "range": "Periodo",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "hint": "I trattini bianchi sono i prompt ricevuti dalle postazioni. Clicca su una riga per aprire la postazione.",
+    "empty": "Nessuna attività delle postazioni in questo periodo.",
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} min)",
+    "tabs": {
+      "timeline": "Cronologia",
+      "stats": "Statistiche"
+    }
+  },
+  "graphics": {
+    "levels": {
+      "eco": "Eco",
+      "normal": "Normale",
+      "max": "Max"
+    },
+    "descriptions": {
+      "eco": "Scalda meno, risparmia batteria",
+      "normal": "Equilibrato",
+      "max": "Più fluido, più esigente"
+    }
+  },
+  "integration": {
+    "title": "Integra il lavoro di {{desk}}",
+    "loading": "Caricamento…",
+    "target": "Verso",
+    "base": "branch di partenza",
+    "nothingToMerge": "Niente da integrare: {{target}} contiene già tutto il lavoro committato della postazione.",
+    "ahead_one": "{{count}} commit da integrare · file modificati: {{files}} (+{{additions}} −{{deletions}})",
+    "ahead_other": "{{count}} commit da integrare · file modificati: {{files}} (+{{additions}} −{{deletions}})",
+    "behind_one": "{{target}} ha {{count}} commit che la postazione non ha",
+    "behind_other": "{{target}} ha {{count}} commit che la postazione non ha",
+    "uncommitted": {
+      "title_one": "{{count}} file non committato nella postazione",
+      "title_other": "{{count}} file non committati nella postazione",
+      "hint": "Viene integrato solo il lavoro committato. Committa queste modifiche qui, o chiedi alla postazione di farlo.",
+      "placeholder": "Lavoro in corso di {{desk}}",
+      "commit": "Committa queste modifiche",
+      "done": "Modifiche committate.",
+      "tag": "non committato"
+    },
+    "busy": "La postazione sta lavorando: aspetta che abbia finito.",
+    "notIdle": "Disponibile quando la postazione è in attesa di istruzioni.",
+    "conflicts": {
+      "title": "Conflitti previsti con {{target}}",
+      "hint": "{{desk}} può fare il merge del branch di destinazione nel proprio branch e risolvere i conflitti in autonomia.",
+      "ask": "Chiedi a {{desk}} di fare il merge di {{target}}",
+      "prompt": "Fai il merge del branch `{{target}}` nel tuo branch `{{branch}}`, risolvi i conflitti, verifica che tutto funzioni (esegui i test, se ci sono) e committa il risultato.",
+      "asked": "Richiesta inviata a {{desk}}."
+    },
+    "commits": "Commit",
+    "moreCommits": "… e altri {{count}}",
+    "files": "File",
+    "binary": "binario",
+    "untracked": "Nuovo file, non ancora tracciato da git.",
+    "noDiff": "Nessuna differenza da mostrare.",
+    "truncated": "Il diff è troppo lungo: è stato troncato.",
+    "moreLines": "… altre {{count}} righe",
+    "targetDirty": "{{path}}, dove {{target}} è in checkout, ha modifiche non committate: committale o mettile in stash prima del merge.",
+    "mergeInCheckout": "Il merge avverrà in {{path}}, dove {{target}} è in checkout.",
+    "mergeWithoutCheckout": "{{target}} non è in checkout da nessuna parte: il branch verrà aggiornato direttamente, senza toccare nessun file.",
+    "update": "Aggiorna la postazione da {{target}}",
+    "updateHint": "Fa il merge dei nuovi commit di {{target}} nel branch della postazione.",
+    "merge": "Fai il merge in {{target}}",
+    "merging": "Merge in corso…",
+    "merged_one": "{{count}} commit integrato in {{target}}.",
+    "merged_other": "{{count}} commit integrati in {{target}}.",
+    "upToDate": "Già aggiornato.",
+    "conflictsFound": "Conflitti in: {{files}}. Non è stato modificato niente.",
+    "pr": {
+      "start": "Crea una pull request",
+      "open": "Apri la pull request",
+      "title": "Nuova pull request",
+      "titleField": "Titolo",
+      "body": "Descrizione",
+      "create": "Crea la pull request",
+      "creating": "Creazione…",
+      "created": "Pull request creata:",
+      "defaultBody": "Lavoro della postazione {{desk}} (Workspace).\n\nCommit:\n{{commits}}",
+      "unavailable": {
+        "no_remote": "Il repository non ha nessun remote.",
+        "no_gh": "La CLI di GitHub (gh) non è installata sul server.",
+        "gh_not_authenticated": "La CLI di GitHub (gh) non ha effettuato l'accesso: esegui `gh auth login` sul server."
+      }
+    },
+    "errors": {
+      "generic": "Operazione non riuscita: {{message}}",
+      "desk_busy": "La postazione sta lavorando: aspetta che abbia finito.",
+      "desk_not_idle": "Al momento la postazione non è in attesa di istruzioni.",
+      "target_dirty": "{{path}} ha modifiche non committate: prima committale o mettile in stash.",
+      "desk_dirty": "La postazione ha modifiche non committate: prima committale.",
+      "target_missing": "Il branch {{target}} non esiste.",
+      "branch_missing": "Il branch della postazione non esiste più.",
+      "not_a_worktree_desk": "Questa postazione lavora direttamente nella cartella del progetto: non c'è niente da integrare.",
+      "push_failed": "Push non riuscito: {{message}}",
+      "pr_failed": "Creazione della pull request non riuscita: {{message}}",
+      "commit_failed": "Commit non riuscito: {{message}}",
+      "merge_failed": "Merge non riuscito: {{message}}",
+      "no_remote": "Il repository non ha nessun remote.",
+      "no_gh": "La CLI di GitHub (gh) non è installata sul server.",
+      "gh_not_authenticated": "La CLI di GitHub (gh) non ha effettuato l'accesso."
+    },
+    "open": "Integra…"
+  },
+  "usage": {
+    "title": "Abbonamento Claude",
+    "fiveHour": "finestra di 5 ore",
+    "fiveHourShort": "5h",
+    "sevenDay": "finestra settimanale",
+    "sevenDayShort": "7g",
+    "windowDetail": "{{window}}: usata al {{percent}}% (azzeramento: {{reset}})",
+    "reported": "Aggiornato {{ago}}",
+    "screen": "Abbonamento",
+    "alert": {
+      "title": "Abbonamento Claude al {{percent}}%",
+      "body": "Azzeramento della {{window}}: {{reset}}. Oltre il limite, le postazioni si fermano fino ad allora."
+    },
+    "context": "contesto {{percent}}%"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "graphics": "Qualità grafica",
+    "sound": "Audio dell'ufficio",
+    "notifications": "Notifiche del browser",
+    "on": "Attivo",
+    "off": "Disattivo",
+    "volumes": {
+      "ambience": "Ambiente (ufficio, esterno, tastiere)",
+      "steps": "Passi"
+    }
+  },
+  "roles": {
+    "lead": {
+      "label": "Team leader",
+      "description": "riceve le richieste, le suddivide in compiti chiari, li affida ai colleghi con lo strumento delegate, segue l'avanzamento e verifica l'integrazione. Scrive poco codice in prima persona."
+    },
+    "developer": {
+      "label": "Sviluppo",
+      "description": "implementa le funzionalità richieste, con i relativi test, e committa man mano."
+    },
+    "frontend": {
+      "label": "Front end",
+      "description": "interfaccia utente: componenti, stili, accessibilità e integrazione con le API."
+    },
+    "backend": {
+      "label": "Back end",
+      "description": "API, dati, logica lato server e prestazioni."
+    },
+    "tests": {
+      "label": "Test e qualità",
+      "description": "scrive ed esegue i test, rivede il lavoro dei colleghi e segnala le regressioni."
+    },
+    "reviewer": {
+      "label": "Revisione",
+      "description": "rivede le modifiche dei colleghi, propone correzioni e verifica che i test passino."
+    },
+    "docs": {
+      "label": "Documentazione",
+      "description": "README, guide e commenti utili, sempre allineati al codice."
+    }
+  },
+  "phoneNotifications": {
+    "title": "Notifiche sul telefono",
+    "intro": "Workspace pubblica le notifiche in un canale Discord: attiva le notifiche di quel canale nell'app Discord del tuo telefono.",
+    "steps": {
+      "channel": "In Discord, crea un canale privato (ad esempio sul tuo server personale).",
+      "webhook": "Impostazioni del canale → Integrazioni → Webhook → Nuovo webhook → Copia URL del webhook.",
+      "paste": "Incolla l'URL qui sotto, salva, poi invia un test."
+    },
+    "webhook": "URL del webhook Discord",
+    "webhookSet": "Webhook salvato ({{hint}}) — incolla un nuovo URL per sostituirlo",
+    "removeWebhook": "Rimuovi il webhook",
+    "events": "Avvisami quando",
+    "eventLabels": {
+      "attention": "una postazione ha bisogno di me (domanda, permesso, errore, limite)",
+      "usage": "l'abbonamento raggiunge l'80% e poi il 95%",
+      "finished": "una postazione finisce un'attività durata più di 5 minuti"
+    },
+    "hideContent": "Nascondi il contenuto (solo il nome della postazione)",
+    "whenAway": "Non viene inviato nulla finché una scheda di Workspace è aperta e visibile; le notifiche partono 30 secondi dopo che la lasci.",
+    "publicUrl": "Indirizzo di Workspace dal telefono",
+    "publicUrlHint": "Serve perché la notifica apra direttamente il terminale della postazione (ad esempio un indirizzo Tailscale). Lascia vuoto per non mettere nessun link.",
+    "save": "Salva",
+    "saved": "Impostazioni salvate.",
+    "test": "Invia un test",
+    "testSent": "Test inviato: controlla il tuo canale Discord.",
+    "testFailed": "Invio non riuscito: {{error}}",
+    "lastSent": "Ultima notifica inviata {{ago}}.",
+    "menu": "Notifiche sul telefono…",
+    "errors": {
+      "invalid_input": "URL non valido: servono un URL di webhook Discord (https://discord.com/api/webhooks/…) e un indirizzo http(s).",
+      "no_webhook": "Prima salva un URL di webhook."
+    }
+  },
+  "search": {
+    "title": "Cerca nelle conversazioni",
+    "button": "Cerca nelle conversazioni ({{shortcut}})",
+    "placeholder": "Una parola, un errore, un nome di file…",
+    "allRooms": "Tutte le stanze",
+    "hint": "Cerca nei prompt e nelle risposte di tutte le postazioni (ignorando maiuscole e accenti).",
+    "searching": "Ricerca in corso…",
+    "none": "Nessun risultato.",
+    "count_one": "{{count}} risultato, dal più recente.",
+    "count_other": "{{count}} risultati, dal più recente.",
+    "countTruncated_one": "I {{count}} risultati più recenti: affina la ricerca per vedere gli altri.",
+    "countTruncated_other": "I {{count}} risultati più recenti: affina la ricerca per vedere gli altri.",
+    "you": "Prompt",
+    "answer": "Risposta"
+  },
+  "stats": {
+    "periods": {
+      "day": "24 h",
+      "week": "7 giorni",
+      "month": "30 giorni"
+    },
+    "hint": "Clicca su una colonna per ordinare, su una postazione per aprirla.",
+    "columns": {
+      "desk": "Postazione",
+      "workingMs": "Lavoro",
+      "waitingMs": "Ti aspetta",
+      "prompts": "Prompt",
+      "toolCalls": "Strumenti",
+      "lines": "Righe",
+      "outputTokens": "Token scritti",
+      "contextTokens": "Contesto",
+      "integrations": "Integrazioni"
+    },
+    "columnHints": {
+      "workingMs": "Tempo passato a lavorare (compattazione inclusa)",
+      "waitingMs": "Tempo passato ad aspettare una risposta, un permesso o la fine di un limite",
+      "prompts": "Prompt che hai digitato (risvegli automatici esclusi)",
+      "toolCalls": "Chiamate agli strumenti (letture, modifiche, comandi…)",
+      "lines": "Righe aggiunte e rimosse dalle modifiche ai file andate a buon fine",
+      "outputTokens": "Token generati da Claude",
+      "contextTokens": "Quanto è pieno ora il contesto della conversazione",
+      "integrations": "Merge · pull request"
+    },
+    "teamwork": "Risvegli · deleghe",
+    "teamworkHint": "Risvegli automatici per messaggio · compiti affidati da un collega",
+    "integrationsHint": "Merge · pull request",
+    "compactions": "Compattazioni",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "hoursMinutes": "{{hours}} h {{minutes}}",
+    "lessThanMinute": "< 1 min",
+    "idleDesks_one": "{{count}} postazione senza attività in questo periodo.",
+    "idleDesks_other": "{{count}} postazioni senza attività in questo periodo."
+  },
+  "frames": {
+    "title": "Cornice",
+    "choose": "Scegli un'immagine…",
+    "replace": "Cambia l'immagine…",
+    "remove": "Rimuovi l'immagine",
+    "drop": "Clicca per scegliere un'immagine, trascinala qui o incollala ({{shortcut}}).",
+    "uploading": "Caricamento…",
+    "hint": "L'immagine viene ritagliata attorno al centro per riempire la cornice. Viene salvata sul server di Workspace.",
+    "errors": {
+      "not_image": "Questo file non è un'immagine leggibile.",
+      "upload_failed": "Impossibile salvare l'immagine. Riprova."
+    }
+  }
+}

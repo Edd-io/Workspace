@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { DeskState } from './deskState.ts';
+import { LANGUAGES } from './languages.ts';
 
 export const DESK_MODES = ['worktree', 'shared'] as const;
 export type DeskMode = (typeof DESK_MODES)[number];
@@ -175,9 +176,11 @@ export interface Timeline {
   desks: DeskTimeline[];
 }
 
+export const languageSchema = z.enum(LANGUAGES);
+
 export const summaryRequestSchema = z.object({
   reason: z.enum(['visit', 'refresh']),
-  language: z.enum(['fr', 'en']),
+  language: languageSchema,
 });
 
 export const loginSchema = z.object({

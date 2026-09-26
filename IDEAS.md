@@ -43,7 +43,8 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 
 ## Platform
 - 👍 **Two-factor authentication** (TOTP) — requested for later.
-- 👍 **More languages** besides FR/EN — the i18n architecture is designed for it.
+- 💡 **Self-hosted fallback fonts for 3D text**: troika fetches Noto glyphs from jsDelivr for scripts
+  Inter lacks (Cyrillic and CJK labels, room names); ship the needed subsets to work fully offline.
 - 💡 **Mobile view**: simplified 2D (map + inbox + terminal).
 - 💡 **Multi-user**: several humans connected, visible as avatars, with presence.
 - 💡 **Deployment**: Docker image / systemd service for the Linux server, HTTPS through a reverse proxy or Tailscale.

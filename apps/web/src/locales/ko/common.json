@@ -1,0 +1,499 @@
+{
+  "app": {
+    "name": "Workspace",
+    "loading": "오피스를 불러오는 중…",
+    "serverUnreachable": "서버에 연결할 수 없어요."
+  },
+  "common": {
+    "retry": "다시 시도",
+    "close": "닫기",
+    "cancel": "취소"
+  },
+  "login": {
+    "subtitle": "나만의 Claude Code 세션 오피스",
+    "password": "비밀번호",
+    "signIn": "로그인",
+    "signingIn": "로그인 중…",
+    "signOut": "로그아웃",
+    "noPassword": "아직 비밀번호가 설정되지 않았어요. 서버에서 이 명령을 실행한 다음 페이지를 새로고침하세요:",
+    "errors": {
+      "invalid": "비밀번호가 틀렸어요.",
+      "rate_limited": "시도 횟수가 너무 많아요. 몇 분 뒤에 다시 시도하세요.",
+      "no_password": "서버에 비밀번호가 설정되어 있지 않아요.",
+      "invalid_input": "비밀번호를 입력하세요.",
+      "unknown_error": "로그인하지 못했어요."
+    }
+  },
+  "hud": {
+    "language": "언어",
+    "viewMode": "보기",
+    "minimap": "오피스 지도",
+    "viewModes": {
+      "overview": {
+        "label": "전체 보기",
+        "hint": "위에서 오피스 전체 보기 (V)"
+      },
+      "walk": {
+        "label": "걷기",
+        "hint": "오피스 안을 걸어 다니기 (V)"
+      }
+    },
+    "walk": {
+      "locked": "WASD / 방향키로 이동 · Shift로 달리기 · E 또는 클릭으로 데스크, 보드, 화면 사용 또는 앉기 · Esc로 전체 보기",
+      "unlocked": "클릭해서 계속 걷기 · V로 전체 보기",
+      "seated": "앉아 있음 · 화면을 보고 E 또는 클릭으로 사용 · 다른 곳에서 WASD 또는 E로 일어나기 · Esc로 전체 보기",
+      "aim": {
+        "desk": "E · 터미널 열기",
+        "board": "E · 보드 열기",
+        "screen": "E · 화면 열기",
+        "seat": "E · 앉기",
+        "frame": "E · 사진 넣기",
+        "picture": "E · 사진 바꾸기"
+      }
+    }
+  },
+  "connection": {
+    "connecting": "연결 중…",
+    "open": "연결됨",
+    "closed": "연결 끊김 — 다시 연결 중"
+  },
+  "states": {
+    "starting": "시작 중",
+    "idle": "대기 중",
+    "working": "작업 중",
+    "question": "확인 필요",
+    "compacting": "압축 중",
+    "limited": "사용 한도",
+    "error": "오류",
+    "offline": "꺼짐"
+  },
+  "sidebar": {
+    "title": "오피스",
+    "show": "오피스",
+    "hide": "숨기기",
+    "empty": "아직 룸이 없어요. 첫 프로젝트를 위한 룸을 만들어 보세요.",
+    "addDesk": "데스크 추가",
+    "newRoom": "새 룸",
+    "board": "보드",
+    "openBoard": "룸 보드 열기"
+  },
+  "desk": {
+    "menu": "데스크 메뉴",
+    "actions": {
+      "start": "시작",
+      "stop": "중지",
+      "restart": "다시 시작",
+      "delete": "데스크 삭제",
+      "confirmDelete": "삭제",
+      "integrate": "작업 통합…",
+      "editRole": "역할…"
+    },
+    "confirmDelete": "세션이 중지되고 워크트리가 삭제돼요. {{branch}} 브랜치는 그대로 남아요.",
+    "confirmDeleteUncommitted": "이 데스크에 커밋되지 않은 변경 사항이 있어요. 삭제하면 모두 사라져요.",
+    "saveRole": "저장"
+  },
+  "errors": {
+    "path_not_found": "서버에 이 폴더가 없어요.",
+    "path_not_absolute": "프로젝트 경로는 절대 경로여야 해요.",
+    "not_a_git_repo": "이 프로젝트는 git 저장소가 아니에요. 공유 폴더 모드를 사용하세요.",
+    "repo_without_commits": "저장소에 아직 커밋이 없어요. 워크트리를 사용하려면 첫 커밋을 만드세요.",
+    "worktree_failed": "워크트리를 만들지 못했어요.",
+    "room_not_empty": "이 룸에 아직 데스크가 있어요.",
+    "uncommitted_changes": "이 데스크에 커밋되지 않은 변경 사항이 있어요.",
+    "invalid_input": "일부 항목이 올바르지 않아요.",
+    "cannot_read_directory": "이 폴더를 읽을 수 없어요.",
+    "room_not_found": "이 룸은 더 이상 존재하지 않아요.",
+    "desk_not_found": "이 데스크는 더 이상 존재하지 않아요.",
+    "unknown_error": "문제가 발생했어요."
+  },
+  "createRoom": {
+    "title": "새 룸",
+    "name": "룸 이름",
+    "project": "서버의 프로젝트 폴더",
+    "parent": "상위 폴더",
+    "hint": "이 룸의 모든 데스크가 이 프로젝트에서 작업해요.",
+    "submit": "룸 만들기",
+    "templates": {
+      "label": "시작 팀",
+      "empty": {
+        "label": "빈 룸",
+        "description": "데스크를 직접 추가해요."
+      },
+      "solo": {
+        "label": "솔로",
+        "description": "개발 데스크 하나."
+      },
+      "duo": {
+        "label": "듀오",
+        "description": "개발자 한 명과 리뷰어 한 명."
+      },
+      "team": {
+        "label": "팀",
+        "description": "작업을 나누는 팀 리드, 프론트엔드, 백엔드, 테스트."
+      }
+    },
+    "creatingDesks": "데스크를 만드는 중…"
+  },
+  "createDesk": {
+    "title": "{{room}}에 새 데스크",
+    "name": "이름",
+    "namePlaceholder": "무작위 이름",
+    "mode": "작업 사본",
+    "modes": {
+      "worktree": {
+        "label": "전용 워크트리",
+        "description": "전용 git 브랜치와 폴더를 사용해요. 다른 데스크와 충돌하지 않아요."
+      },
+      "shared": {
+        "label": "공유 폴더",
+        "description": "다른 공유 데스크처럼 프로젝트 폴더에서 바로 작업해요."
+      }
+    },
+    "notGit": "프로젝트가 git 저장소가 아니어서 공유 폴더 모드만 사용할 수 있어요.",
+    "model": "모델",
+    "permissionMode": "권한",
+    "defaultOption": "기본값",
+    "initialPrompt": "첫 프롬프트 (선택)",
+    "initialPromptPlaceholder": "이 데스크는 어떤 작업을 할까요?",
+    "submit": "데스크 만들기",
+    "creating": "만드는 중…",
+    "role": "역할 (선택)",
+    "rolePlaceholder": "이 룸에서 이 데스크가 맡을 일"
+  },
+  "permissionModes": {
+    "default": "매번 묻기",
+    "acceptEdits": "편집 자동 수락",
+    "auto": "자동",
+    "plan": "계획 모드",
+    "bypassPermissions": "모든 권한 확인 건너뛰기"
+  },
+  "terminal": {
+    "offline": "이 세션은 중지되었어요.",
+    "removed": "이 데스크는 삭제되었어요."
+  },
+  "world": {
+    "addDesk": "+ 데스크 추가",
+    "masterRoom": "내 오피스",
+    "lounge": "라운지",
+    "newRoom": "+ 새 룸"
+  },
+  "whiteboard": {
+    "title": "{{room}} — 보드",
+    "whoDoesWhat": "역할 분담",
+    "notes": "고정된 메모",
+    "messages": "메시지",
+    "nobody": "아직 아무도 없어요",
+    "noNotes": "아직 메모가 없어요",
+    "human": "나",
+    "room": "모두",
+    "autoWake": "메시지를 받으면 대기 중인 데스크 깨우기",
+    "autoWakeHint": "대기 중인 데스크에 보낸 메시지는 프롬프트로 입력돼요 (10분에 최대 4번)."
+  },
+  "board": {
+    "formerDesk": "삭제된 데스크",
+    "removeNote": "이 메모 삭제",
+    "notePlaceholder": "결정 사항, 규칙, 주의 사항…",
+    "pin": "고정",
+    "noMessages": "아직 메시지가 없어요.",
+    "toRoom": "룸 전체",
+    "messagePlaceholder": "데스크에 메시지 쓰기…",
+    "send": "보내기",
+    "deliveryHint": "작업 중인 데스크는 다음에 도구를 사용할 때 메시지를 받아요. 대기 중인 데스크는 깨우기가 켜져 있으면 바로 깨어나요."
+  },
+  "inbox": {
+    "title": "수신함",
+    "button": "수신함",
+    "empty": "기다리고 있는 데스크가 없어요.",
+    "answer": "터미널 열기",
+    "count_other": "데스크 {{count}}개가 기다리고 있어요"
+  },
+  "attention": {
+    "question": "질문",
+    "permission": "권한",
+    "plan": "계획 승인",
+    "message": "요청",
+    "error": "오류",
+    "limit": "사용 한도",
+    "trust": "폴더 신뢰"
+  },
+  "summary": {
+    "title": "브리핑",
+    "button": "브리핑",
+    "generated": "{{ago}} 작성 · {{since}}부터의 내용",
+    "screenGenerated": "{{ago}} 작성",
+    "none": "아직 브리핑이 없어요.",
+    "generating": "Haiku가 브리핑을 쓰는 중…",
+    "refresh": "새로고침",
+    "error": "브리핑을 작성하지 못했어요. 잠시 후 다시 시도하세요."
+  },
+  "map": {
+    "title": "오피스 지도",
+    "hint": "데스크를 클릭하면 터미널이 열리고, 다른 곳을 클릭하면 그곳으로 이동해요."
+  },
+  "notifications": {
+    "title": "{{desk}} ({{room}}): 확인이 필요해요",
+    "discord": {
+      "waiting_other": "데스크 {{count}}개가 기다리고 있어요",
+      "attentionTitle": "{{desk}} ({{room}}): 확인이 필요해요",
+      "finishedTitle": "{{desk}} ({{room}}): 작업 완료",
+      "finishedBody": "{{minutes}}분 만에 작업을 마쳤어요.",
+      "test": "Workspace 테스트: 알림이 여기로 잘 도착해요. 👋"
+    }
+  },
+  "timeline": {
+    "title": "활동",
+    "button": "활동",
+    "range": "기간",
+    "hours_other": "{{count}}시간",
+    "hint": "흰 눈금은 데스크가 받은 프롬프트예요. 행을 클릭하면 데스크가 열려요.",
+    "empty": "이 기간에는 데스크 활동이 없어요.",
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}}분)",
+    "tabs": {
+      "timeline": "타임라인",
+      "stats": "통계"
+    }
+  },
+  "graphics": {
+    "levels": {
+      "eco": "에코",
+      "normal": "보통",
+      "max": "최고"
+    },
+    "descriptions": {
+      "eco": "발열 최소, 배터리 절약",
+      "normal": "균형 잡힌 설정",
+      "max": "가장 부드럽지만 부하가 가장 큼"
+    }
+  },
+  "integration": {
+    "title": "{{desk}}의 작업 통합",
+    "loading": "불러오는 중…",
+    "target": "대상",
+    "base": "기준 브랜치",
+    "nothingToMerge": "통합할 내용이 없어요. {{target}}에 데스크의 커밋된 작업이 이미 모두 있어요.",
+    "ahead_other": "통합할 커밋 {{count}}개 · 변경된 파일 {{files}}개 (+{{additions}} −{{deletions}})",
+    "behind_other": "{{target}}에 데스크에 없는 커밋이 {{count}}개 있어요",
+    "uncommitted": {
+      "title_other": "데스크에 커밋되지 않은 파일 {{count}}개",
+      "hint": "커밋된 작업만 통합돼요. 여기서 이 변경 사항을 커밋하거나 데스크에 커밋을 요청하세요.",
+      "placeholder": "{{desk}}의 진행 중인 작업",
+      "commit": "이 변경 사항 커밋",
+      "done": "변경 사항을 커밋했어요.",
+      "tag": "커밋 안 됨"
+    },
+    "busy": "데스크가 작업 중이에요. 끝날 때까지 기다리세요.",
+    "notIdle": "데스크가 다음 지시를 기다릴 때 사용할 수 있어요.",
+    "conflicts": {
+      "title": "{{target}} 브랜치와 충돌 예상",
+      "hint": "{{desk}} 데스크가 대상 브랜치를 자기 브랜치에 병합하고 충돌을 직접 해결할 수 있어요.",
+      "ask": "{{desk}}에게 {{target}} 병합 요청",
+      "prompt": "`{{target}}` 브랜치를 현재 브랜치 `{{branch}}`에 병합하고 충돌을 해결하세요. 모든 것이 제대로 동작하는지 확인한 다음(테스트가 있으면 실행하세요) 결과를 커밋하세요.",
+      "asked": "{{desk}}에게 요청을 보냈어요."
+    },
+    "commits": "커밋",
+    "moreCommits": "… 외 {{count}}개",
+    "files": "파일",
+    "binary": "바이너리",
+    "untracked": "git이 아직 추적하지 않는 새 파일이에요.",
+    "noDiff": "표시할 차이가 없어요.",
+    "truncated": "diff가 너무 길어서 잘렸어요.",
+    "moreLines": "… {{count}}줄 더",
+    "targetDirty": "{{target}} 브랜치가 체크아웃된 {{path}}에 커밋되지 않은 변경 사항이 있어요. 병합하기 전에 커밋하거나 stash하세요.",
+    "mergeInCheckout": "병합은 {{target}} 브랜치가 체크아웃된 {{path}}에서 진행돼요.",
+    "mergeWithoutCheckout": "{{target}} 브랜치는 어디에도 체크아웃되어 있지 않아요. 파일은 건드리지 않고 브랜치만 바로 업데이트돼요.",
+    "update": "{{target}}에서 데스크 업데이트",
+    "updateHint": "{{target}}의 새 커밋을 데스크 브랜치에 병합해요.",
+    "merge": "{{target}}에 병합",
+    "merging": "병합 중…",
+    "merged_other": "커밋 {{count}}개를 {{target}}에 통합했어요.",
+    "upToDate": "이미 최신 상태예요.",
+    "conflictsFound": "충돌 파일: {{files}}. 아무것도 변경되지 않았어요.",
+    "pr": {
+      "start": "풀 리퀘스트 만들기",
+      "open": "풀 리퀘스트 열기",
+      "title": "새 풀 리퀘스트",
+      "titleField": "제목",
+      "body": "설명",
+      "create": "풀 리퀘스트 만들기",
+      "creating": "만드는 중…",
+      "created": "풀 리퀘스트를 만들었어요:",
+      "defaultBody": "{{desk}} 데스크의 작업 (Workspace).\n\n커밋:\n{{commits}}",
+      "unavailable": {
+        "no_remote": "저장소에 리모트가 없어요.",
+        "no_gh": "서버에 GitHub CLI(gh)가 설치되어 있지 않아요.",
+        "gh_not_authenticated": "GitHub CLI(gh)에 로그인되어 있지 않아요. 서버에서 `gh auth login`을 실행하세요."
+      }
+    },
+    "errors": {
+      "generic": "실패: {{message}}",
+      "desk_busy": "데스크가 작업 중이에요. 끝날 때까지 기다리세요.",
+      "desk_not_idle": "데스크가 지금은 지시를 기다리고 있지 않아요.",
+      "target_dirty": "{{path}}에 커밋되지 않은 변경 사항이 있어요. 먼저 커밋하거나 stash하세요.",
+      "desk_dirty": "데스크에 커밋되지 않은 변경 사항이 있어요. 먼저 커밋하세요.",
+      "target_missing": "{{target}} 브랜치가 존재하지 않아요.",
+      "branch_missing": "데스크의 브랜치가 더 이상 존재하지 않아요.",
+      "not_a_worktree_desk": "이 데스크는 프로젝트 폴더에서 바로 작업해요. 통합할 내용이 없어요.",
+      "push_failed": "푸시 실패: {{message}}",
+      "pr_failed": "풀 리퀘스트 생성 실패: {{message}}",
+      "commit_failed": "커밋 실패: {{message}}",
+      "merge_failed": "병합 실패: {{message}}",
+      "no_remote": "저장소에 리모트가 없어요.",
+      "no_gh": "서버에 GitHub CLI(gh)가 설치되어 있지 않아요.",
+      "gh_not_authenticated": "GitHub CLI(gh)에 로그인되어 있지 않아요."
+    },
+    "open": "통합…"
+  },
+  "usage": {
+    "title": "Claude 구독",
+    "fiveHour": "5시간 한도",
+    "fiveHourShort": "5시간",
+    "sevenDay": "주간 한도",
+    "sevenDayShort": "7일",
+    "windowDetail": "{{window}}: {{percent}}% 사용 ({{reset}}에 초기화)",
+    "reported": "{{ago}} 업데이트",
+    "screen": "구독",
+    "alert": {
+      "title": "Claude 구독 {{percent}}% 사용",
+      "body": "{{window}} 초기화: {{reset}}. 한도를 넘으면 그때까지 데스크가 멈춰요."
+    },
+    "context": "컨텍스트 {{percent}}%"
+  },
+  "settings": {
+    "title": "설정",
+    "graphics": "그래픽 품질",
+    "sound": "오피스 사운드",
+    "notifications": "브라우저 알림",
+    "on": "켜짐",
+    "off": "꺼짐",
+    "volumes": {
+      "ambience": "배경음 (오피스, 야외, 키보드)",
+      "steps": "발소리"
+    }
+  },
+  "roles": {
+    "lead": {
+      "label": "팀 리드",
+      "description": "요청을 받아 명확한 작업으로 나누고, delegate 도구로 동료에게 맡기며, 진행 상황을 챙기고 통합을 확인해요. 직접 코드를 작성하는 일은 적어요."
+    },
+    "developer": {
+      "label": "개발",
+      "description": "요청받은 기능을 테스트와 함께 구현하고, 작업하는 동안 수시로 커밋해요."
+    },
+    "frontend": {
+      "label": "프론트엔드",
+      "description": "사용자 인터페이스: 컴포넌트, 스타일, 접근성, API 연동."
+    },
+    "backend": {
+      "label": "백엔드",
+      "description": "API, 데이터, 서버 로직, 성능."
+    },
+    "tests": {
+      "label": "테스트 및 품질",
+      "description": "테스트를 작성하고 실행하며, 동료의 작업을 리뷰하고 회귀를 보고해요."
+    },
+    "reviewer": {
+      "label": "리뷰",
+      "description": "동료의 변경 사항을 리뷰하고, 수정 사항을 제안하며, 테스트가 통과하는지 확인해요."
+    },
+    "docs": {
+      "label": "문서화",
+      "description": "README, 가이드, 유용한 주석을 작성하고 코드에 맞춰 최신 상태로 유지해요."
+    }
+  },
+  "phoneNotifications": {
+    "title": "휴대폰 알림",
+    "intro": "Workspace는 Discord 채널로 알림을 보내요. 휴대폰의 Discord 앱에서 그 채널의 알림을 켜세요.",
+    "steps": {
+      "channel": "Discord에서 비공개 채널을 만드세요 (예: 내 서버에).",
+      "webhook": "채널 편집 → 연동 → 웹후크 → 새 웹후크 → 웹후크 URL 복사.",
+      "paste": "아래에 URL을 붙여넣고 저장한 다음 테스트를 보내세요."
+    },
+    "webhook": "Discord 웹후크 URL",
+    "webhookSet": "웹후크 저장됨 ({{hint}}) — 바꾸려면 새 URL을 붙여넣으세요",
+    "removeWebhook": "웹후크 삭제",
+    "events": "이럴 때 알림 받기",
+    "eventLabels": {
+      "attention": "데스크가 나를 기다릴 때 (질문, 권한, 오류, 한도)",
+      "usage": "구독 사용량이 80%, 그다음 95%에 도달할 때",
+      "finished": "데스크가 5분 넘게 걸린 작업을 마쳤을 때"
+    },
+    "hideContent": "내용 숨기기 (데스크 이름만 표시)",
+    "whenAway": "Workspace 탭이 열려 있고 화면에 보이는 동안에는 아무것도 보내지 않아요. 자리를 비우면 30초 뒤에 알림이 전송돼요.",
+    "publicUrl": "휴대폰에서 접속할 Workspace 주소",
+    "publicUrlHint": "알림에서 데스크 터미널을 바로 열 수 있게 해 줘요 (예: Tailscale 주소). 링크가 필요 없으면 비워 두세요.",
+    "save": "저장",
+    "saved": "설정을 저장했어요.",
+    "test": "테스트 보내기",
+    "testSent": "테스트를 보냈어요. Discord 채널을 확인하세요.",
+    "testFailed": "전송 실패: {{error}}",
+    "lastSent": "마지막 알림 전송: {{ago}}.",
+    "menu": "휴대폰 알림…",
+    "errors": {
+      "invalid_input": "잘못된 URL이에요. Discord 웹후크 URL(https://discord.com/api/webhooks/…)과 http(s) 주소가 필요해요.",
+      "no_webhook": "먼저 웹후크 URL을 저장하세요."
+    }
+  },
+  "search": {
+    "title": "대화 검색",
+    "button": "대화 검색 ({{shortcut}})",
+    "placeholder": "단어, 오류, 파일 이름…",
+    "allRooms": "모든 룸",
+    "hint": "모든 데스크의 프롬프트와 답변을 검색해요 (대소문자와 악센트 무시).",
+    "searching": "검색 중…",
+    "none": "결과가 없어요.",
+    "count_other": "결과 {{count}}개, 최신순.",
+    "countTruncated_other": "최근 결과 {{count}}개만 표시해요. 나머지를 보려면 검색어를 더 구체적으로 입력하세요.",
+    "you": "프롬프트",
+    "answer": "답변"
+  },
+  "stats": {
+    "periods": {
+      "day": "24시간",
+      "week": "7일",
+      "month": "30일"
+    },
+    "hint": "열을 클릭하면 정렬되고, 데스크를 클릭하면 열려요.",
+    "columns": {
+      "desk": "데스크",
+      "workingMs": "작업",
+      "waitingMs": "확인 대기",
+      "prompts": "프롬프트",
+      "toolCalls": "도구",
+      "lines": "줄",
+      "outputTokens": "생성 토큰",
+      "contextTokens": "컨텍스트",
+      "integrations": "통합"
+    },
+    "columnHints": {
+      "workingMs": "작업한 시간 (압축 포함)",
+      "waitingMs": "답변, 권한 또는 한도 해제를 기다린 시간",
+      "prompts": "직접 입력한 프롬프트 (자동 깨우기 제외)",
+      "toolCalls": "도구 호출 (읽기, 편집, 명령…)",
+      "lines": "성공한 파일 편집으로 추가·삭제된 줄",
+      "outputTokens": "Claude가 생성한 토큰",
+      "contextTokens": "현재 대화 컨텍스트가 찬 정도",
+      "integrations": "병합 · 풀 리퀘스트"
+    },
+    "teamwork": "깨우기 · 위임",
+    "teamworkHint": "메시지로 인한 자동 깨우기 · 동료가 맡긴 작업",
+    "integrationsHint": "병합 · 풀 리퀘스트",
+    "compactions": "압축",
+    "minutes_other": "{{count}}분",
+    "hoursMinutes": "{{hours}}시간 {{minutes}}분",
+    "lessThanMinute": "< 1분",
+    "idleDesks_other": "이 기간에 활동이 없는 데스크 {{count}}개."
+  },
+  "frames": {
+    "title": "액자",
+    "choose": "사진 선택…",
+    "replace": "사진 바꾸기…",
+    "remove": "사진 빼기",
+    "drop": "클릭해서 사진을 선택하거나, 여기에 끌어다 놓거나, 붙여넣으세요 ({{shortcut}}).",
+    "uploading": "업로드 중…",
+    "hint": "사진은 액자를 채우도록 가운데를 기준으로 잘려요. Workspace 서버에 저장돼요.",
+    "errors": {
+      "not_image": "읽을 수 있는 사진 파일이 아니에요.",
+      "upload_failed": "사진을 저장하지 못했어요. 다시 시도하세요."
+    }
+  }
+}

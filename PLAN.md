@@ -25,7 +25,7 @@ Idea backlog: [`IDEAS.md`](IDEAS.md). Conventions for contributors/agents: [`CLA
 | Haiku summary | Generated on login ("since your last visit") and on demand. |
 | Security | Password login now (hashed, HTTP-only cookie session); 2FA later. |
 | Persistence | Sessions survive server restarts (process host outside the Node server) and machine reboots (`claude --resume <session-id>`). |
-| Language | All repository content in English. Web UI localized FR + EN (i18n, more languages later). |
+| Language | All repository content in English. Web UI localized (i18n): de, en, es, fr, it, ja, ko, pt-BR, ru, zh-Hans. |
 
 ## 2. Architecture overview
 
@@ -37,7 +37,7 @@ Browser (apps/web)                                   Server (apps/server, Node 2
 │  - screen previews (canvas)   │               │ SessionHost ──► tmux / claude --bg ──► claude CLI (per desk)
 │  - full xterm.js terminal     │               │ TerminalMirror (@xterm/headless per desk)  │
 │  - HUD: inbox, map, timeline  │               │ HookIngest ◄── HTTP hooks (per desk token) │
-│  - i18n (fr, en)              │               │ StateMachine → events → timeline (SQLite)  │
+│  - i18n (10 languages)        │               │ StateMachine → events → timeline (SQLite)  │
 │  - WebAudio ambience          │               │ OfficeBus (room board, messages)           │
 └──────────────────────────────┘               │ Summarizer ──► claude -p --model haiku     │
                                                 └────────────────────────────────────────────┘
@@ -168,8 +168,10 @@ tests over recorded hook payloads. Every transition is stored (`desk_events`) fo
 - **Sound**: WebAudio, positional — room tone/HVAC hum, keyboard typing near working desks (volume
   follows the number of working desks), chime on new question, footsteps in first-person, doors,
   coffee machine. First version synthesized procedurally, later replaced by CC0 recordings.
-- **i18n**: `react-i18next`, `locales/{fr,en}/*.json`, language switcher, browser detection; text
-  drawn on 3D textures goes through i18n too. The Haiku summary is requested in the UI language.
+- **i18n**: `react-i18next`, `locales/<lang>/*.json` (languages listed in `packages/shared`),
+  language picker, browser detection; English is bundled as the fallback, the other languages are
+  loaded when chosen. Text drawn on 3D textures goes through i18n too. The Haiku summary and the
+  Discord messages use the UI language.
 
 ### 2.7 Summarizer (Haiku)
 
@@ -350,6 +352,11 @@ Phone notifications (Discord):
 Stats and search:
 - [x] Per-desk statistics over a period: working time, prompts, lines changed, context, integrations
 - [x] Search across every desk's conversation
+
+More languages:
+- [x] UI in German, Spanish, Italian, Brazilian Portuguese, Russian, Japanese, Korean and Simplified
+      Chinese besides French and English; language picker showing each language in its own name
+- [x] Locale test checks keys, the plural forms each language needs and `{{variables}}`
 
 ## 4. Risks & open points
 

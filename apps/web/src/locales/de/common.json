@@ -1,0 +1,510 @@
+{
+  "app": {
+    "name": "Workspace",
+    "loading": "Büro wird geladen…",
+    "serverUnreachable": "Der Server ist nicht erreichbar."
+  },
+  "common": {
+    "retry": "Erneut versuchen",
+    "close": "Schließen",
+    "cancel": "Abbrechen"
+  },
+  "login": {
+    "subtitle": "Dein Büro voller Claude-Code-Sessions",
+    "password": "Passwort",
+    "signIn": "Anmelden",
+    "signingIn": "Anmeldung…",
+    "signOut": "Abmelden",
+    "noPassword": "Es ist noch kein Passwort festgelegt. Führe diesen Befehl auf dem Server aus und lade dann die Seite neu:",
+    "errors": {
+      "invalid": "Falsches Passwort.",
+      "rate_limited": "Zu viele Versuche. Versuch es in ein paar Minuten noch einmal.",
+      "no_password": "Auf dem Server ist kein Passwort festgelegt.",
+      "invalid_input": "Bitte gib dein Passwort ein.",
+      "unknown_error": "Anmeldung fehlgeschlagen."
+    }
+  },
+  "hud": {
+    "language": "Sprache",
+    "viewMode": "Ansicht",
+    "minimap": "Büroplan",
+    "viewModes": {
+      "overview": {
+        "label": "Übersicht",
+        "hint": "Das ganze Büro von oben sehen (V)"
+      },
+      "walk": {
+        "label": "Rundgang",
+        "hint": "Durch das Büro laufen (V)"
+      }
+    },
+    "walk": {
+      "locked": "WASD / Pfeiltasten zum Laufen · Umschalt zum Rennen · E oder Klick, um einen Arbeitsplatz, eine Tafel oder einen Bildschirm zu nutzen oder dich hinzusetzen · Esc für die Übersicht",
+      "unlocked": "Klicke, um den Rundgang fortzusetzen · V für die Übersicht",
+      "seated": "Du sitzt · E oder Klick auf einen Bildschirm, um ihn zu nutzen · WASD oder E woanders, um aufzustehen · Esc für die Übersicht",
+      "aim": {
+        "desk": "E · Terminal öffnen",
+        "board": "E · Tafel öffnen",
+        "screen": "E · Bildschirm öffnen",
+        "seat": "E · Hinsetzen",
+        "frame": "E · Bild einsetzen",
+        "picture": "E · Bild ändern"
+      }
+    }
+  },
+  "connection": {
+    "connecting": "Verbinde…",
+    "open": "Verbunden",
+    "closed": "Getrennt — verbinde neu"
+  },
+  "states": {
+    "starting": "Startet",
+    "idle": "Leerlauf",
+    "working": "Arbeitet",
+    "question": "Braucht dich",
+    "compacting": "Kompaktiert",
+    "limited": "Nutzungslimit",
+    "error": "Fehler",
+    "offline": "Offline"
+  },
+  "sidebar": {
+    "title": "Büro",
+    "show": "Büro",
+    "hide": "Ausblenden",
+    "empty": "Noch kein Raum. Erstelle einen für dein erstes Projekt.",
+    "addDesk": "Arbeitsplatz hinzufügen",
+    "newRoom": "Neuer Raum",
+    "board": "Tafel",
+    "openBoard": "Tafel des Raums öffnen"
+  },
+  "desk": {
+    "menu": "Aktionen des Arbeitsplatzes",
+    "actions": {
+      "start": "Starten",
+      "stop": "Stoppen",
+      "restart": "Neu starten",
+      "delete": "Arbeitsplatz löschen",
+      "confirmDelete": "Löschen",
+      "integrate": "Arbeit integrieren…",
+      "editRole": "Rolle…"
+    },
+    "confirmDelete": "Die Session wird beendet und ihr Worktree entfernt. Der Branch {{branch}} bleibt erhalten.",
+    "confirmDeleteUncommitted": "Dieser Arbeitsplatz hat nicht committete Änderungen. Sie gehen verloren, wenn du ihn löschst.",
+    "saveRole": "Speichern"
+  },
+  "errors": {
+    "path_not_found": "Dieser Ordner existiert auf dem Server nicht.",
+    "path_not_absolute": "Der Projektpfad muss absolut sein.",
+    "not_a_git_repo": "Dieses Projekt ist kein Git-Repository: Nutze den Modus „Gemeinsamer Ordner“.",
+    "repo_without_commits": "Das Repository hat noch keinen Commit. Erstelle einen ersten Commit, um Worktrees zu nutzen.",
+    "worktree_failed": "Der Worktree konnte nicht erstellt werden.",
+    "room_not_empty": "In diesem Raum gibt es noch Arbeitsplätze.",
+    "uncommitted_changes": "Dieser Arbeitsplatz hat nicht committete Änderungen.",
+    "invalid_input": "Einige Felder sind ungültig.",
+    "cannot_read_directory": "Dieser Ordner kann nicht gelesen werden.",
+    "room_not_found": "Diesen Raum gibt es nicht mehr.",
+    "desk_not_found": "Diesen Arbeitsplatz gibt es nicht mehr.",
+    "unknown_error": "Etwas ist schiefgelaufen."
+  },
+  "createRoom": {
+    "title": "Neuer Raum",
+    "name": "Name des Raums",
+    "project": "Projektordner auf dem Server",
+    "parent": "Übergeordneter Ordner",
+    "hint": "Alle Arbeitsplätze dieses Raums arbeiten an diesem Projekt.",
+    "submit": "Raum erstellen",
+    "templates": {
+      "label": "Startteam",
+      "empty": {
+        "label": "Leerer Raum",
+        "description": "Du fügst die Arbeitsplätze selbst hinzu."
+      },
+      "solo": {
+        "label": "Solo",
+        "description": "Ein Arbeitsplatz für die Entwicklung."
+      },
+      "duo": {
+        "label": "Duo",
+        "description": "Einer entwickelt, einer reviewt."
+      },
+      "team": {
+        "label": "Team",
+        "description": "Eine Teamleitung, die die Arbeit aufteilt, dazu Frontend, Backend und Tests."
+      }
+    },
+    "creatingDesks": "Arbeitsplätze werden erstellt…"
+  },
+  "createDesk": {
+    "title": "Neuer Arbeitsplatz in {{room}}",
+    "name": "Name",
+    "namePlaceholder": "Zufälliger Name",
+    "mode": "Arbeitskopie",
+    "modes": {
+      "worktree": {
+        "label": "Eigener Worktree",
+        "description": "Ein eigener Git-Branch und Ordner. Keine Konflikte mit anderen Arbeitsplätzen."
+      },
+      "shared": {
+        "label": "Gemeinsamer Ordner",
+        "description": "Arbeitet direkt im Projektordner, wie die anderen Arbeitsplätze mit gemeinsamem Ordner."
+      }
+    },
+    "notGit": "Das Projekt ist kein Git-Repository, daher ist nur der Modus „Gemeinsamer Ordner“ verfügbar.",
+    "model": "Modell",
+    "permissionMode": "Berechtigungen",
+    "defaultOption": "Standard",
+    "initialPrompt": "Erster Prompt (optional)",
+    "initialPromptPlaceholder": "Woran soll dieser Arbeitsplatz arbeiten?",
+    "submit": "Arbeitsplatz erstellen",
+    "creating": "Wird erstellt…",
+    "role": "Rolle (optional)",
+    "rolePlaceholder": "Worum sich dieser Arbeitsplatz im Raum kümmert"
+  },
+  "permissionModes": {
+    "default": "Jedes Mal fragen",
+    "acceptEdits": "Änderungen annehmen",
+    "auto": "Auto",
+    "plan": "Planmodus",
+    "bypassPermissions": "Alle Berechtigungen umgehen"
+  },
+  "terminal": {
+    "offline": "Diese Session ist gestoppt.",
+    "removed": "Dieser Arbeitsplatz wurde gelöscht."
+  },
+  "world": {
+    "addDesk": "+ Arbeitsplatz",
+    "masterRoom": "Mein Büro",
+    "lounge": "Lounge",
+    "newRoom": "+ Neuer Raum"
+  },
+  "whiteboard": {
+    "title": "{{room}} — Tafel",
+    "whoDoesWhat": "Wer macht was",
+    "notes": "Angepinnte Notizen",
+    "messages": "Nachrichten",
+    "nobody": "Noch niemand hier",
+    "noNotes": "Noch keine Notiz",
+    "human": "Du",
+    "room": "alle",
+    "autoWake": "Arbeitsplätze im Leerlauf wecken, wenn ihnen jemand schreibt",
+    "autoWakeHint": "Eine Nachricht an einen Arbeitsplatz im Leerlauf wird als Prompt eingegeben (höchstens 4-mal pro 10 Minuten)."
+  },
+  "board": {
+    "formerDesk": "Ehemaliger Arbeitsplatz",
+    "removeNote": "Notiz entfernen",
+    "notePlaceholder": "Eine Entscheidung, eine Konvention, eine Warnung…",
+    "pin": "Anpinnen",
+    "noMessages": "Noch keine Nachricht.",
+    "toRoom": "Ganzer Raum",
+    "messagePlaceholder": "Nachricht an die Arbeitsplätze…",
+    "send": "Senden",
+    "deliveryHint": "Ein Arbeitsplatz, der gerade arbeitet, erhält Nachrichten bei seinem nächsten Tool-Aufruf; einer im Leerlauf wird sofort geweckt, wenn das Wecken aktiviert ist."
+  },
+  "inbox": {
+    "title": "Posteingang",
+    "button": "Posteingang",
+    "empty": "Niemand wartet auf dich.",
+    "answer": "Terminal öffnen",
+    "count_one": "{{count}} Arbeitsplatz wartet auf dich",
+    "count_other": "{{count}} Arbeitsplätze warten auf dich"
+  },
+  "attention": {
+    "question": "Frage",
+    "permission": "Berechtigung",
+    "plan": "Plan zur Freigabe",
+    "message": "Fragt dich",
+    "error": "Fehler",
+    "limit": "Nutzungslimit",
+    "trust": "Ordner vertrauen"
+  },
+  "summary": {
+    "title": "Briefing",
+    "button": "Briefing",
+    "generated": "Verfasst {{ago}} · Zeitraum begann {{since}}",
+    "screenGenerated": "Verfasst {{ago}}",
+    "none": "Noch kein Briefing.",
+    "generating": "Haiku schreibt das Briefing…",
+    "refresh": "Aktualisieren",
+    "error": "Das Briefing konnte nicht geschrieben werden. Versuch es gleich noch einmal."
+  },
+  "map": {
+    "title": "Büroplan",
+    "hint": "Klicke auf einen Arbeitsplatz, um sein Terminal zu öffnen, oder woandershin, um dorthin zu gehen."
+  },
+  "notifications": {
+    "title": "{{desk}} ({{room}}) braucht dich",
+    "discord": {
+      "waiting_one": "{{count}} Arbeitsplatz wartet auf dich",
+      "waiting_other": "{{count}} Arbeitsplätze warten auf dich",
+      "attentionTitle": "{{desk}} ({{room}}) braucht dich",
+      "finishedTitle": "{{desk}} ({{room}}) ist fertig",
+      "finishedBody": "Arbeit nach {{minutes}} Min. abgeschlossen.",
+      "test": "Workspace-Test: Benachrichtigungen kommen hier an. 👋"
+    }
+  },
+  "timeline": {
+    "title": "Aktivität",
+    "button": "Aktivität",
+    "range": "Zeitraum",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "hint": "Weiße Striche sind die Prompts, die die Arbeitsplätze erhalten haben. Klicke auf eine Zeile, um den Arbeitsplatz zu öffnen.",
+    "empty": "Keine Aktivität in diesem Zeitraum.",
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} Min.)",
+    "tabs": {
+      "timeline": "Zeitleiste",
+      "stats": "Statistik"
+    }
+  },
+  "graphics": {
+    "levels": {
+      "eco": "Eco",
+      "normal": "Normal",
+      "max": "Max"
+    },
+    "descriptions": {
+      "eco": "Am kühlsten, schont den Akku",
+      "normal": "Ausgewogen",
+      "max": "Am flüssigsten, am anspruchsvollsten"
+    }
+  },
+  "integration": {
+    "title": "Arbeit von {{desk}} integrieren",
+    "loading": "Wird geladen…",
+    "target": "Ziel",
+    "base": "Ausgangs-Branch",
+    "nothingToMerge": "Nichts zu integrieren: {{target}} enthält bereits die gesamte committete Arbeit des Arbeitsplatzes.",
+    "ahead_one": "{{count}} Commit zu integrieren · geänderte Dateien: {{files}} (+{{additions}} −{{deletions}})",
+    "ahead_other": "{{count}} Commits zu integrieren · geänderte Dateien: {{files}} (+{{additions}} −{{deletions}})",
+    "behind_one": "{{target}} hat {{count}} Commit, den der Arbeitsplatz nicht hat",
+    "behind_other": "{{target}} hat {{count}} Commits, die der Arbeitsplatz nicht hat",
+    "uncommitted": {
+      "title_one": "{{count}} nicht committete Datei im Arbeitsplatz",
+      "title_other": "{{count}} nicht committete Dateien im Arbeitsplatz",
+      "hint": "Nur committete Arbeit wird integriert. Committe diese Änderungen hier oder bitte den Arbeitsplatz darum.",
+      "placeholder": "Zwischenstand von {{desk}}",
+      "commit": "Diese Änderungen committen",
+      "done": "Änderungen committet.",
+      "tag": "nicht committet"
+    },
+    "busy": "Der Arbeitsplatz arbeitet gerade: Warte, bis er fertig ist.",
+    "notIdle": "Verfügbar, wenn der Arbeitsplatz auf einen Prompt wartet.",
+    "conflicts": {
+      "title": "Konflikte mit {{target}} erwartet",
+      "hint": "{{desk}} kann das Ziel in seinen Branch mergen und die Konflikte selbst lösen.",
+      "ask": "{{desk}} bitten, {{target}} zu mergen",
+      "prompt": "Merge den Branch `{{target}}` in deinen Branch `{{branch}}`, löse die Konflikte, prüfe, ob alles funktioniert (führe die Tests aus, falls es welche gibt), und committe das Ergebnis.",
+      "asked": "Anfrage an {{desk}} gesendet."
+    },
+    "commits": "Commits",
+    "moreCommits": "… und {{count}} weitere",
+    "files": "Dateien",
+    "binary": "binär",
+    "untracked": "Neue Datei, von Git noch nicht erfasst.",
+    "noDiff": "Keine Unterschiede anzuzeigen.",
+    "truncated": "Der Diff ist zu lang und wurde gekürzt.",
+    "moreLines": "… {{count}} weitere Zeilen",
+    "targetDirty": "{{path}}, wo {{target}} ausgecheckt ist, hat nicht committete Änderungen: Committe oder stashe sie vor dem Merge.",
+    "mergeInCheckout": "Der Merge erfolgt in {{path}}, wo {{target}} ausgecheckt ist.",
+    "mergeWithoutCheckout": "{{target}} ist nirgends ausgecheckt: Der Branch wird direkt aktualisiert, ohne eine Datei anzufassen.",
+    "update": "Arbeitsplatz mit {{target}} aktualisieren",
+    "updateHint": "Führt die neuen Commits von {{target}} in den Branch des Arbeitsplatzes zusammen.",
+    "merge": "In {{target}} mergen",
+    "merging": "Merge läuft…",
+    "merged_one": "{{count}} Commit in {{target}} integriert.",
+    "merged_other": "{{count}} Commits in {{target}} integriert.",
+    "upToDate": "Bereits auf dem neuesten Stand.",
+    "conflictsFound": "Konflikte in: {{files}}. Es wurde nichts geändert.",
+    "pr": {
+      "start": "Pull Request erstellen",
+      "open": "Pull Request öffnen",
+      "title": "Neuer Pull Request",
+      "titleField": "Titel",
+      "body": "Beschreibung",
+      "create": "Pull Request erstellen",
+      "creating": "Wird erstellt…",
+      "created": "Pull Request erstellt:",
+      "defaultBody": "Arbeit des Arbeitsplatzes {{desk}} (Workspace).\n\nCommits:\n{{commits}}",
+      "unavailable": {
+        "no_remote": "Das Repository hat kein Remote.",
+        "no_gh": "Die GitHub-CLI (gh) ist auf dem Server nicht installiert.",
+        "gh_not_authenticated": "Die GitHub-CLI (gh) ist nicht angemeldet: Führe `gh auth login` auf dem Server aus."
+      }
+    },
+    "errors": {
+      "generic": "Fehlgeschlagen: {{message}}",
+      "desk_busy": "Der Arbeitsplatz arbeitet gerade: Warte, bis er fertig ist.",
+      "desk_not_idle": "Der Arbeitsplatz wartet gerade nicht auf einen Prompt.",
+      "target_dirty": "{{path}} hat nicht committete Änderungen: Committe oder stashe sie zuerst.",
+      "desk_dirty": "Der Arbeitsplatz hat nicht committete Änderungen: Committe sie zuerst.",
+      "target_missing": "Der Branch {{target}} existiert nicht.",
+      "branch_missing": "Der Branch des Arbeitsplatzes existiert nicht mehr.",
+      "not_a_worktree_desk": "Dieser Arbeitsplatz arbeitet direkt im Projektordner: Es gibt nichts zu integrieren.",
+      "push_failed": "Der Push ist fehlgeschlagen: {{message}}",
+      "pr_failed": "Der Pull Request konnte nicht erstellt werden: {{message}}",
+      "commit_failed": "Der Commit ist fehlgeschlagen: {{message}}",
+      "merge_failed": "Der Merge ist fehlgeschlagen: {{message}}",
+      "no_remote": "Das Repository hat kein Remote.",
+      "no_gh": "Die GitHub-CLI (gh) ist auf dem Server nicht installiert.",
+      "gh_not_authenticated": "Die GitHub-CLI (gh) ist nicht angemeldet."
+    },
+    "open": "Integrieren…"
+  },
+  "usage": {
+    "title": "Claude-Abo",
+    "fiveHour": "5-Stunden-Fenster",
+    "fiveHourShort": "5 h",
+    "sevenDay": "Wochenfenster",
+    "sevenDayShort": "7 T",
+    "windowDetail": "{{window}}: {{percent}} % genutzt (Reset: {{reset}})",
+    "reported": "Aktualisiert {{ago}}",
+    "screen": "Abo",
+    "alert": {
+      "title": "Claude-Abo bei {{percent}} %",
+      "body": "Das {{window}} läuft bis {{reset}}. Ist das Limit erreicht, pausieren die Arbeitsplätze bis dahin."
+    },
+    "context": "Kontext {{percent}} %"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "graphics": "Grafikqualität",
+    "sound": "Bürogeräusche",
+    "notifications": "Browser-Benachrichtigungen",
+    "on": "An",
+    "off": "Aus",
+    "volumes": {
+      "ambience": "Umgebung (Büro, draußen, Tastaturen)",
+      "steps": "Schritte"
+    }
+  },
+  "roles": {
+    "lead": {
+      "label": "Teamleitung",
+      "description": "nimmt die Anfragen entgegen, zerlegt sie in klare Aufgaben, übergibt sie mit dem Tool delegate an die Kollegen, verfolgt den Fortschritt und prüft die Integration. Programmiert selbst wenig."
+    },
+    "developer": {
+      "label": "Entwicklung",
+      "description": "setzt die gewünschten Features samt Tests um und committet laufend."
+    },
+    "frontend": {
+      "label": "Frontend",
+      "description": "Benutzeroberfläche: Komponenten, Styles, Barrierefreiheit und Anbindung an die API."
+    },
+    "backend": {
+      "label": "Backend",
+      "description": "API, Daten, Serverlogik und Performance."
+    },
+    "tests": {
+      "label": "Tests und Qualität",
+      "description": "schreibt die Tests und führt sie aus, prüft die Arbeit der Kollegen und meldet Regressionen."
+    },
+    "reviewer": {
+      "label": "Review",
+      "description": "reviewt die Änderungen der Kollegen, schlägt Korrekturen vor und prüft, ob die Tests durchlaufen."
+    },
+    "docs": {
+      "label": "Dokumentation",
+      "description": "README, Anleitungen und hilfreiche Kommentare, stets auf dem Stand des Codes."
+    }
+  },
+  "phoneNotifications": {
+    "title": "Benachrichtigungen aufs Handy",
+    "intro": "Workspace sendet Benachrichtigungen in einen Discord-Kanal: Aktiviere die Benachrichtigungen für diesen Kanal in der Discord-App auf deinem Handy.",
+    "steps": {
+      "channel": "Erstelle in Discord einen privaten Kanal (zum Beispiel auf deinem eigenen Server).",
+      "webhook": "Kanal bearbeiten → Integrationen → Webhooks → Neuer Webhook → Webhook-URL kopieren.",
+      "paste": "Füge die URL unten ein, speichere und sende dann einen Test."
+    },
+    "webhook": "Discord-Webhook-URL",
+    "webhookSet": "Webhook gespeichert ({{hint}}) — füge eine neue URL ein, um ihn zu ersetzen",
+    "removeWebhook": "Webhook entfernen",
+    "events": "Benachrichtige mich, wenn",
+    "eventLabels": {
+      "attention": "ein Arbeitsplatz mich braucht (Frage, Berechtigung, Fehler, Limit)",
+      "usage": "das Abo 80 % und dann 95 % erreicht",
+      "finished": "ein Arbeitsplatz eine Aufgabe beendet, die länger als 5 Minuten gedauert hat"
+    },
+    "hideContent": "Inhalt ausblenden (nur Name des Arbeitsplatzes)",
+    "whenAway": "Solange ein Workspace-Tab offen und sichtbar ist, wird nichts gesendet; Benachrichtigungen gehen 30 Sekunden, nachdem du ihn verlassen hast, raus.",
+    "publicUrl": "Workspace-Adresse vom Handy aus",
+    "publicUrlHint": "Damit die Benachrichtigung direkt das Terminal des Arbeitsplatzes öffnet (z. B. eine Tailscale-Adresse). Leer lassen, wenn du keinen Link willst.",
+    "save": "Speichern",
+    "saved": "Einstellungen gespeichert.",
+    "test": "Test senden",
+    "testSent": "Test gesendet: Schau in deinen Discord-Kanal.",
+    "testFailed": "Senden fehlgeschlagen: {{error}}",
+    "lastSent": "Letzte Benachrichtigung {{ago}} gesendet.",
+    "menu": "Handy-Benachrichtigungen…",
+    "errors": {
+      "invalid_input": "Ungültige URL: Nötig sind eine Discord-Webhook-URL (https://discord.com/api/webhooks/…) und eine http(s)-Adresse.",
+      "no_webhook": "Speichere zuerst eine Webhook-URL."
+    }
+  },
+  "search": {
+    "title": "Unterhaltungen durchsuchen",
+    "button": "Unterhaltungen durchsuchen ({{shortcut}})",
+    "placeholder": "Ein Wort, ein Fehler, ein Dateiname…",
+    "allRooms": "Alle Räume",
+    "hint": "Durchsucht die Prompts und Antworten aller Arbeitsplätze (Groß-/Kleinschreibung und Akzente werden ignoriert).",
+    "searching": "Suche läuft…",
+    "none": "Keine Ergebnisse.",
+    "count_one": "{{count}} Ergebnis, neueste zuerst.",
+    "count_other": "{{count}} Ergebnisse, neueste zuerst.",
+    "countTruncated_one": "Das neueste Ergebnis ({{count}}): Verfeinere die Suche, um die anderen zu sehen.",
+    "countTruncated_other": "Die {{count}} neuesten Ergebnisse: Verfeinere die Suche, um die anderen zu sehen.",
+    "you": "Prompt",
+    "answer": "Antwort"
+  },
+  "stats": {
+    "periods": {
+      "day": "24 h",
+      "week": "7 Tage",
+      "month": "30 Tage"
+    },
+    "hint": "Klicke auf eine Spalte zum Sortieren, auf einen Arbeitsplatz zum Öffnen.",
+    "columns": {
+      "desk": "Arbeitsplatz",
+      "workingMs": "Arbeitet",
+      "waitingMs": "Wartet auf dich",
+      "prompts": "Prompts",
+      "toolCalls": "Tools",
+      "lines": "Zeilen",
+      "outputTokens": "Erzeugte Tokens",
+      "contextTokens": "Kontext",
+      "integrations": "Integrationen"
+    },
+    "columnHints": {
+      "workingMs": "Arbeitszeit (inklusive Kompaktierung)",
+      "waitingMs": "Wartezeit auf eine Antwort, eine Berechtigung oder das Ende eines Limits",
+      "prompts": "Prompts, die du eingegeben hast (ohne automatisches Wecken)",
+      "toolCalls": "Tool-Aufrufe (Lesen, Bearbeiten, Befehle…)",
+      "lines": "Durch erfolgreiche Dateibearbeitungen hinzugefügte und entfernte Zeilen",
+      "outputTokens": "Von Claude erzeugte Tokens",
+      "contextTokens": "Wie voll der Kontext der Unterhaltung gerade ist",
+      "integrations": "Merges · Pull Requests"
+    },
+    "teamwork": "Weckrufe · Delegationen",
+    "teamworkHint": "Automatische Weckrufe bei Nachrichten · von Kollegen übergebene Aufgaben",
+    "integrationsHint": "Merges · Pull Requests",
+    "compactions": "Kompaktierungen",
+    "minutes_one": "{{count}} Min.",
+    "minutes_other": "{{count}} Min.",
+    "hoursMinutes": "{{hours}} h {{minutes}}",
+    "lessThanMinute": "< 1 Min.",
+    "idleDesks_one": "{{count}} Arbeitsplatz ohne Aktivität in diesem Zeitraum.",
+    "idleDesks_other": "{{count}} Arbeitsplätze ohne Aktivität in diesem Zeitraum."
+  },
+  "frames": {
+    "title": "Bilderrahmen",
+    "choose": "Bild auswählen…",
+    "replace": "Bild ändern…",
+    "remove": "Bild entfernen",
+    "drop": "Klicke, um ein Bild auszuwählen, zieh es hierher oder füge es ein ({{shortcut}}).",
+    "uploading": "Wird hochgeladen…",
+    "hint": "Das Bild wird um seine Mitte herum zugeschnitten, um den Rahmen zu füllen. Es wird auf dem Workspace-Server gespeichert.",
+    "errors": {
+      "not_image": "Diese Datei ist kein lesbares Bild.",
+      "upload_failed": "Das Bild konnte nicht gespeichert werden. Versuch es noch einmal."
+    }
+  }
+}

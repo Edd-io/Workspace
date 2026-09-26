@@ -5,6 +5,8 @@ import {
   DESK_STATE_COLORS,
   type Desk,
   type DeskState,
+  type Language,
+  LANGUAGES,
   type NotificationEvent,
   type NotificationSettings,
   type UpdateNotificationSettings,
@@ -33,7 +35,7 @@ interface StoredSettings {
   events: Record<NotificationEvent, boolean>;
   hideContent: boolean;
   publicUrl: string | null;
-  language: 'fr' | 'en';
+  language: Language;
   lastSentAt: number | null;
   lastError: string | null;
 }
@@ -96,12 +98,15 @@ export class Presence {
 type Dictionary = Record<string, unknown>;
 
 /** Reads the web client's locale files (the only place with non-English texts). */
-export function loadLocales(repoRoot: string): Record<'fr' | 'en', Dictionary> {
+export function loadLocales(repoRoot: string): Record<Language, Dictionary> {
   const read = (language: string) =>
     JSON.parse(
       readFileSync(join(repoRoot, 'apps/web/src/locales', language, 'common.json'), 'utf8'),
     ) as Dictionary;
-  return { fr: read('fr'), en: read('en') };
+  return Object.fromEntries(LANGUAGES.map((language) => [language, read(language)])) as Record<
+    Language,
+    Dictionary
+  >;
 }
 
 export function translate(
@@ -136,7 +141,7 @@ async function postToDiscord(webhook: string, body: unknown): Promise<void> {
 export class Notifier {
   private readonly store: OfficeStore;
   private readonly presence: Presence;
-  private readonly locales: Record<'fr' | 'en', Dictionary>;
+  private readonly locales: Record<Language, Dictionary>;
   private readonly send: Sender;
   private readonly groupMs: number;
   private settings: StoredSettings;
@@ -148,7 +153,7 @@ export class Notifier {
   constructor(
     store: OfficeStore,
     presence: Presence,
-    locales: Record<'fr' | 'en', Dictionary>,
+    locales: Record<Language, Dictionary>,
     send: Sender = postToDiscord,
     groupMs = GROUP_MS,
   ) {
