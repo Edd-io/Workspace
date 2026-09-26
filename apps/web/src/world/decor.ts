@@ -22,6 +22,8 @@ export interface PropPlacement {
   rotation: number;
   scale?: number;
   tilt?: number;
+  /** Outside the building: darkened at night like the rest of the outdoors. */
+  outdoor?: boolean;
 }
 
 export const DESK_TOP = 0.74;

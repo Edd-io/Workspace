@@ -108,6 +108,9 @@ export function daylight(sun: SunPosition, indoors: boolean): Daylight {
         },
     ambient: indoors ? 0.55 : 0.15 + 0.05 * night,
     fog: mix(mix('#cfd8e0', '#e8b890', smoothstep(12, 0, elevation) * day), '#0b1020', night),
-    outdoorTint: mix('#ffffff', '#2f3844', night * 0.9),
+    // Moonlit rather than black: everything outside (ground, trees, cars, neighbors) gets the same
+    // tint, so nothing stands out of the night.
+    // (The tint multiplies linear colors: #a3acbd keeps about a third of the daylight brightness.)
+    outdoorTint: mix('#ffffff', '#a3acbd', night),
   };
 }

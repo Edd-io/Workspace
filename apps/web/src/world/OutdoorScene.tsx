@@ -235,7 +235,7 @@ export function OutdoorScene({ layout, light }: { layout: OfficeLayout; light: D
           {t('app.name')}
         </Text>
       </group>
-      <Neighborhood neighbors={outdoor.neighbors} night={light.night} />
+      <Neighborhood neighbors={outdoor.neighbors} night={light.night} tint={light.outdoorTint} />
     </group>
   );
 }

@@ -207,7 +207,15 @@ function buildGeometry(neighbors: Neighbor[]): THREE.BufferGeometry {
   return geometry;
 }
 
-export function Neighborhood({ neighbors, night }: { neighbors: Neighbor[]; night: number }) {
+export function Neighborhood({
+  neighbors,
+  night,
+  tint,
+}: {
+  neighbors: Neighbor[];
+  night: number;
+  tint: string;
+}) {
   const geometry = useMemo(() => buildGeometry(neighbors), [neighbors]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   const materials = useMemo(() => {
@@ -237,6 +245,8 @@ export function Neighborhood({ neighbors, night }: { neighbors: Neighbor[]; nigh
   );
   useEffect(() => {
     materials[0].emissiveIntensity = night * 1.1;
-  }, [materials, night]);
+    // Facades and roofs darken with the rest of the outdoors; lit windows (emissive) do not.
+    for (const material of materials) material.color.set(tint);
+  }, [materials, night, tint]);
   return <mesh geometry={geometry} material={[...materials]} />;
 }

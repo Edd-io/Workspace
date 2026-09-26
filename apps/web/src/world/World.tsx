@@ -141,7 +141,7 @@ export function World() {
       <Suspense fallback={null}>
         <Structure layout={layout} cutaway={!walking} />
         <OutdoorScene layout={layout} light={light} />
-        <PropInstances placements={visibleProps} />
+        <PropInstances placements={visibleProps} outdoorTint={light.outdoorTint} />
       </Suspense>
 
       {layout.rooms.map((room) => (

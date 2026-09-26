@@ -125,7 +125,7 @@ export function computeOutdoor(layout: OfficeLayout): OutdoorLayout {
   const roads: Road[] = [];
   const pools: LightPool[] = [];
   const place = (model: PropName, x: number, z: number, rotation = 0, y = GROUND_Y, scale?: number) => {
-    props.push({ model, x, y, z, rotation, ...(scale ? { scale } : {}) });
+    props.push({ model, x, y, z, rotation, outdoor: true, ...(scale ? { scale } : {}) });
   };
   const lamp = (x: number, z: number, rotation: number, y = GROUND_Y) => {
     place('street_lamp', x, z, rotation, y);
