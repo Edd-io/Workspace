@@ -47,7 +47,10 @@ export function deskDir(dataDir: string, deskId: string): string {
 /** Events Claude Code does not deliver through `http` hooks (verified empirically); relayed with curl. */
 const COMMAND_ONLY_EVENTS = new Set<string>(['SessionStart']);
 
-export function buildHookSettings(hookUrl: string): object {
+/** How often (seconds) the status line is refreshed even when nothing happens in the session. */
+const STATUS_LINE_REFRESH_S = 60;
+
+export function buildHookSettings(hookUrl: string, statusUrl?: string): object {
   const httpHook = {
     type: 'http',
     url: hookUrl,
@@ -62,9 +65,19 @@ export function buildHookSettings(hookUrl: string): object {
       `-H "Authorization: Bearer $WORKSPACE_DESK_TOKEN" --data-binary @- ${shellQuote(hookUrl)} || true`,
     timeout: 10,
   };
+  // The status line input carries the subscription usage and the context size: the server keeps
+  // them and answers with the line to print. curl is lighter than node for a command run this often.
+  const statusLine = statusUrl && {
+    type: 'command',
+    command:
+      `curl -s --max-time 2 -X POST -H 'content-type: application/json' ` +
+      `-H "Authorization: Bearer $WORKSPACE_DESK_TOKEN" --data-binary @- ${shellQuote(statusUrl)} || true`,
+    refreshInterval: STATUS_LINE_REFRESH_S,
+  };
   return {
     // The office tools only reach the Workspace server: never ask the human before using them.
     permissions: { allow: ['mcp__office'] },
+    ...(statusLine ? { statusLine } : {}),
     hooks: Object.fromEntries(
       HOOK_EVENTS.map((event) => [
         event,
@@ -98,7 +111,14 @@ export function writeLaunchFiles(context: LaunchContext): string {
   const settingsPath = join(dir, 'settings.json');
   writeFileSync(
     settingsPath,
-    JSON.stringify(buildHookSettings(`${context.hookBaseUrl}/internal/hooks/${desk.id}`), null, 2),
+    JSON.stringify(
+      buildHookSettings(
+        `${context.hookBaseUrl}/internal/hooks/${desk.id}`,
+        `${context.hookBaseUrl}/internal/office/${desk.id}/status`,
+      ),
+      null,
+      2,
+    ),
   );
 
   let mcpConfigPath: string | null = null;

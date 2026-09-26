@@ -5,9 +5,6 @@ import { api } from '../../api/http';
 import { deskTopic } from '../../lib/desk';
 import { InboxPanel } from '../inbox/InboxPanel';
 import { MapPanel } from '../map/MapPanel';
-import { browserNotificationsEnabled, setBrowserNotifications } from '../notifications/useAttentionAlerts';
-import { onSoundEnabledChange, setSoundEnabled, soundEnabled } from '../sound/soundSettings';
-import { GRAPHICS_QUALITIES, setGraphicsQuality, useGraphicsQuality } from '../../world/graphicsSettings';
 import { SummaryPanel } from '../summary/SummaryPanel';
 import { TimelinePanel } from '../timeline/TimelinePanel';
 import { attentionDesks, desksOfRoom, sortedRooms, useOffice } from '../../state/officeStore';
@@ -16,8 +13,9 @@ import { CreateDeskDialog } from './CreateDeskDialog';
 import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
 import { IntegrationDialog } from '../integration/IntegrationDialog';
-import { LanguageSwitcher } from './LanguageSwitcher';
+import { UsageGauge } from '../usage/UsageGauge';
 import { Minimap } from './Minimap';
+import { SettingsMenu } from './SettingsMenu';
 import { Toasts } from './Toasts';
 import { StateDot } from './StateBadge';
 
@@ -45,11 +43,6 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
     return result;
   }, [desks]);
 
-  const logout = async () => {
-    await api('POST', '/api/auth/logout');
-    onLoggedOut();
-  };
-
   return (
     <header className="topbar panel">
       <div className="topbar__brand">
@@ -68,6 +61,7 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
           </span>
         ))}
       </div>
+      <UsageGauge />
       <div className="topbar__actions">
         <InboxButton />
         <button className="button button--ghost" onClick={() => setPanel({ kind: 'summary' })}>
@@ -76,14 +70,8 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
         <button className="button button--ghost" onClick={() => setPanel({ kind: 'timeline' })}>
           {t('timeline.button')}
         </button>
-        <NotificationToggle />
-        <SoundToggle />
-        <GraphicsToggle />
         <ViewModeSwitch />
-        <LanguageSwitcher />
-        <button className="button button--ghost" onClick={() => void logout()}>
-          {t('login.signOut')}
-        </button>
+        <SettingsMenu onLoggedOut={onLoggedOut} />
       </div>
     </header>
   );
@@ -191,56 +179,6 @@ function InboxButton() {
     >
       {t('inbox.button')}
       {count > 0 && <span className="badge">{count}</span>}
-    </button>
-  );
-}
-
-function NotificationToggle() {
-  const { t } = useTranslation();
-  const [enabled, setEnabled] = useState(browserNotificationsEnabled);
-  return (
-    <button
-      className={`button button--ghost button--icon${enabled ? ' button--on' : ''}`}
-      onClick={() => void setBrowserNotifications(!enabled).then(setEnabled)}
-      title={enabled ? t('notifications.disable') : t('notifications.enable')}
-      aria-pressed={enabled}
-    >
-      {enabled ? '🔔' : '🔕'}
-    </button>
-  );
-}
-
-function SoundToggle() {
-  const { t } = useTranslation();
-  const [enabled, setEnabled] = useState(soundEnabled);
-  useEffect(() => onSoundEnabledChange(setEnabled), []);
-  return (
-    <button
-      className="button button--ghost button--icon"
-      onClick={() => setSoundEnabled(!enabled)}
-      title={enabled ? t('sound.mute') : t('sound.unmute')}
-      aria-pressed={enabled}
-    >
-      {enabled ? '🔊' : '🔇'}
-    </button>
-  );
-}
-
-function GraphicsToggle() {
-  const { t } = useTranslation();
-  const quality = useGraphicsQuality();
-  const next = GRAPHICS_QUALITIES[(GRAPHICS_QUALITIES.indexOf(quality) + 1) % GRAPHICS_QUALITIES.length]!;
-  return (
-    <button
-      className="button button--ghost"
-      onClick={() => setGraphicsQuality(next)}
-      title={t('graphics.hint', {
-        level: t(`graphics.levels.${quality}`),
-        description: t(`graphics.descriptions.${quality}`),
-      })}
-      aria-label={t('graphics.label')}
-    >
-      <span aria-hidden="true">🖥️</span> {t(`graphics.levels.${quality}`)}
     </button>
   );
 }

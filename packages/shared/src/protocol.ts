@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { Desk, OfficeSummary, Room, RoomBoard } from './models.ts';
+import type { DeskStats, SubscriptionUsage, UsageAlert } from './usage.ts';
 
 /**
  * WebSocket protocol between the web client and the server.
@@ -37,7 +38,17 @@ export const PREVIEW_FLAG_UNDERLINE = 8;
 export const PREVIEW_FLAG_INVERSE = 16;
 
 export type ServerMessage =
-  | { t: 'office.snapshot'; rooms: Room[]; desks: Desk[]; boards: RoomBoard[] }
+  | {
+      t: 'office.snapshot';
+      rooms: Room[];
+      desks: Desk[];
+      boards: RoomBoard[];
+      usage: SubscriptionUsage;
+      deskStats: Record<string, DeskStats>;
+    }
+  | { t: 'usage.update'; usage: SubscriptionUsage }
+  | { t: 'usage.alert'; alert: UsageAlert }
+  | { t: 'desk.stats'; deskId: string; stats: DeskStats }
   | { t: 'board.update'; board: RoomBoard }
   | { t: 'summary.update'; summary: OfficeSummary }
   | { t: 'room.upsert'; room: Room }

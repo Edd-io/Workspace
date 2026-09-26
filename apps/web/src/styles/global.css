@@ -304,13 +304,16 @@ textarea.input {
 .topbar__counts {
   display: flex;
   gap: 8px;
-  flex: 1;
-  flex-wrap: wrap;
+  /* Never squeezed: the actions wrap first on narrow windows. */
+  flex: 1 0 auto;
 }
 .topbar__actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 .count-chip {
   display: inline-flex;
@@ -1157,4 +1160,93 @@ textarea.input {
 }
 .diff-line--meta {
   color: var(--text-muted);
+}
+
+/* ---- subscription usage ----------------------------------------------------------------------- */
+.usage-gauge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px;
+  cursor: default;
+}
+.usage-gauge__item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.usage-gauge__label {
+  color: var(--text-muted);
+}
+.usage-gauge__bar {
+  position: relative;
+  width: 34px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.usage-gauge__bar span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 3px;
+  background: var(--usage-color);
+}
+.usage-gauge__item--ok {
+  --usage-color: #3ddc84;
+}
+.usage-gauge__item--high {
+  --usage-color: #ff9f1a;
+}
+.usage-gauge__item--critical {
+  --usage-color: #ff4d4f;
+}
+.usage-gauge__item--critical .usage-gauge__value {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+.toast--usage {
+  border-color: rgba(255, 159, 26, 0.5);
+}
+.toast__icon {
+  font-size: 18px;
+}
+
+/* ---- settings menu ---------------------------------------------------------------------------- */
+.settings {
+  position: relative;
+}
+.settings__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 6;
+  width: 300px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--panel-solid);
+}
+.settings__row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.settings__row .segmented {
+  align-self: flex-start;
+}
+.settings__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.settings__hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.settings__logout {
+  align-self: stretch;
 }

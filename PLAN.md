@@ -297,11 +297,11 @@ Integrate a desk's work:
 - [x] Conflicts: ask the desk itself to merge the target into its branch; update a desk from its target
 
 Subscription usage gauge:
-- [ ] Each desk relays its status line JSON (`rate_limits`, context window, cost) to the server with
+- [x] Each desk relays its status line JSON (`rate_limits`, context window, cost) to the server with
       `curl`; the server answers with the status line text shown in the terminal
-- [ ] Account usage (5-hour and weekly windows) kept in the database and pushed to the clients
-- [ ] Gauge in the top bar and on the master office map screen; alerts at 80 % and 95 % of a window
-- [ ] Per-desk context usage and model in the terminal header; usage included in the Haiku briefing
+- [x] Account usage (5-hour and weekly windows) kept in the database and pushed to the clients
+- [x] Gauge in the top bar and on the master office map screen; alerts at 80 % and 95 % of a window
+- [x] Per-desk context usage and model in the terminal header; usage included in the Haiku briefing
 
 A living office:
 - [ ] Day/night cycle following the local time: sun course, golden hour, night sky with stars, dim

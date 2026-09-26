@@ -201,9 +201,7 @@
     "hint": "Click a desk to open its terminal, anywhere else to go there."
   },
   "notifications": {
-    "title": "{{desk}} ({{room}}) needs you",
-    "enable": "Enable browser notifications",
-    "disable": "Disable browser notifications"
+    "title": "{{desk}} ({{room}}) needs you"
   },
   "timeline": {
     "title": "Timeline",
@@ -215,22 +213,16 @@
     "empty": "No desk activity in this period.",
     "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} min)"
   },
-  "sound": {
-    "mute": "Mute the office",
-    "unmute": "Turn the office sound on"
-  },
   "graphics": {
-    "label": "Graphics quality",
-    "hint": "Graphics quality: {{level}} ({{description}}). Click to change.",
     "levels": {
       "eco": "Eco",
       "normal": "Normal",
       "max": "Max"
     },
     "descriptions": {
-      "eco": "coolest, saves battery",
-      "normal": "balanced",
-      "max": "smoothest, most demanding"
+      "eco": "Coolest, saves battery",
+      "normal": "Balanced",
+      "max": "Smoothest, most demanding"
     }
   },
   "integration": {
@@ -314,5 +306,28 @@
       "gh_not_authenticated": "The GitHub CLI (gh) is not logged in."
     },
     "open": "Integrate…"
+  },
+  "usage": {
+    "title": "Claude subscription",
+    "fiveHour": "5-hour window",
+    "fiveHourShort": "5h",
+    "sevenDay": "week",
+    "sevenDayShort": "7d",
+    "windowDetail": "{{window}}: {{percent}}% used (resets at {{reset}})",
+    "reported": "Updated {{ago}}",
+    "screen": "Subscription",
+    "alert": {
+      "title": "Claude subscription at {{percent}}%",
+      "body": "The {{window}} resets at {{reset}}. Past the limit, desks stop until then."
+    },
+    "context": "context {{percent}}%"
+  },
+  "settings": {
+    "title": "Settings",
+    "graphics": "Graphics quality",
+    "sound": "Office sound",
+    "notifications": "Browser notifications",
+    "on": "On",
+    "off": "Off"
   }
 }

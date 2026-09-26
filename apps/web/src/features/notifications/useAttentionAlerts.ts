@@ -1,7 +1,8 @@
 import { ATTENTION_STATES, type DeskState } from '@workspace/shared';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOffice } from '../../state/officeStore';
+import { onUsageAlert, useOffice } from '../../state/officeStore';
+import { formatReset, WINDOW_LABEL_KEYS } from '../usage/usage';
 import { playChime } from '../sound/chime';
 
 const PREFERENCE_KEY = 'workspace.browserNotifications';
@@ -32,7 +33,27 @@ export async function setBrowserNotifications(enabled: boolean): Promise<boolean
  * chime, and a browser notification if enabled and the tab is not visible.
  */
 export function useAttentionAlerts(): void {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Subscription usage crossing 80 % / 95 % of a window (sent once per window by the server).
+  useEffect(
+    () =>
+      onUsageAlert((alert) => {
+        useOffice.getState().pushUsageToast(alert);
+        playChime('question');
+        if (browserNotificationsEnabled() && document.visibilityState !== 'visible') {
+          new Notification(t('usage.alert.title', { percent: Math.round(alert.usedPercentage) }), {
+            body: t('usage.alert.body', {
+              window: t(WINDOW_LABEL_KEYS[alert.window]),
+              reset: formatReset(alert, i18n.resolvedLanguage ?? 'en'),
+            }),
+            tag: `usage-${alert.window}`,
+          });
+        }
+      }),
+    [t, i18n.resolvedLanguage],
+  );
+
   useEffect(() => {
     const previous = new Map<string, DeskState>();
     let initialized = false;

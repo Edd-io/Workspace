@@ -2,10 +2,13 @@ import { create } from 'zustand';
 import {
   ATTENTION_STATES,
   type Desk,
+  type DeskStats,
   type OfficeSummary,
   type Room,
   type RoomBoard,
   type ServerMessage,
+  type SubscriptionUsage,
+  type UsageAlert,
 } from '@workspace/shared';
 import { officeSocket, type ConnectionStatus } from '../api/socket';
 
@@ -20,11 +23,9 @@ export type Panel =
   | { kind: 'integrate'; deskId: string }
   | null;
 
-/** Short-lived in-app notification (a desk started waiting for the human). */
-export interface Toast {
-  id: number;
-  deskId: string;
-}
+/** Short-lived in-app notification: a desk started waiting for the human, or usage is running out. */
+export type Toast =
+  { id: number; deskId: string; usage?: undefined } | { id: number; usage: UsageAlert; deskId?: undefined };
 
 export type ViewMode = 'overview' | 'walk';
 
@@ -35,6 +36,10 @@ interface OfficeState {
   desks: Record<string, Desk>;
   boards: Record<string, RoomBoard>;
   summary: OfficeSummary | null;
+  /** Claude subscription usage (shared by every desk). */
+  usage: SubscriptionUsage | null;
+  /** Live figures of each desk's session (model, context size). */
+  deskStats: Record<string, DeskStats>;
   toasts: Toast[];
   /** Desk the camera is looking at. */
   focusedDeskId: string | null;
@@ -51,6 +56,7 @@ interface OfficeState {
   goTo: (x: number, z: number, yaw?: number) => void;
   setSummary: (summary: OfficeSummary) => void;
   pushToast: (deskId: string) => void;
+  pushUsageToast: (alert: UsageAlert) => void;
   dismissToast: (id: number) => void;
   openTerminal: (deskId: string) => void;
   closeTerminal: () => void;
@@ -64,6 +70,8 @@ export const useOffice = create<OfficeState>((set) => ({
   desks: {},
   boards: {},
   summary: null,
+  usage: null,
+  deskStats: {},
   toasts: [],
   focusedDeskId: null,
   terminalDeskId: null,
@@ -85,6 +93,13 @@ export const useOffice = create<OfficeState>((set) => ({
       toasts: [
         ...state.toasts.filter((toast) => toast.deskId !== deskId),
         { id: Date.now() + Math.random(), deskId },
+      ].slice(-4),
+    })),
+  pushUsageToast: (alert) =>
+    set((state) => ({
+      toasts: [
+        ...state.toasts.filter((toast) => toast.usage?.window !== alert.window),
+        { id: Date.now() + Math.random(), usage: alert },
       ].slice(-4),
     })),
   dismissToast: (id) => set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) })),
@@ -113,7 +128,18 @@ function applyMessage(message: ServerMessage): void {
         rooms: Object.fromEntries(message.rooms.map((room) => [room.id, room])),
         desks: Object.fromEntries(message.desks.map((desk) => [desk.id, desk])),
         boards: Object.fromEntries(message.boards.map((board) => [board.roomId, board])),
+        usage: message.usage,
+        deskStats: message.deskStats,
       });
+      break;
+    case 'usage.update':
+      useOffice.setState({ usage: message.usage });
+      break;
+    case 'usage.alert':
+      for (const listener of usageAlertListeners) listener(message.alert);
+      break;
+    case 'desk.stats':
+      useOffice.setState((state) => ({ deskStats: { ...state.deskStats, [message.deskId]: message.stats } }));
       break;
     case 'summary.update':
       useOffice.setState({ summary: message.summary });
@@ -146,6 +172,14 @@ function applyMessage(message: ServerMessage): void {
     default:
       break;
   }
+}
+
+const usageAlertListeners = new Set<(alert: UsageAlert) => void>();
+
+/** Usage alerts are events, not state: the notification layer subscribes here. */
+export function onUsageAlert(listener: (alert: UsageAlert) => void): () => void {
+  usageAlertListeners.add(listener);
+  return () => usageAlertListeners.delete(listener);
 }
 
 let started = false;

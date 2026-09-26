@@ -51,7 +51,11 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
 - **Walk** (`V` or the top bar): first-person visit. Click to look around, WASD / ZQSD / arrows to
   move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you.
 - **Master office** (at the entrance): live map, Haiku briefing, inbox and the day's timeline.
-- **Graphics quality** (🖥 in the top bar): Eco / Normal / Max. The office only redraws at full rate
-  while you move around; Eco keeps laptops cool and saves battery.
+- **Settings** (⚙ in the top bar): graphics quality (Eco / Normal / Max — the office only redraws at
+  full rate while you move around; Eco keeps laptops cool), sound, browser notifications, language.
+- **Subscription gauge** (top bar and master office map): 5-hour and weekly usage of the Claude
+  subscription, relayed by the desks' status lines, with alerts at 80 % and 95 %.
+- **Integrate a desk's work** (desk menu or terminal header): diff, merge into a branch, or pull
+  request through `gh`.
 - Desk lamps: blue = working, orange = needs you, green = idle, purple = compacting,
   yellow = usage limit, red = error, off = stopped.

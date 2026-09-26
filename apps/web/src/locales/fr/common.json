@@ -201,9 +201,7 @@
     "hint": "Clique sur un poste pour ouvrir son terminal, ailleurs pour t'y rendre."
   },
   "notifications": {
-    "title": "{{desk}} ({{room}}) t'attend",
-    "enable": "Activer les notifications du navigateur",
-    "disable": "Désactiver les notifications du navigateur"
+    "title": "{{desk}} ({{room}}) t'attend"
   },
   "timeline": {
     "title": "Journée",
@@ -215,22 +213,16 @@
     "empty": "Aucune activité sur cette période.",
     "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} min)"
   },
-  "sound": {
-    "mute": "Couper le son du bureau",
-    "unmute": "Activer le son du bureau"
-  },
   "graphics": {
-    "label": "Qualité graphique",
-    "hint": "Qualité graphique : {{level}} ({{description}}). Cliquer pour changer.",
     "levels": {
       "eco": "Éco",
       "normal": "Normal",
       "max": "Max"
     },
     "descriptions": {
-      "eco": "chauffe le moins, économise la batterie",
-      "normal": "bon compromis",
-      "max": "le plus fluide, le plus gourmand"
+      "eco": "Chauffe le moins, économise la batterie",
+      "normal": "Bon compromis",
+      "max": "Le plus fluide, le plus gourmand"
     }
   },
   "integration": {
@@ -314,5 +306,28 @@
       "gh_not_authenticated": "La CLI GitHub (gh) n'est pas connectée."
     },
     "open": "Intégrer…"
+  },
+  "usage": {
+    "title": "Abonnement Claude",
+    "fiveHour": "fenêtre de 5 h",
+    "fiveHourShort": "5 h",
+    "sevenDay": "semaine",
+    "sevenDayShort": "7 j",
+    "windowDetail": "{{window}} : {{percent}} % utilisés (réinitialisation à {{reset}})",
+    "reported": "Mis à jour {{ago}}",
+    "screen": "Abonnement",
+    "alert": {
+      "title": "Abonnement Claude à {{percent}} %",
+      "body": "La {{window}} se réinitialise à {{reset}}. Au-delà de la limite, les postes s'arrêtent jusque-là."
+    },
+    "context": "contexte {{percent}} %"
+  },
+  "settings": {
+    "title": "Réglages",
+    "graphics": "Qualité graphique",
+    "sound": "Son du bureau",
+    "notifications": "Notifications du navigateur",
+    "on": "Activé",
+    "off": "Coupé"
   }
 }

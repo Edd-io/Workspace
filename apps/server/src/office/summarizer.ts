@@ -3,7 +3,7 @@ import { EventEmitter } from 'node:events';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import type { OfficeSummary } from '@workspace/shared';
+import type { OfficeSummary, SubscriptionUsage, UsageWindow } from '@workspace/shared';
 import type { Config } from '../config.ts';
 import type { DeskRecord, OfficeStore } from '../store/officeStore.ts';
 import type { BoardStore } from './boardStore.ts';
@@ -63,12 +63,18 @@ export class Summarizer extends EventEmitter<{ update: [OfficeSummary] }> {
   private generating: Promise<void> | null = null;
   private status: OfficeSummary['status'] = 'idle';
   private lastError: string | null = null;
+  private usageSource: (() => SubscriptionUsage) | null = null;
 
   constructor(store: OfficeStore, boards: BoardStore, config: Config) {
     super();
     this.store = store;
     this.boards = boards;
     this.config = config;
+  }
+
+  /** Where the briefing reads the subscription usage from. */
+  setUsageSource(source: () => SubscriptionUsage): void {
+    this.usageSource = source;
   }
 
   current(): OfficeSummary {
@@ -154,6 +160,15 @@ export class Summarizer extends EventEmitter<{ update: [OfficeSummary] }> {
     const lines: string[] = [
       `Current time: ${localTime(now)}. Period covered: since ${localTime(since)} (${ago(since, now)}).`,
     ];
+    const usage = this.usageSource?.();
+    const window = (label: string, value: UsageWindow | null | undefined) =>
+      value
+        ? `${label} ${Math.round(value.usedPercentage)}% used (resets ${localTime(value.resetsAt)})`
+        : null;
+    const usageParts = [window('5-hour window', usage?.fiveHour), window('weekly', usage?.sevenDay)].filter(
+      Boolean,
+    );
+    if (usageParts.length > 0) lines.push(`Claude subscription usage: ${usageParts.join(', ')}.`);
     const rooms = this.store.listRooms();
     if (rooms.length === 0) lines.push('The office has no room yet.');
     for (const room of rooms) {

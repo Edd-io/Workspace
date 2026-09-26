@@ -4,12 +4,14 @@ import { z } from 'zod';
 import { postRoomMessageSchema, postRoomNoteSchema } from '@workspace/shared';
 import type { BoardStore } from '../office/boardStore.ts';
 import { deskTopic, type RoomAwareness } from '../office/roomAwareness.ts';
+import { statusLineSchema, statusLineText, type UsageTracker } from '../office/usageTracker.ts';
 import type { DeskRecord, OfficeStore } from '../store/officeStore.ts';
 
 interface Deps {
   store: OfficeStore;
   boards: BoardStore;
   awareness: RoomAwareness;
+  usage: UsageTracker;
 }
 
 function tokensEqual(a: string, b: string): boolean {
@@ -41,7 +43,23 @@ const deskMessageSchema = z.object({
   to: z.string().trim().min(1).optional(),
 });
 
-export function registerOfficeRoutes(app: FastifyInstance, { store, boards, awareness }: Deps): void {
+export function registerOfficeRoutes(app: FastifyInstance, { store, boards, awareness, usage }: Deps): void {
+  // ---- internal: status line of each desk (relayed by curl, see launchConfig.ts) ---------------
+
+  app.post<{ Params: { deskId: string } }>('/internal/office/:deskId/status', async (request, reply) => {
+    const desk = authenticateDesk(store, request, reply);
+    if (!desk) return reply;
+    const parsed = statusLineSchema.safeParse(request.body ?? {});
+    if (parsed.success) usage.report(desk.id, parsed.data);
+    const room = store.getRoom(desk.roomId);
+    const stats = usage.deskStats()[desk.id];
+    const text = stats
+      ? statusLineText(room?.name ?? '', desk.name, stats, usage.usage())
+      : `Workspace · ${desk.name}`;
+    // Claude Code prints what the status line command writes: plain text.
+    return reply.type('text/plain; charset=utf-8').send(text);
+  });
+
   // ---- internal: called by the office MCP server of each desk -----------------------------------
 
   app.get<{ Params: { deskId: string } }>('/internal/office/:deskId/colleagues', async (request, reply) => {

@@ -28,6 +28,7 @@ function TerminalWindow({ deskId }: { deskId: string }) {
   const room = useOffice((state) => (desk ? state.rooms[desk.roomId] : undefined));
   const closeTerminal = useOffice((state) => state.closeTerminal);
   const setPanel = useOffice((state) => state.setPanel);
+  const stats = useOffice((state) => (deskId ? state.deskStats[deskId] : undefined));
   const containerRef = useRef<HTMLDivElement>(null);
   const [closedReason, setClosedReason] = useState<'offline' | 'removed' | null>(null);
 
@@ -115,6 +116,16 @@ function TerminalWindow({ deskId }: { deskId: string }) {
             <strong>{desk.name}</strong>
             <span className="muted">{room?.name}</span>
             {desk.branch && <code className="muted">{desk.branch}</code>}
+            {stats && (stats.model || stats.contextPercent !== null) && (
+              <span className="muted">
+                {[
+                  stats.model,
+                  stats.contextPercent !== null && t('usage.context', { percent: stats.contextPercent }),
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
+            )}
           </div>
           <StateBadge state={desk.state} />
           <div className="terminal-window__actions">

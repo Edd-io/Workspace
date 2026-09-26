@@ -24,6 +24,7 @@ import type { IntegrationService } from '../office/integrationService.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
 import type { RoomAwareness } from '../office/roomAwareness.ts';
 import type { Summarizer } from '../office/summarizer.ts';
+import type { UsageTracker } from '../office/usageTracker.ts';
 import { buildTimeline } from '../office/timeline.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import type { HookPayload } from '../sessions/stateMachine.ts';
@@ -42,6 +43,7 @@ export interface AppDeps {
   awareness: RoomAwareness;
   summarizer: Summarizer;
   integration: IntegrationService;
+  usage: UsageTracker;
 }
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
@@ -58,7 +60,7 @@ function sendError(reply: FastifyReply, error: unknown): FastifyReply {
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
-  const { config, store, auth, office, sessions, boards, awareness, summarizer, integration } = deps;
+  const { config, store, auth, office, sessions, boards, awareness, summarizer, integration, usage } = deps;
   const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' }, bodyLimit: 1024 * 1024 });
 
   app.setErrorHandler((error, _request, reply) => {
@@ -298,7 +300,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return sessions.handleHook(desk.id, payload);
   });
 
-  registerOfficeRoutes(app, { store, boards, awareness });
+  registerOfficeRoutes(app, { store, boards, awareness, usage });
 
   app.get<{ Querystring: { hours?: string } }>('/api/timeline', async (request) => {
     const hours = Math.min(Math.max(Number(request.query.hours ?? 12) || 12, 1), 24 * 7);
@@ -317,7 +319,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
 
   // ---- realtime -------------------------------------------------------------------------------
 
-  registerWebSocket(app, { store, sessions, boards, summarizer });
+  registerWebSocket(app, { store, sessions, boards, summarizer, usage });
 
   // ---- web client (production build) ----------------------------------------------------------
 

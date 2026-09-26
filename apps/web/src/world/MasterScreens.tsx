@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import { drawOfficeMap, mapTransform, useMapLabels } from '../features/hud/Minimap';
+import { drawUsageBadge } from '../features/usage/usage';
 import { stripMarkdown } from '../lib/markdown';
 import { formatRelative } from '../lib/time';
 import { attentionDesks, useOffice, type Panel } from '../state/officeStore';
@@ -179,6 +180,13 @@ export function MasterScreens({ layout }: { layout: OfficeLayout }) {
     lastMapDraw.current = clock.elapsedTime;
     const context = (mapTexture.image as HTMLCanvasElement).getContext('2d')!;
     drawOfficeMap(context, layout, transform, clock.elapsedTime, mapLabels, { background: '#20252c' });
+    drawUsageBadge(
+      context,
+      useOffice.getState().usage,
+      { title: t('usage.screen'), fiveHour: t('usage.fiveHourShort'), sevenDay: t('usage.sevenDayShort') },
+      PREVIEW_WIDTH,
+      PREVIEW_HEIGHT,
+    );
     mapTexture.needsUpdate = true;
   });
 

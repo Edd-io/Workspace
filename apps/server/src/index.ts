@@ -9,6 +9,7 @@ import { IntegrationService } from './office/integrationService.ts';
 import { OfficeService } from './office/officeService.ts';
 import { RoomAwareness } from './office/roomAwareness.ts';
 import { Summarizer } from './office/summarizer.ts';
+import { UsageTracker } from './office/usageTracker.ts';
 import { SessionManager } from './sessions/sessionManager.ts';
 import { TmuxHost } from './sessions/tmuxHost.ts';
 import { OfficeStore } from './store/officeStore.ts';
@@ -27,6 +28,9 @@ const awareness = new RoomAwareness(store, boards);
 sessions.setHookResponder((desk, payload) => awareness.respond(desk, payload));
 const summarizer = new Summarizer(store, boards, config);
 const integration = new IntegrationService(store, sessions);
+const usage = new UsageTracker(store);
+store.on('deskRemoved', (deskId) => usage.forgetDesk(deskId));
+summarizer.setUsageSource(() => usage.usage());
 
 const app = await buildApp({
   config,
@@ -38,6 +42,7 @@ const app = await buildApp({
   awareness,
   summarizer,
   integration,
+  usage,
 });
 await sessions.init();
 auth.purgeExpired();
