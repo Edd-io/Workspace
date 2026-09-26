@@ -22,6 +22,7 @@ export type Panel =
   | { kind: 'timeline' }
   | { kind: 'integrate'; deskId: string }
   | { kind: 'notifications' }
+  | { kind: 'search' }
   | null;
 
 /** Short-lived in-app notification: a desk started waiting for the human, or usage is running out. */

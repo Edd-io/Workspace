@@ -240,14 +240,18 @@
     }
   },
   "timeline": {
-    "title": "Journée",
-    "button": "Journée",
+    "title": "Activité",
+    "button": "Activité",
     "range": "Période",
     "hours_one": "{{count}} h",
     "hours_other": "{{count}} h",
     "hint": "Les traits blancs sont les consignes reçues par les postes. Clique sur une ligne pour ouvrir le poste.",
     "empty": "Aucune activité sur cette période.",
-    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} min)"
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} min)",
+    "tabs": {
+      "timeline": "Journée",
+      "stats": "Statistiques"
+    }
   },
   "graphics": {
     "levels": {
@@ -428,5 +432,59 @@
       "invalid_input": "URL invalide : il faut une URL de webhook Discord (https://discord.com/api/webhooks/…) et une adresse http(s).",
       "no_webhook": "Enregistre d'abord une URL de webhook."
     }
+  },
+  "search": {
+    "title": "Rechercher dans les conversations",
+    "button": "Rechercher dans les conversations ({{shortcut}})",
+    "placeholder": "Un mot, une erreur, un nom de fichier…",
+    "allRooms": "Toutes les salles",
+    "hint": "Cherche dans les consignes et les réponses de tous les postes (sans tenir compte des majuscules ni des accents).",
+    "searching": "Recherche…",
+    "none": "Aucun résultat.",
+    "count_one": "{{count}} résultat, du plus récent au plus ancien.",
+    "count_other": "{{count}} résultats, du plus récent au plus ancien.",
+    "countTruncated_one": "Les {{count}} résultats les plus récents : précise la recherche pour voir les autres.",
+    "countTruncated_other": "Les {{count}} résultats les plus récents : précise la recherche pour voir les autres.",
+    "you": "Consigne",
+    "answer": "Réponse"
+  },
+  "stats": {
+    "periods": {
+      "day": "24 h",
+      "week": "7 jours",
+      "month": "30 jours"
+    },
+    "hint": "Clique sur une colonne pour trier, sur un poste pour l'ouvrir.",
+    "columns": {
+      "desk": "Poste",
+      "workingMs": "Travail",
+      "waitingMs": "T'attend",
+      "prompts": "Consignes",
+      "toolCalls": "Outils",
+      "lines": "Lignes",
+      "outputTokens": "Tokens écrits",
+      "contextTokens": "Contexte",
+      "integrations": "Intégrations"
+    },
+    "columnHints": {
+      "workingMs": "Temps passé à travailler (compactage compris)",
+      "waitingMs": "Temps passé à attendre une réponse, une autorisation ou la fin d'une limite",
+      "prompts": "Consignes que tu as tapées (hors réveils automatiques)",
+      "toolCalls": "Appels d'outils (lecture, édition, commandes…)",
+      "lines": "Lignes ajoutées et supprimées par les éditions de fichiers réussies",
+      "outputTokens": "Tokens générés par Claude",
+      "contextTokens": "Remplissage actuel du contexte de la conversation",
+      "integrations": "Fusions · pull requests"
+    },
+    "teamwork": "Réveils · délégations",
+    "teamworkHint": "Réveils automatiques sur message · tâches confiées par un collègue",
+    "integrationsHint": "Fusions · pull requests",
+    "compactions": "Compactages",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min",
+    "hoursMinutes": "{{hours}} h {{minutes}}",
+    "lessThanMinute": "< 1 min",
+    "idleDesks_one": "{{count}} poste sans activité sur la période.",
+    "idleDesks_other": "{{count}} postes sans activité sur la période."
   }
 }

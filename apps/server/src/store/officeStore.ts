@@ -290,9 +290,22 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         .prepare(`UPDATE desks SET ${assignments} WHERE id = ?`)
         .run(...entries.map(([, value]) => toSqlValue(value)), id);
     }
+    if (patch.transcriptPath) {
+      // Conversations change with /clear: remember them all for statistics and search.
+      this.db
+        .prepare('INSERT OR IGNORE INTO desk_transcripts (desk_id, path, first_seen) VALUES (?, ?, ?)')
+        .run(id, patch.transcriptPath, Date.now());
+    }
     const desk = this.getDesk(id);
     if (desk && entries.length > 0) this.emit('deskUpsert', toPublicDesk(desk));
     return desk;
+  }
+
+  deskTranscripts(deskId: string): string[] {
+    const rows = this.db
+      .prepare('SELECT path FROM desk_transcripts WHERE desk_id = ? ORDER BY first_seen')
+      .all(deskId) as Row[];
+    return rows.map((row) => row.path as string);
   }
 
   deleteDesk(id: string): void {
@@ -335,6 +348,52 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
       state: (row.state as DeskState | null) ?? null,
       event: (row.event as string | null) ?? null,
     }));
+  }
+
+  /** Per-desk counts of events between `from` and `to`. */
+  eventCounts(
+    from: number,
+    to: number,
+  ): Map<
+    string,
+    {
+      prompts: number;
+      toolCalls: number;
+      compactions: number;
+      wakes: number;
+      delegations: number;
+      merges: number;
+      pullRequests: number;
+    }
+  > {
+    const rows = this.db
+      .prepare(
+        `SELECT desk_id,
+           SUM(kind = 'hook' AND json_extract(data, '$.event') = 'UserPromptSubmit'
+               AND COALESCE(json_extract(data, '$.prompt'), '') NOT LIKE '[Workspace]%') AS prompts,
+           SUM(kind = 'hook' AND json_extract(data, '$.event') = 'PreToolUse') AS tool_calls,
+           SUM(kind = 'state' AND state = 'compacting') AS compactions,
+           SUM(kind = 'wake') AS wakes,
+           SUM(kind = 'delegated') AS delegations,
+           SUM(kind = 'integration' AND json_extract(data, '$.action') = 'merge') AS merges,
+           SUM(kind = 'integration' AND json_extract(data, '$.action') = 'pull_request') AS pull_requests
+         FROM desk_events WHERE ts >= ? AND ts <= ? GROUP BY desk_id`,
+      )
+      .all(from, to) as Row[];
+    return new Map(
+      rows.map((row) => [
+        row.desk_id as string,
+        {
+          prompts: Number(row.prompts ?? 0),
+          toolCalls: Number(row.tool_calls ?? 0),
+          compactions: Number(row.compactions ?? 0),
+          wakes: Number(row.wakes ?? 0),
+          delegations: Number(row.delegations ?? 0),
+          merges: Number(row.merges ?? 0),
+          pullRequests: Number(row.pull_requests ?? 0),
+        },
+      ]),
+    );
   }
 
   /** The state a desk was in at `ts` (latest state change before it), if known. */

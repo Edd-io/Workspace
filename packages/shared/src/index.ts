@@ -1,4 +1,5 @@
 export * from './deskState.ts';
+export * from './insights.ts';
 export * from './integration.ts';
 export * from './models.ts';
 export * from './notifications.ts';

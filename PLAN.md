@@ -341,8 +341,8 @@ Phone notifications (Discord):
 - [x] Links open the desk's terminal (`?desk=` deep link, public URL setting)
 
 Stats and search:
-- [ ] Per-desk statistics over a period: working time, prompts, lines changed, context, integrations
-- [ ] Search across every desk's conversation
+- [x] Per-desk statistics over a period: working time, prompts, lines changed, context, integrations
+- [x] Search across every desk's conversation
 
 ## 4. Risks & open points
 

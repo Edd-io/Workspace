@@ -51,6 +51,10 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
 - **Walk** (`V` or the top bar): first-person visit. Click to look around, WASD / ZQSD / arrows to
   move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you.
 - **Master office** (at the entrance): live map, Haiku briefing, inbox and the day's timeline.
+- **Activity** (top bar): the timeline of every desk's states, and statistics over 24 h / 7 / 30 days
+  (working and waiting time, prompts, tools, lines written, tokens, context, integrations).
+- **Search** (🔍 in the top bar, ⌘K / Ctrl+K): every desk's prompts and answers, ignoring case and
+  accents; a hit opens the desk.
 - **Settings** (⚙ in the top bar): graphics quality (Eco / Normal / Max — the office only redraws at
   full rate while you move around; Eco keeps laptops cool), sound, browser notifications, language.
 - **Subscription gauge** (top bar and master office map): 5-hour and weekly usage of the Claude

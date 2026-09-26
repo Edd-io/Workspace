@@ -14,6 +14,8 @@ import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
 import { IntegrationDialog } from '../integration/IntegrationDialog';
 import { NotificationsDialog } from '../notifications/NotificationsDialog';
+import { SearchDialog } from '../search/SearchDialog';
+import { SEARCH_SHORTCUT } from '../search/shortcut';
 import { UsageGauge } from '../usage/UsageGauge';
 import { Minimap } from './Minimap';
 import { SettingsMenu } from './SettingsMenu';
@@ -64,6 +66,17 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
       </div>
       <UsageGauge />
       <div className="topbar__actions">
+        <button
+          className="button button--ghost button--icon"
+          onClick={() => setPanel({ kind: 'search' })}
+          aria-label={t('search.title')}
+          title={t('search.button', { shortcut: SEARCH_SHORTCUT })}
+        >
+          <svg className="search-icon" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="6.8" cy="6.8" r="4.6" />
+            <path d="M10.3 10.3 14 14" />
+          </svg>
+        </button>
         <InboxButton />
         <button className="button button--ghost" onClick={() => setPanel({ kind: 'summary' })}>
           {t('summary.button')}
@@ -239,6 +252,7 @@ function Dialogs() {
   if (panel.kind === 'summary') return <SummaryPanel onClose={close} />;
   if (panel.kind === 'map') return <MapPanel onClose={close} />;
   if (panel.kind === 'timeline') return <TimelinePanel onClose={close} />;
+  if (panel.kind === 'search') return <SearchDialog onClose={close} />;
   if (panel.kind === 'notifications') return <NotificationsDialog onClose={close} />;
   if (panel.kind === 'integrate') return <IntegrationDialog deskId={panel.deskId} onClose={close} />;
   return <CreateDeskDialog roomId={panel.roomId} onClose={close} />;

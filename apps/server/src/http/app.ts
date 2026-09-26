@@ -12,9 +12,11 @@ import {
   integrationTargetSchema,
   loginSchema,
   pullRequestSchema,
-  updateNotificationSettingsSchema,
+  searchQuerySchema,
+  statsQuerySchema,
   summaryRequestSchema,
   updateDeskSchema,
+  updateNotificationSettingsSchema,
   updateRoomSchema,
 } from '@workspace/shared';
 import { SESSION_COOKIE, SESSION_COOKIE_MAX_AGE_S, type AuthService } from '../auth/authService.ts';
@@ -24,6 +26,7 @@ import type { BoardStore } from '../office/boardStore.ts';
 import type { IntegrationService } from '../office/integrationService.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
 import type { RoomAwareness } from '../office/roomAwareness.ts';
+import type { Insights } from '../office/stats.ts';
 import type { Summarizer } from '../office/summarizer.ts';
 import type { Notifier, Presence } from '../office/notifier.ts';
 import type { UsageTracker } from '../office/usageTracker.ts';
@@ -48,6 +51,7 @@ export interface AppDeps {
   usage: UsageTracker;
   notifier: Notifier;
   presence: Presence;
+  insights: Insights;
 }
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
@@ -77,6 +81,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     usage,
     notifier,
     presence,
+    insights,
   } = deps;
   const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' }, bodyLimit: 1024 * 1024 });
 
@@ -323,6 +328,15 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     const hours = Math.min(Math.max(Number(request.query.hours ?? 12) || 12, 1), 24 * 7);
     const to = Date.now();
     return buildTimeline(store, to - hours * 3600_000, to);
+  });
+
+  // ---- statistics and search ------------------------------------------------------------------
+
+  app.get('/api/stats', async (request) => insights.stats(statsQuerySchema.parse(request.query).period));
+
+  app.get('/api/search', async (request) => {
+    const { q, roomId } = searchQuerySchema.parse(request.query);
+    return insights.search(q, roomId);
   });
 
   // ---- summary (Haiku) ------------------------------------------------------------------------

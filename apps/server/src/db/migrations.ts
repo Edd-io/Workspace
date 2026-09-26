@@ -98,4 +98,14 @@ export const MIGRATIONS: string[] = [
   ALTER TABLE rooms ADD COLUMN auto_wake INTEGER NOT NULL DEFAULT 1;
   ALTER TABLE desks ADD COLUMN role TEXT;
   `,
+  `
+  CREATE TABLE desk_transcripts (
+    desk_id TEXT NOT NULL REFERENCES desks(id) ON DELETE CASCADE,
+    path TEXT NOT NULL,
+    first_seen INTEGER NOT NULL,
+    PRIMARY KEY (desk_id, path)
+  );
+  INSERT INTO desk_transcripts (desk_id, path, first_seen)
+    SELECT id, transcript_path, created_at FROM desks WHERE transcript_path IS NOT NULL;
+  `,
 ];

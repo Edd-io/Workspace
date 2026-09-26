@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Hud } from './features/hud/Hud';
 import { useAttentionAlerts } from './features/notifications/useAttentionAlerts';
+import { isSearchShortcut } from './features/search/shortcut';
 import { audioContext } from './features/sound/chime';
 import { requestSummary } from './features/summary/SummaryPanel';
 import { TerminalOverlay } from './features/terminal/TerminalOverlay';
@@ -33,9 +34,14 @@ export function Office({ onLoggedOut }: { onLoggedOut: () => void }) {
   }, [loaded]);
 
   // Keyboard shortcuts outside the terminal and dialogs (which handle their own keys):
-  // Escape leaves the focused desk, V switches between the overview and the walk.
+  // Escape leaves the focused desk, V switches between the overview and the walk, ⌘K / Ctrl+K searches.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      if (isSearchShortcut(event, useOffice.getState().terminalDeskId !== null)) {
+        event.preventDefault();
+        useOffice.getState().setPanel({ kind: 'search' });
+        return;
+      }
       const target = event.target as HTMLElement | null;
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable))
         return;

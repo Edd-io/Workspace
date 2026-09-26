@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../api/http';
 import { sortedRooms, useOffice } from '../../state/officeStore';
 import { Dialog } from '../hud/Dialog';
+import { StatsView } from './StatsView';
 import {
   drawTimeline,
   hitTimeline,
@@ -35,8 +36,33 @@ export function useTimeline(hours: number, refreshMs = REFRESH_MS): Timeline | n
   return timeline;
 }
 
-/** The day of the office: every desk's states over time. */
+/** The office's activity: every desk's states over time, and statistics over longer periods. */
 export function TimelinePanel({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
+  const [tab, setTab] = useState<'timeline' | 'stats'>('timeline');
+  return (
+    <Dialog title={t('timeline.title')} onClose={onClose} wide>
+      <div className="timeline">
+        <div className="segmented timeline__tabs" role="tablist">
+          {(['timeline', 'stats'] as const).map((option) => (
+            <button
+              key={option}
+              role="tab"
+              aria-selected={tab === option}
+              className={`segmented__item${tab === option ? ' segmented__item--active' : ''}`}
+              onClick={() => setTab(option)}
+            >
+              {t(`timeline.tabs.${option}`)}
+            </button>
+          ))}
+        </div>
+        {tab === 'timeline' ? <TimelineView /> : <StatsView />}
+      </div>
+    </Dialog>
+  );
+}
+
+function TimelineView() {
   const { t, i18n } = useTranslation();
   const [hours, setHours] = useState<(typeof RANGES)[number]>(6);
   const timeline = useTimeline(hours);
@@ -105,42 +131,40 @@ export function TimelinePanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <Dialog title={t('timeline.title')} onClose={onClose} wide>
-      <div className="timeline">
-        <div className="timeline__toolbar">
-          <div className="segmented" role="group" aria-label={t('timeline.range')}>
-            {RANGES.map((range) => (
-              <button
-                key={range}
-                className={`segmented__item${hours === range ? ' segmented__item--active' : ''}`}
-                onClick={() => setHours(range)}
-              >
-                {t('timeline.hours', { count: range })}
-              </button>
-            ))}
-          </div>
-          <span className="muted">{t('timeline.hint')}</span>
+    <>
+      <div className="timeline__toolbar">
+        <div className="segmented" role="group" aria-label={t('timeline.range')}>
+          {RANGES.map((range) => (
+            <button
+              key={range}
+              className={`segmented__item${hours === range ? ' segmented__item--active' : ''}`}
+              onClick={() => setHours(range)}
+            >
+              {t('timeline.hours', { count: range })}
+            </button>
+          ))}
         </div>
-        <div className="timeline__canvas">
-          {!timeline && <p className="muted">{t('app.loading')}</p>}
-          {timeline && rows.length === 0 && <p className="muted">{t('timeline.empty')}</p>}
-          <canvas
-            ref={canvasRef}
-            style={{ width: WIDTH, height, display: rows.length ? 'block' : 'none' }}
-            onMouseMove={onMove}
-            onMouseLeave={() => setHover(null)}
-            onClick={(event) => {
-              const { hit } = locate(event);
-              if (hit) openTerminal(hit.deskId);
-            }}
-          />
-          {hover && (
-            <div className="timeline__tooltip" style={{ left: hover.x + 12, top: hover.y + 12 }}>
-              {hover.text}
-            </div>
-          )}
-        </div>
+        <span className="muted">{t('timeline.hint')}</span>
       </div>
-    </Dialog>
+      <div className="timeline__canvas">
+        {!timeline && <p className="muted">{t('app.loading')}</p>}
+        {timeline && rows.length === 0 && <p className="muted">{t('timeline.empty')}</p>}
+        <canvas
+          ref={canvasRef}
+          style={{ width: WIDTH, height, display: rows.length ? 'block' : 'none' }}
+          onMouseMove={onMove}
+          onMouseLeave={() => setHover(null)}
+          onClick={(event) => {
+            const { hit } = locate(event);
+            if (hit) openTerminal(hit.deskId);
+          }}
+        />
+        {hover && (
+          <div className="timeline__tooltip" style={{ left: hover.x + 12, top: hover.y + 12 }}>
+            {hover.text}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
