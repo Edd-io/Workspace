@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import type { Desk, DeskMode, DeskState, PermissionMode, Room } from '@workspace/shared';
+import type { Desk, DeskAttention, DeskMode, DeskState, PermissionMode, Room } from '@workspace/shared';
 import type { Database } from '../db/database.ts';
 import type { Blocker } from '../sessions/stateMachine.ts';
 
@@ -30,6 +30,7 @@ export type DeskPatch = Partial<
     | 'transcriptPath'
     | 'desiredRunning'
     | 'initialPrompt'
+    | 'attention'
   >
 >;
 
@@ -66,6 +67,7 @@ const DESK_COLUMNS: Record<keyof DeskPatch, string> = {
   transcriptPath: 'transcript_path',
   desiredRunning: 'desired_running',
   initialPrompt: 'initial_prompt',
+  attention: 'attention',
 };
 
 function toRoom(row: Row): Room {
@@ -101,6 +103,7 @@ function toDeskRecord(row: Row): DeskRecord {
     currentTool: (row.current_tool as string | null) ?? null,
     lastPrompt: (row.last_prompt as string | null) ?? null,
     lastAssistantMessage: (row.last_assistant_message as string | null) ?? null,
+    attention: row.attention ? (JSON.parse(row.attention as string) as DeskAttention) : null,
     createdAt: row.created_at as number,
     token: row.token as string,
     desiredRunning: row.desired_running === 1,
@@ -229,8 +232,9 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
       .prepare(
         `INSERT INTO desks (id, room_id, name, slug, mode, workdir, branch, session_id, model, permission_mode,
            appearance_seed, position, token, desired_running, initial_prompt, transcript_path, state, state_since,
-           in_turn, current_task, current_tool, last_prompt, last_assistant_message, created_at, blockers, session_title)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           in_turn, current_task, current_tool, last_prompt, last_assistant_message, created_at, blockers, session_title,
+           attention)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         desk.id,
@@ -259,6 +263,7 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         desk.createdAt,
         JSON.stringify(desk.blockers),
         desk.sessionTitle,
+        desk.attention ? JSON.stringify(desk.attention) : null,
       );
     this.emit('deskUpsert', toPublicDesk(desk));
   }

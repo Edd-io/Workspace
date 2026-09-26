@@ -199,3 +199,44 @@ describe('endsWithQuestion', () => {
     expect(endsWithQuestion(undefined)).toBe(false);
   });
 });
+
+describe('attention', () => {
+  it('describes a question, a permission and clears it when work resumes', () => {
+    const working: DeskContext = { state: 'working', inTurn: true, blockers: [] };
+    const asked = reduceHook(working, {
+      hook_event_name: 'PreToolUse',
+      tool_name: 'AskUserQuestion',
+      tool_use_id: 'q',
+      tool_input: { questions: [{ question: 'Haiku or limerick?' }] },
+    });
+    expect(asked.attention).toEqual({ kind: 'question', text: 'Haiku or limerick?' });
+
+    const permission = reduceHook(working, {
+      hook_event_name: 'PermissionRequest',
+      tool_name: 'Bash',
+      tool_input: { command: 'rm -rf build' },
+    });
+    expect(permission.attention).toEqual({ kind: 'permission', text: 'Bash: rm -rf build' });
+
+    const resumed = reduceHook(
+      { state: 'question', inTurn: true, blockers: [] },
+      { hook_event_name: 'PostToolUse', tool_name: 'Bash', tool_input: { command: 'rm -rf build' } },
+    );
+    expect(resumed.attention).toBeNull();
+  });
+
+  it('keeps the last paragraph of a closing question and describes failures', () => {
+    const working: DeskContext = { state: 'working', inTurn: true, blockers: [] };
+    const stop = reduceHook(working, {
+      hook_event_name: 'Stop',
+      last_assistant_message: 'I fixed the bug.\n\nShould I also add a test?',
+    });
+    expect(stop.attention).toEqual({ kind: 'message', text: 'Should I also add a test?' });
+    const limited = reduceHook(working, {
+      hook_event_name: 'StopFailure',
+      error_type: 'rate_limit',
+      error_message: 'Usage limit reached',
+    });
+    expect(limited.attention).toEqual({ kind: 'limit', text: 'Usage limit reached' });
+  });
+});

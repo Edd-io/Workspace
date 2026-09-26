@@ -7,6 +7,24 @@ export type DeskMode = (typeof DESK_MODES)[number];
 export const PERMISSION_MODES = ['default', 'acceptEdits', 'auto', 'plan', 'bypassPermissions'] as const;
 export type PermissionMode = (typeof PERMISSION_MODES)[number];
 
+export const ATTENTION_KINDS = [
+  'question',
+  'permission',
+  'plan',
+  'message',
+  'error',
+  'limit',
+  'trust',
+] as const;
+export type AttentionKind = (typeof ATTENTION_KINDS)[number];
+
+/** What a desk is waiting for from the human, when it is waiting. */
+export interface DeskAttention {
+  kind: AttentionKind;
+  /** Content from the session (question asked, command to approve, error…), may be empty. */
+  text: string;
+}
+
 export interface Room {
   id: string;
   name: string;
@@ -41,7 +59,21 @@ export interface Desk {
   currentTool: string | null;
   lastPrompt: string | null;
   lastAssistantMessage: string | null;
+  attention: DeskAttention | null;
   createdAt: number;
+}
+
+export type SummaryStatus = 'idle' | 'generating' | 'error';
+
+/** The Haiku-written summary shown in the master office. */
+export interface OfficeSummary {
+  status: SummaryStatus;
+  text: string | null;
+  language: string | null;
+  generatedAt: number | null;
+  /** Start of the period the summary covers (the previous visit). */
+  since: number | null;
+  error: string | null;
 }
 
 export interface RoomMessage {
@@ -114,6 +146,11 @@ export const updateDeskSchema = z.object({
   name: z.string().trim().min(1).max(40).optional(),
 });
 export type UpdateDeskInput = z.infer<typeof updateDeskSchema>;
+
+export const summaryRequestSchema = z.object({
+  reason: z.enum(['visit', 'refresh']),
+  language: z.enum(['fr', 'en']),
+});
 
 export const loginSchema = z.object({
   password: z.string().min(1).max(512),

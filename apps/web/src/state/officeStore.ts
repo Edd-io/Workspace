@@ -1,9 +1,28 @@
 import { create } from 'zustand';
-import type { Desk, Room, RoomBoard, ServerMessage } from '@workspace/shared';
+import {
+  ATTENTION_STATES,
+  type Desk,
+  type OfficeSummary,
+  type Room,
+  type RoomBoard,
+  type ServerMessage,
+} from '@workspace/shared';
 import { officeSocket, type ConnectionStatus } from '../api/socket';
 
 export type Panel =
-  { kind: 'createRoom' } | { kind: 'createDesk'; roomId: string } | { kind: 'board'; roomId: string } | null;
+  | { kind: 'createRoom' }
+  | { kind: 'createDesk'; roomId: string }
+  | { kind: 'board'; roomId: string }
+  | { kind: 'inbox' }
+  | { kind: 'summary' }
+  | { kind: 'map' }
+  | null;
+
+/** Short-lived in-app notification (a desk started waiting for the human). */
+export interface Toast {
+  id: number;
+  deskId: string;
+}
 
 export type ViewMode = 'overview' | 'walk';
 
@@ -13,6 +32,8 @@ interface OfficeState {
   rooms: Record<string, Room>;
   desks: Record<string, Desk>;
   boards: Record<string, RoomBoard>;
+  summary: OfficeSummary | null;
+  toasts: Toast[];
   /** Desk the camera is looking at. */
   focusedDeskId: string | null;
   /** Desk whose terminal overlay is open. */
@@ -26,6 +47,9 @@ interface OfficeState {
   setViewMode: (mode: ViewMode) => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
   goTo: (x: number, z: number, yaw?: number) => void;
+  setSummary: (summary: OfficeSummary) => void;
+  pushToast: (deskId: string) => void;
+  dismissToast: (id: number) => void;
   openTerminal: (deskId: string) => void;
   closeTerminal: () => void;
   setPanel: (panel: Panel) => void;
@@ -37,6 +61,8 @@ export const useOffice = create<OfficeState>((set) => ({
   rooms: {},
   desks: {},
   boards: {},
+  summary: null,
+  toasts: [],
   focusedDeskId: null,
   terminalDeskId: null,
   panel: null,
@@ -51,6 +77,15 @@ export const useOffice = create<OfficeState>((set) => ({
       sidebarCollapsed: viewMode === 'walk' ? true : state.sidebarCollapsed,
     })),
   setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
+  setSummary: (summary) => set({ summary }),
+  pushToast: (deskId) =>
+    set((state) => ({
+      toasts: [
+        ...state.toasts.filter((toast) => toast.deskId !== deskId),
+        { id: Date.now() + Math.random(), deskId },
+      ].slice(-4),
+    })),
+  dismissToast: (id) => set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) })),
   goTo: (x, z, yaw) =>
     set((state) => ({
       viewTarget: { x, z, yaw, seq: (state.viewTarget?.seq ?? 0) + 1 },
@@ -77,6 +112,9 @@ function applyMessage(message: ServerMessage): void {
         desks: Object.fromEntries(message.desks.map((desk) => [desk.id, desk])),
         boards: Object.fromEntries(message.boards.map((board) => [board.roomId, board])),
       });
+      break;
+    case 'summary.update':
+      useOffice.setState({ summary: message.summary });
       break;
     case 'board.update':
       useOffice.setState((state) => ({ boards: { ...state.boards, [message.board.roomId]: message.board } }));
@@ -131,4 +169,11 @@ export function desksOfRoom(desks: Record<string, Desk>, roomId: string): Desk[]
   return Object.values(desks)
     .filter((desk) => desk.roomId === roomId)
     .sort((a, b) => a.position - b.position);
+}
+
+/** Desks waiting for the human, oldest first. */
+export function attentionDesks(desks: Record<string, Desk>): Desk[] {
+  return Object.values(desks)
+    .filter((desk) => ATTENTION_STATES.has(desk.state))
+    .sort((a, b) => a.stateSince - b.stateSince);
 }

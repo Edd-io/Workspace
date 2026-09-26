@@ -251,11 +251,17 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
       cross-fades (working/compacting → typing, question → raised hand, error → head in hands,
       limited → coffee, idle → rotating idle/lean back/drink), nobody at stopped desks
 
-### Phase 6 — Master room
-- [ ] 2D map monitor (click → teleport)
-- [ ] Inbox (pending questions, open terminal in place), HUD notifications + browser notifications
-- [ ] Haiku summarizer (login + on demand) and its monitor
-- Demo: land in the master room and understand the whole office in 10 seconds.
+### Phase 6 — Master room ✅
+- [x] Owner's desk with three monitors: live 2D map, Haiku briefing, inbox — each opens its panel
+      (click in overview, E when walking)
+- [x] Desk `attention` (question asked, command to approve, plan, closing question, error, usage
+      limit, trust dialog) computed from hooks and shown everywhere
+- [x] Inbox panel + top-bar badge; in-app toasts with a synthesized chime; optional browser
+      notifications when the tab is hidden
+- [x] Summarizer: digest of states, prompts, answers, commits and room messages since the previous
+      visit → `claude -p --model haiku` (isolated: no tools, no settings, no MCP, own system prompt),
+      written in the UI language, generated on arrival (reused for 10 min) and on demand
+- [x] Large interactive map panel (click a desk to open it, elsewhere to go there)
 
 ### Phase 7 — Timeline & sound
 - [ ] Timeline view (per-desk state bars over the day, event details)

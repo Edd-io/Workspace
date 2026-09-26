@@ -167,5 +167,41 @@
     "messagePlaceholder": "Écris aux postes…",
     "send": "Envoyer",
     "deliveryHint": "Les postes reçoivent les messages à leur prochaine consigne ou utilisation d'outil."
+  },
+  "inbox": {
+    "title": "Boîte de réception",
+    "button": "Boîte de réception",
+    "empty": "Personne ne t'attend.",
+    "answer": "Ouvrir le terminal",
+    "count_one": "{{count}} poste t'attend",
+    "count_other": "{{count}} postes t'attendent"
+  },
+  "attention": {
+    "question": "Question",
+    "permission": "Permission",
+    "plan": "Plan à valider",
+    "message": "Te demande",
+    "error": "Erreur",
+    "limit": "Limite d'usage",
+    "trust": "Confiance du dossier"
+  },
+  "summary": {
+    "title": "Résumé",
+    "button": "Résumé",
+    "generated": "Écrit {{ago}} · couvre depuis {{since}}",
+    "screenGenerated": "Écrit {{ago}}",
+    "none": "Pas encore de résumé.",
+    "generating": "Haiku rédige le résumé…",
+    "refresh": "Actualiser",
+    "error": "Le résumé n'a pas pu être rédigé. Réessaie dans un instant."
+  },
+  "map": {
+    "title": "Plan du bureau",
+    "hint": "Clique sur un poste pour ouvrir son terminal, ailleurs pour t'y rendre."
+  },
+  "notifications": {
+    "title": "{{desk}} ({{room}}) t'attend",
+    "enable": "Activer les notifications du navigateur",
+    "disable": "Désactiver les notifications du navigateur"
   }
 }

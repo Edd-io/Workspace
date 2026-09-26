@@ -1,4 +1,4 @@
-import type { DeskState } from '@workspace/shared';
+import type { DeskAttention, DeskState } from '@workspace/shared';
 
 /** Subset of the Claude Code hook input we rely on. Unknown fields are ignored. */
 export interface HookPayload {
@@ -49,6 +49,75 @@ export interface HookEffect {
   transcriptPath?: string;
   sessionTitle?: string;
   blockers?: Blocker[];
+  /** `null` clears it; undefined keeps the current one. */
+  attention?: DeskAttention | null;
+}
+
+const MAX_ATTENTION = 400;
+
+function clip(text: string): string {
+  const flat = text.replace(/\s+/g, ' ').trim();
+  return flat.length > MAX_ATTENTION ? `${flat.slice(0, MAX_ATTENTION - 1)}…` : flat;
+}
+
+/** Short human-readable description of a tool call waiting for approval. */
+export function describeToolInput(tool: string | undefined, input: unknown): string {
+  const data = (input ?? {}) as Record<string, unknown>;
+  const detail =
+    (typeof data.command === 'string' && data.command) ||
+    (typeof data.file_path === 'string' && data.file_path) ||
+    (typeof data.url === 'string' && data.url) ||
+    (typeof data.pattern === 'string' && data.pattern) ||
+    (typeof data.description === 'string' && data.description) ||
+    '';
+  return clip(detail ? `${tool ?? ''}: ${detail}` : (tool ?? ''));
+}
+
+function questionsOf(input: unknown): string {
+  const questions = (input as { questions?: { question?: string }[] } | undefined)?.questions;
+  if (!Array.isArray(questions)) return '';
+  return clip(
+    questions
+      .map((entry) => entry.question ?? '')
+      .filter(Boolean)
+      .join(' / '),
+  );
+}
+
+/** The last paragraph of an assistant message: usually the question it asks. */
+function lastParagraph(message: string | undefined): string {
+  if (!message) return '';
+  const paragraphs = message.trim().split(/\n\s*\n/);
+  return clip(paragraphs.at(-1) ?? '');
+}
+
+const ATTENTION_STATES: ReadonlySet<DeskState> = new Set(['question', 'error', 'limited']);
+
+function attentionFor(payload: HookPayload): DeskAttention | undefined {
+  switch (payload.hook_event_name) {
+    case 'PreToolUse':
+      if (payload.tool_name === 'AskUserQuestion')
+        return { kind: 'question', text: questionsOf(payload.tool_input) };
+      if (payload.tool_name === 'ExitPlanMode') {
+        const plan = (payload.tool_input as { plan?: string } | undefined)?.plan ?? '';
+        return { kind: 'plan', text: clip(plan) };
+      }
+      return undefined;
+    case 'PermissionRequest':
+      if (payload.tool_name === 'AskUserQuestion')
+        return { kind: 'question', text: questionsOf(payload.tool_input) };
+      return { kind: 'permission', text: describeToolInput(payload.tool_name, payload.tool_input) };
+    case 'Notification':
+      return { kind: 'permission', text: clip(payload.message ?? '') };
+    case 'Stop':
+      return { kind: 'message', text: lastParagraph(payload.last_assistant_message) };
+    case 'StopFailure':
+      return payload.error_type === 'rate_limit'
+        ? { kind: 'limit', text: clip(payload.error_message ?? '') }
+        : { kind: 'error', text: clip(payload.error_message ?? payload.error_type ?? '') };
+    default:
+      return undefined;
+  }
 }
 
 /** Tools that block on the human even without a permission prompt. */
@@ -123,6 +192,13 @@ export function reduceHook(context: DeskContext, payload: HookPayload): HookEffe
   }
   if (blockers !== context.blockers) effect.blockers = blockers;
   if (blockers.length > 0 && effect.state === 'working') effect.state = 'question';
+
+  // Describe what the desk waits for, keeping the first reason while a question stays pending.
+  if (effect.state !== undefined && !ATTENTION_STATES.has(effect.state)) {
+    effect.attention = null;
+  } else if (effect.state !== undefined && effect.state !== context.state) {
+    effect.attention = attentionFor(payload) ?? null;
+  }
   return effect;
 }
 

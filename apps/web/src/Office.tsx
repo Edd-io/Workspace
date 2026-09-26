@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 import { Hud } from './features/hud/Hud';
+import { useAttentionAlerts } from './features/notifications/useAttentionAlerts';
+import { audioContext } from './features/sound/chime';
+import { requestSummary } from './features/summary/SummaryPanel';
 import { TerminalOverlay } from './features/terminal/TerminalOverlay';
 import { startOfficeSync, useOffice } from './state/officeStore';
 import { World } from './world/World';
@@ -7,7 +10,15 @@ import { World } from './world/World';
 export function Office({ onLoggedOut }: { onLoggedOut: () => void }) {
   useEffect(() => {
     startOfficeSync();
+    // Arriving at the office: Haiku summarizes what happened since the previous visit.
+    void requestSummary('visit').catch(() => undefined);
+    // Browsers only allow sound after a user gesture.
+    const unlock = () => audioContext();
+    window.addEventListener('pointerdown', unlock, { once: true });
+    return () => window.removeEventListener('pointerdown', unlock);
   }, []);
+
+  useAttentionAlerts();
 
   // Keyboard shortcuts outside the terminal and dialogs (which handle their own keys):
   // Escape leaves the focused desk, V switches between the overview and the walk.

@@ -167,5 +167,41 @@
     "messagePlaceholder": "Write to the desks…",
     "send": "Send",
     "deliveryHint": "Desks receive messages at their next prompt or tool use."
+  },
+  "inbox": {
+    "title": "Inbox",
+    "button": "Inbox",
+    "empty": "Nobody is waiting for you.",
+    "answer": "Open the terminal",
+    "count_one": "{{count}} desk is waiting for you",
+    "count_other": "{{count}} desks are waiting for you"
+  },
+  "attention": {
+    "question": "Question",
+    "permission": "Permission",
+    "plan": "Plan to approve",
+    "message": "Asks you",
+    "error": "Error",
+    "limit": "Usage limit",
+    "trust": "Trust this folder"
+  },
+  "summary": {
+    "title": "Briefing",
+    "button": "Briefing",
+    "generated": "Written {{ago}} · covers since {{since}}",
+    "screenGenerated": "Written {{ago}}",
+    "none": "No briefing yet.",
+    "generating": "Haiku is writing the briefing…",
+    "refresh": "Refresh",
+    "error": "The briefing could not be written. Try again in a moment."
+  },
+  "map": {
+    "title": "Office map",
+    "hint": "Click a desk to open its terminal, anywhere else to go there."
+  },
+  "notifications": {
+    "title": "{{desk}} ({{room}}) needs you",
+    "enable": "Enable browser notifications",
+    "disable": "Disable browser notifications"
   }
 }

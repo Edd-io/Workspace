@@ -791,3 +791,139 @@ textarea.input {
     display: none;
   }
 }
+
+/* ---- inbox, summary, toasts ------------------------------------------------------------------ */
+
+.badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #ff9f1a;
+  color: #1b0f0b;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+.inbox-button--active {
+  color: #ffc46b;
+}
+.button--icon {
+  padding: 5px 8px;
+}
+.inbox {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.inbox-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+  cursor: pointer;
+}
+.inbox-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+.inbox-item__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.inbox-item__since {
+  margin-left: auto;
+  font-size: 12px;
+}
+.inbox-item__body {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.inbox-item__body .tag {
+  margin-left: 0;
+  flex: none;
+}
+.inbox-item__action {
+  align-self: flex-end;
+  font-size: 12px;
+  color: var(--accent-strong);
+}
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.summary__meta {
+  font-size: 12px;
+}
+.summary__text {
+  line-height: 1.55;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.summary__text h4 {
+  margin: 14px 0 6px;
+  font-size: 14px;
+}
+.summary__text ul,
+.summary__text ol {
+  margin: 4px 0 10px;
+  padding-left: 20px;
+}
+.office-map {
+  display: block;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(20, 23, 28, 0.6);
+}
+.toasts {
+  position: absolute;
+  top: 74px;
+  right: 12px;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(360px, calc(100% - 24px));
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px;
+  animation: fade-in 0.25s ease-out;
+}
+.toast__main {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.toast__main .state-dot {
+  margin-top: 5px;
+}
+.toast__text {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

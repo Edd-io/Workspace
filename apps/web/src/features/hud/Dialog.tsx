@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -10,6 +10,14 @@ interface Props {
 
 export function Dialog({ title, onClose, children, wide = false }: Props) {
   const { t } = useTranslation();
+  // Escape closes the dialog wherever the focus is.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
   return (
     <div
       className="dialog-backdrop"
@@ -21,8 +29,8 @@ export function Dialog({ title, onClose, children, wide = false }: Props) {
         aria-modal="true"
         aria-label={title}
         onKeyDown={(event) => {
-          event.stopPropagation();
-          if (event.key === 'Escape') onClose();
+          // Keep office shortcuts away from form fields, but let Escape reach the close handler.
+          if (event.key !== 'Escape') event.stopPropagation();
         }}
       >
         <header className="dialog__header">

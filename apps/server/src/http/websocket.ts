@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { WebSocket } from 'ws';
 import { clientMessageSchema, type ServerMessage } from '@workspace/shared';
 import type { BoardStore } from '../office/boardStore.ts';
+import type { Summarizer } from '../office/summarizer.ts';
 import type { TerminalSubscriber } from '../sessions/deskRuntime.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import { toPublicDesk, type OfficeStore } from '../store/officeStore.ts';
@@ -13,6 +14,7 @@ interface Deps {
   store: OfficeStore;
   sessions: SessionManager;
   boards: BoardStore;
+  summarizer: Summarizer;
 }
 
 class ClientConnection implements TerminalSubscriber {
@@ -33,7 +35,7 @@ class ClientConnection implements TerminalSubscriber {
   }
 }
 
-export function registerWebSocket(app: FastifyInstance, { store, sessions, boards }: Deps): void {
+export function registerWebSocket(app: FastifyInstance, { store, sessions, boards, summarizer }: Deps): void {
   const clients = new Set<ClientConnection>();
 
   const broadcast = (message: ServerMessage): void => {
@@ -44,6 +46,7 @@ export function registerWebSocket(app: FastifyInstance, { store, sessions, board
   store.on('deskUpsert', (desk) => broadcast({ t: 'desk.upsert', desk }));
   store.on('deskRemoved', (deskId) => broadcast({ t: 'desk.removed', deskId }));
   boards.on('boardChanged', (roomId) => broadcast({ t: 'board.update', board: boards.board(roomId) }));
+  summarizer.on('update', (summary) => broadcast({ t: 'summary.update', summary }));
 
   app.get('/ws', { websocket: true }, (socket) => {
     const client = new ClientConnection(socket);

@@ -7,6 +7,7 @@ import { buildApp } from './http/app.ts';
 import { BoardStore } from './office/boardStore.ts';
 import { OfficeService } from './office/officeService.ts';
 import { RoomAwareness } from './office/roomAwareness.ts';
+import { Summarizer } from './office/summarizer.ts';
 import { SessionManager } from './sessions/sessionManager.ts';
 import { TmuxHost } from './sessions/tmuxHost.ts';
 import { OfficeStore } from './store/officeStore.ts';
@@ -23,8 +24,9 @@ const office = new OfficeService(store, sessions, config);
 const boards = new BoardStore(db);
 const awareness = new RoomAwareness(store, boards);
 sessions.setHookResponder((desk, payload) => awareness.respond(desk, payload));
+const summarizer = new Summarizer(store, boards, config);
 
-const app = await buildApp({ config, store, auth, office, sessions, boards, awareness });
+const app = await buildApp({ config, store, auth, office, sessions, boards, awareness, summarizer });
 await sessions.init();
 auth.purgeExpired();
 await app.listen({ host: config.host, port: config.port });

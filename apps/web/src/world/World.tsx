@@ -5,6 +5,7 @@ import { desksOfRoom, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
 import type { PropPlacement } from './decor';
 import { DeskStation } from './DeskStation';
+import { MasterScreens } from './MasterScreens';
 import { PropInstances } from './props/PropInstances';
 import { RoomView } from './RoomView';
 import { Structure } from './structure/Structure';
@@ -92,6 +93,7 @@ export function World() {
       {layout.desks.map((desk) => (
         <DeskStation key={desk.desk.id} layout={desk} showLabel={!walking} />
       ))}
+      <MasterScreens layout={layout} />
 
       {walking ? <WalkControls layout={layout} props={props} /> : <CameraRig layout={layout} />}
     </Canvas>

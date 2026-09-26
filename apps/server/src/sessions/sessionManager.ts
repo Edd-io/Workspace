@@ -205,7 +205,12 @@ export class SessionManager {
     const desk = this.store.getDesk(deskId);
     if (!desk || desk.state === state) return;
     const now = Date.now();
-    this.store.updateDesk(deskId, { state, stateSince: now });
+    const clearsAttention = state !== 'question' && state !== 'error' && state !== 'limited';
+    this.store.updateDesk(deskId, {
+      state,
+      stateSince: now,
+      ...(clearsAttention ? { attention: null } : {}),
+    });
     this.store.addDeskEvent(deskId, 'state', state, { from: desk.state, ...detail }, now);
   }
 
@@ -219,7 +224,12 @@ export class SessionManager {
       if (pane.dead) {
         if (desk.state !== 'offline' && desk.state !== 'error') {
           const failed = pane.exitStatus !== null && pane.exitStatus !== 0;
-          this.store.updateDesk(desk.id, { inTurn: false, currentTool: null, blockers: [] });
+          this.store.updateDesk(desk.id, {
+            inTurn: false,
+            currentTool: null,
+            blockers: [],
+            attention: failed ? { kind: 'error', text: `exit ${pane.exitStatus}` } : null,
+          });
           this.setState(desk.id, failed ? 'error' : 'offline', {
             cause: 'process_exit',
             exitStatus: pane.exitStatus,
@@ -231,6 +241,7 @@ export class SessionManager {
         // First launch in a new folder shows a trust dialog before any hook fires.
         const screen = this.runtimes.get(desk.id)?.mirror.screenText() ?? '';
         if (/trust (this|the files in this) folder/i.test(screen)) {
+          this.store.updateDesk(desk.id, { attention: { kind: 'trust', text: desk.workdir } });
           this.setState(desk.id, 'question', { cause: 'trust_dialog' });
         }
       }

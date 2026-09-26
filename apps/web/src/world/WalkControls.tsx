@@ -80,7 +80,11 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
       raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
       raycaster.far = INTERACT_DISTANCE;
       for (const hit of raycaster.intersectObjects(scene.children, true)) {
-        const data = hit.object.userData as { deskId?: string; boardRoomId?: string };
+        const data = hit.object.userData as {
+          deskId?: string;
+          boardRoomId?: string;
+          panel?: 'map' | 'summary' | 'inbox';
+        };
         if (data.deskId) {
           document.exitPointerLock();
           useOffice.getState().openTerminal(data.deskId);
@@ -89,6 +93,11 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
         if (data.boardRoomId) {
           document.exitPointerLock();
           useOffice.getState().setPanel({ kind: 'board', roomId: data.boardRoomId });
+          return;
+        }
+        if (data.panel) {
+          document.exitPointerLock();
+          useOffice.getState().setPanel({ kind: data.panel });
           return;
         }
       }

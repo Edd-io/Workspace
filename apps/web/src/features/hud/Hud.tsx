@@ -3,13 +3,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../api/http';
 import { deskTopic } from '../../lib/desk';
-import { desksOfRoom, sortedRooms, useOffice } from '../../state/officeStore';
+import { InboxPanel } from '../inbox/InboxPanel';
+import { MapPanel } from '../map/MapPanel';
+import { browserNotificationsEnabled, setBrowserNotifications } from '../notifications/useAttentionAlerts';
+import { SummaryPanel } from '../summary/SummaryPanel';
+import { attentionDesks, desksOfRoom, sortedRooms, useOffice } from '../../state/officeStore';
 import { RoomBoardDialog } from '../board/RoomBoardDialog';
 import { CreateDeskDialog } from './CreateDeskDialog';
 import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Minimap } from './Minimap';
+import { Toasts } from './Toasts';
 import { StateDot } from './StateBadge';
 
 export function Hud({ onLoggedOut }: { onLoggedOut: () => void }) {
@@ -19,6 +24,7 @@ export function Hud({ onLoggedOut }: { onLoggedOut: () => void }) {
       <OfficeSidebar />
       <Minimap />
       <WalkHints />
+      <Toasts />
       <Dialogs />
     </>
   );
@@ -28,6 +34,7 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
   const { t } = useTranslation();
   const connection = useOffice((state) => state.connection);
   const desks = useOffice((state) => state.desks);
+  const setPanel = useOffice((state) => state.setPanel);
   const counts = useMemo(() => {
     const result = new Map<DeskState, number>();
     for (const desk of Object.values(desks)) result.set(desk.state, (result.get(desk.state) ?? 0) + 1);
@@ -58,6 +65,11 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
         ))}
       </div>
       <div className="topbar__actions">
+        <InboxButton />
+        <button className="button button--ghost" onClick={() => setPanel({ kind: 'summary' })}>
+          {t('summary.button')}
+        </button>
+        <NotificationToggle />
         <ViewModeSwitch />
         <LanguageSwitcher />
         <button className="button button--ghost" onClick={() => void logout()}>
@@ -158,6 +170,37 @@ function OfficeSidebar() {
   );
 }
 
+function InboxButton() {
+  const { t } = useTranslation();
+  const desks = useOffice((state) => state.desks);
+  const setPanel = useOffice((state) => state.setPanel);
+  const count = attentionDesks(desks).length;
+  return (
+    <button
+      className={`button button--ghost inbox-button${count > 0 ? ' inbox-button--active' : ''}`}
+      onClick={() => setPanel({ kind: 'inbox' })}
+    >
+      {t('inbox.button')}
+      {count > 0 && <span className="badge">{count}</span>}
+    </button>
+  );
+}
+
+function NotificationToggle() {
+  const { t } = useTranslation();
+  const [enabled, setEnabled] = useState(browserNotificationsEnabled);
+  return (
+    <button
+      className={`button button--ghost button--icon${enabled ? ' button--on' : ''}`}
+      onClick={() => void setBrowserNotifications(!enabled).then(setEnabled)}
+      title={enabled ? t('notifications.disable') : t('notifications.enable')}
+      aria-pressed={enabled}
+    >
+      {enabled ? '🔔' : '🔕'}
+    </button>
+  );
+}
+
 function ViewModeSwitch() {
   const { t } = useTranslation();
   const viewMode = useOffice((state) => state.viewMode);
@@ -205,5 +248,8 @@ function Dialogs() {
   const close = () => setPanel(null);
   if (panel.kind === 'createRoom') return <CreateRoomDialog onClose={close} />;
   if (panel.kind === 'board') return <RoomBoardDialog roomId={panel.roomId} onClose={close} />;
+  if (panel.kind === 'inbox') return <InboxPanel onClose={close} />;
+  if (panel.kind === 'summary') return <SummaryPanel onClose={close} />;
+  if (panel.kind === 'map') return <MapPanel onClose={close} />;
   return <CreateDeskDialog roomId={panel.roomId} onClose={close} />;
 }

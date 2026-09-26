@@ -88,4 +88,7 @@ export const MIGRATIONS: string[] = [
 
   ALTER TABLE desks ADD COLUMN last_read_message_id INTEGER NOT NULL DEFAULT 0;
   `,
+  `
+  ALTER TABLE desks ADD COLUMN attention TEXT;
+  `,
 ];

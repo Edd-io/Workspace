@@ -201,6 +201,7 @@ export class OfficeService {
       currentTool: null,
       lastPrompt: null,
       lastAssistantMessage: null,
+      attention: null,
       createdAt: now,
       token: randomBytes(24).toString('base64url'),
       desiredRunning: true,

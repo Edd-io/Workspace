@@ -8,6 +8,7 @@ import {
   createDeskSchema,
   createRoomSchema,
   loginSchema,
+  summaryRequestSchema,
   updateDeskSchema,
   updateRoomSchema,
 } from '@workspace/shared';
@@ -16,6 +17,7 @@ import type { Config } from '../config.ts';
 import type { BoardStore } from '../office/boardStore.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
 import type { RoomAwareness } from '../office/roomAwareness.ts';
+import type { Summarizer } from '../office/summarizer.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import type { HookPayload } from '../sessions/stateMachine.ts';
 import { toPublicDesk, type OfficeStore } from '../store/officeStore.ts';
@@ -31,6 +33,7 @@ export interface AppDeps {
   sessions: SessionManager;
   boards: BoardStore;
   awareness: RoomAwareness;
+  summarizer: Summarizer;
 }
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
@@ -44,7 +47,7 @@ function sendError(reply: FastifyReply, error: unknown): FastifyReply {
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
-  const { config, store, auth, office, sessions, boards, awareness } = deps;
+  const { config, store, auth, office, sessions, boards, awareness, summarizer } = deps;
   const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' }, bodyLimit: 1024 * 1024 });
 
   app.setErrorHandler((error, _request, reply) => {
@@ -208,9 +211,18 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
 
   registerOfficeRoutes(app, { store, boards, awareness });
 
+  // ---- summary (Haiku) ------------------------------------------------------------------------
+
+  app.get('/api/summary', async () => summarizer.current());
+
+  app.post('/api/summary', async (request) => {
+    const { reason, language } = summaryRequestSchema.parse(request.body);
+    return reason === 'visit' ? summarizer.visit(language) : summarizer.refresh(language);
+  });
+
   // ---- realtime -------------------------------------------------------------------------------
 
-  registerWebSocket(app, { store, sessions, boards });
+  registerWebSocket(app, { store, sessions, boards, summarizer });
 
   // ---- web client (production build) ----------------------------------------------------------
 

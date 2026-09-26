@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Desk, Room, RoomBoard } from './models.ts';
+import type { Desk, OfficeSummary, Room, RoomBoard } from './models.ts';
 
 /**
  * WebSocket protocol between the web client and the server.
@@ -39,6 +39,7 @@ export const PREVIEW_FLAG_INVERSE = 16;
 export type ServerMessage =
   | { t: 'office.snapshot'; rooms: Room[]; desks: Desk[]; boards: RoomBoard[] }
   | { t: 'board.update'; board: RoomBoard }
+  | { t: 'summary.update'; summary: OfficeSummary }
   | { t: 'room.upsert'; room: Room }
   | { t: 'room.removed'; roomId: string }
   | { t: 'desk.upsert'; desk: Desk }

@@ -37,6 +37,7 @@ function desk(id: string, roomId: string, position: number): Desk {
     currentTool: null,
     lastPrompt: null,
     lastAssistantMessage: null,
+    attention: null,
     createdAt: 0,
   };
 }
