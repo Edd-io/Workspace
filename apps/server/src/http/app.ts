@@ -1,5 +1,4 @@
 import { existsSync } from 'node:fs';
-import { timingSafeEqual } from 'node:crypto';
 import cookie from '@fastify/cookie';
 import fastifyStatic from '@fastify/static';
 import websocket from '@fastify/websocket';
@@ -14,12 +13,15 @@ import {
 } from '@workspace/shared';
 import { SESSION_COOKIE, SESSION_COOKIE_MAX_AGE_S, type AuthService } from '../auth/authService.ts';
 import type { Config } from '../config.ts';
+import type { BoardStore } from '../office/boardStore.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
+import type { RoomAwareness } from '../office/roomAwareness.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import type { HookPayload } from '../sessions/stateMachine.ts';
 import { toPublicDesk, type OfficeStore } from '../store/officeStore.ts';
-import { registerWebSocket } from './websocket.ts';
 import { listDirectories } from './directories.ts';
+import { authenticateDesk, registerOfficeRoutes } from './officeRoutes.ts';
+import { registerWebSocket } from './websocket.ts';
 
 export interface AppDeps {
   config: Config;
@@ -27,6 +29,8 @@ export interface AppDeps {
   auth: AuthService;
   office: OfficeService;
   sessions: SessionManager;
+  boards: BoardStore;
+  awareness: RoomAwareness;
 }
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
@@ -39,15 +43,16 @@ function sendError(reply: FastifyReply, error: unknown): FastifyReply {
   throw error;
 }
 
-function tokensEqual(a: string, b: string): boolean {
-  const left = Buffer.from(a);
-  const right = Buffer.from(b);
-  return left.length === right.length && timingSafeEqual(left, right);
-}
-
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
-  const { config, store, auth, office, sessions } = deps;
+  const { config, store, auth, office, sessions, boards, awareness } = deps;
   const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' }, bodyLimit: 1024 * 1024 });
+
+  app.setErrorHandler((error, _request, reply) => {
+    if (error instanceof z.ZodError) {
+      return reply.code(400).send({ error: 'invalid_input', message: z.prettifyError(error) });
+    }
+    return reply.send(error);
+  });
 
   await app.register(cookie);
   await app.register(websocket, { options: { maxPayload: 1024 * 1024 } });
@@ -192,19 +197,20 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   // ---- hooks (called by Claude Code, authenticated with the desk token) -----------------------
 
   app.post<{ Params: { deskId: string } }>('/internal/hooks/:deskId', async (request, reply) => {
-    const desk = store.getDesk(request.params.deskId);
-    const header = request.headers.authorization ?? '';
-    const token = header.startsWith('Bearer ') ? header.slice('Bearer '.length) : '';
-    if (!desk || !tokensEqual(token, desk.token)) return reply.code(403).send({ error: 'forbidden' });
+    const desk = authenticateDesk(store, request, reply);
+    if (!desk) return reply;
     const payload = request.body as HookPayload;
-    if (typeof payload?.hook_event_name !== 'string')
+    if (typeof payload?.hook_event_name !== 'string') {
       return reply.code(400).send({ error: 'invalid_payload' });
+    }
     return sessions.handleHook(desk.id, payload);
   });
 
+  registerOfficeRoutes(app, { store, boards, awareness });
+
   // ---- realtime -------------------------------------------------------------------------------
 
-  registerWebSocket(app, { store, sessions });
+  registerWebSocket(app, { store, sessions, boards });
 
   // ---- web client (production build) ----------------------------------------------------------
 

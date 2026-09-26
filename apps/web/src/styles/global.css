@@ -654,3 +654,96 @@ textarea.input {
     border-radius: 0;
   }
 }
+
+/* ---- room board ------------------------------------------------------------------------------ */
+
+.dialog--wide {
+  width: min(960px, 100%);
+}
+.board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.board__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.board__section h3 {
+  margin: 6px 0 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.board__desks,
+.board__notes,
+.board__messages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.board__desk {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+.board__desk:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.board__desk .muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.board__notes li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-left: 3px solid #c0392b;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0 6px 6px 0;
+}
+.board__note-body {
+  flex: 1;
+}
+.board__meta {
+  font-size: 12px;
+}
+.board__messages {
+  max-height: 320px;
+  overflow-y: auto;
+  gap: 10px;
+}
+.board__messages p {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+}
+.board__form {
+  display: flex;
+  gap: 8px;
+}
+.board__form--message {
+  flex-direction: column;
+}
+.board__form--message .button {
+  align-self: flex-end;
+}
+@media (max-width: 720px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}

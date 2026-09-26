@@ -218,11 +218,15 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
 - Verified in headless Chrome (playwright-core + installed Chrome): login, desk creation, prompt typed in
   the browser terminal, live states, monitor previews, overview/desk camera.
 
-### Phase 3 — Room awareness
-- [ ] Office MCP server + tools, desk tokens
-- [ ] Board + messages in SQLite, `additionalContext` injection
-- [ ] Whiteboard texture in each room
-- Demo: two desks in a room coordinate without human relay.
+### Phase 3 — Room awareness ✅
+- [x] Office MCP server (`packages/office-mcp`): `colleagues`, `set_task`, `send_message`,
+      `read_messages`, `board`, `post_note`, `remove_note` — pre-allowed (`permissions.allow: mcp__office`)
+- [x] Board + messages in SQLite, room summary + unread messages injected as `additionalContext`
+      (SessionStart, UserPromptSubmit when changed, PostToolUse for messages arriving mid-turn)
+- [x] Whiteboard texture in each room (handwritten style) + board panel where the human reads, pins
+      notes and writes to one desk or the whole room
+- Verified with two real sessions: Ken declared his task and asked Grace not to touch `math.js`;
+  Grace knew it without any tool call; a human message posted mid-turn reached Ken through PostToolUse.
 
 ### Phase 4 — The office (3D world)
 - [ ] Procedural floor plan (corridor, master room, project rooms, lounge), walls/doors/windows

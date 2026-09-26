@@ -28,7 +28,7 @@ pnpm typecheck
 | `WORKSPACE_PORT` | `4317` | HTTP/WebSocket port |
 | `WORKSPACE_DATA_DIR` | `~/.workspace` | Database, per-desk runtime files, worktrees |
 | `WORKSPACE_TMUX_SOCKET` | `workspace` | Name of the dedicated tmux server socket |
-| `WORKSPACE_CLAUDE_BIN` / `WORKSPACE_TMUX_BIN` | from `PATH` | Executables to use |
+| `WORKSPACE_CLAUDE_BIN` / `WORKSPACE_TMUX_BIN` / `WORKSPACE_NODE_BIN` | from `PATH` | Executables to use |
 | `WORKSPACE_HOOK_BASE_URL` | `http://<host>:<port>` | URL Claude Code hooks call back |
 | `WORKSPACE_SECURE_COOKIES` | unset | Set to `1` when served over HTTPS |
 | `WORKSPACE_RECORD_HOOKS` | unset | Set to `1` to log raw hook payloads to `<data>/hook-log.jsonl` |

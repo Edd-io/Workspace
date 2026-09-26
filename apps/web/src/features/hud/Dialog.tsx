@@ -5,9 +5,10 @@ interface Props {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  wide?: boolean;
 }
 
-export function Dialog({ title, onClose, children }: Props) {
+export function Dialog({ title, onClose, children, wide = false }: Props) {
   const { t } = useTranslation();
   return (
     <div
@@ -15,7 +16,7 @@ export function Dialog({ title, onClose, children }: Props) {
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
       <div
-        className="dialog panel"
+        className={`dialog panel${wide ? ' dialog--wide' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}

@@ -66,4 +66,26 @@ export const MIGRATIONS: string[] = [
   ALTER TABLE desks ADD COLUMN blockers TEXT NOT NULL DEFAULT '[]';
   ALTER TABLE desks ADD COLUMN session_title TEXT;
   `,
+  `
+  CREATE TABLE room_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id TEXT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+    from_desk_id TEXT,
+    to_desk_id TEXT,
+    body TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX room_messages_room ON room_messages (room_id, id);
+
+  CREATE TABLE room_notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id TEXT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+    desk_id TEXT,
+    body TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX room_notes_room ON room_notes (room_id, id);
+
+  ALTER TABLE desks ADD COLUMN last_read_message_id INTEGER NOT NULL DEFAULT 0;
+  `,
 ];

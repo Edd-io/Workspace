@@ -44,6 +44,43 @@ export interface Desk {
   createdAt: number;
 }
 
+export interface RoomMessage {
+  id: number;
+  roomId: string;
+  /** Sender desk, or null when the human wrote it. */
+  fromDeskId: string | null;
+  /** Recipient desk, or null for the whole room. */
+  toDeskId: string | null;
+  body: string;
+  createdAt: number;
+}
+
+export interface RoomNote {
+  id: number;
+  roomId: string;
+  /** Author desk, or null when the human pinned it. */
+  deskId: string | null;
+  body: string;
+  createdAt: number;
+}
+
+/** Shared state of a room, seen by its desks (through the office MCP) and drawn on its whiteboard. */
+export interface RoomBoard {
+  roomId: string;
+  notes: RoomNote[];
+  /** Most recent messages, oldest first. */
+  messages: RoomMessage[];
+}
+
+export const postRoomMessageSchema = z.object({
+  body: z.string().trim().min(1).max(4000),
+  toDeskId: z.string().min(1).nullable().optional(),
+});
+
+export const postRoomNoteSchema = z.object({
+  body: z.string().trim().min(1).max(1000),
+});
+
 export const createRoomSchema = z.object({
   name: z.string().trim().min(1).max(80),
   projectPath: z.string().trim().min(1),

@@ -1,14 +1,16 @@
 import { create } from 'zustand';
-import type { Desk, Room, ServerMessage } from '@workspace/shared';
+import type { Desk, Room, RoomBoard, ServerMessage } from '@workspace/shared';
 import { officeSocket, type ConnectionStatus } from '../api/socket';
 
-export type Panel = { kind: 'createRoom' } | { kind: 'createDesk'; roomId: string } | null;
+export type Panel =
+  { kind: 'createRoom' } | { kind: 'createDesk'; roomId: string } | { kind: 'board'; roomId: string } | null;
 
 interface OfficeState {
   connection: ConnectionStatus;
   loaded: boolean;
   rooms: Record<string, Room>;
   desks: Record<string, Desk>;
+  boards: Record<string, RoomBoard>;
   /** Desk the camera is looking at. */
   focusedDeskId: string | null;
   /** Desk whose terminal overlay is open. */
@@ -25,6 +27,7 @@ export const useOffice = create<OfficeState>((set) => ({
   loaded: false,
   rooms: {},
   desks: {},
+  boards: {},
   focusedDeskId: null,
   terminalDeskId: null,
   panel: null,
@@ -41,7 +44,11 @@ function applyMessage(message: ServerMessage): void {
         loaded: true,
         rooms: Object.fromEntries(message.rooms.map((room) => [room.id, room])),
         desks: Object.fromEntries(message.desks.map((desk) => [desk.id, desk])),
+        boards: Object.fromEntries(message.boards.map((board) => [board.roomId, board])),
       });
+      break;
+    case 'board.update':
+      useOffice.setState((state) => ({ boards: { ...state.boards, [message.board.roomId]: message.board } }));
       break;
     case 'room.upsert':
       useOffice.setState((state) => ({ rooms: { ...state.rooms, [message.room.id]: message.room } }));

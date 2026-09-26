@@ -52,7 +52,9 @@
     "hide": "Masquer",
     "empty": "Aucune salle pour l'instant. Crée-en une pour ton premier projet.",
     "addDesk": "Ajouter un poste",
-    "newRoom": "Nouvelle salle"
+    "newRoom": "Nouvelle salle",
+    "board": "Tableau",
+    "openBoard": "Ouvrir le tableau de la salle"
   },
   "desk": {
     "menu": "Actions du poste",
@@ -125,5 +127,26 @@
   },
   "world": {
     "addDesk": "+ Ajouter un poste"
+  },
+  "whiteboard": {
+    "title": "{{room}} — tableau",
+    "whoDoesWhat": "Qui fait quoi",
+    "notes": "Notes épinglées",
+    "messages": "Messages",
+    "nobody": "Personne pour l'instant",
+    "noNotes": "Aucune note",
+    "human": "Toi",
+    "room": "tout le monde"
+  },
+  "board": {
+    "formerDesk": "Ancien poste",
+    "removeNote": "Retirer cette note",
+    "notePlaceholder": "Une décision, une convention, un avertissement…",
+    "pin": "Épingler",
+    "noMessages": "Aucun message pour l'instant.",
+    "toRoom": "Toute la salle",
+    "messagePlaceholder": "Écris aux postes…",
+    "send": "Envoyer",
+    "deliveryHint": "Les postes reçoivent les messages à leur prochaine consigne ou utilisation d'outil."
   }
 }

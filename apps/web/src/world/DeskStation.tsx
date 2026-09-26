@@ -4,6 +4,7 @@ import { DESK_STATE_COLORS, type DeskState } from '@workspace/shared';
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
+import { deskTopic } from '../lib/desk';
 import { useOffice } from '../state/officeStore';
 import { appearanceFromSeed } from './appearance';
 import { FONT_TEXT_BOLD } from './fonts';
@@ -170,7 +171,7 @@ export function DeskStation({ layout }: { layout: DeskLayout }) {
         >
           {desk.name}
         </Text>
-        {(desk.sessionTitle ?? desk.currentTask) && (
+        {deskTopic(desk) && (
           <Text
             font={FONT_TEXT_BOLD}
             fontSize={0.09}
@@ -182,7 +183,7 @@ export function DeskStation({ layout }: { layout: DeskLayout }) {
             maxWidth={2}
             textAlign="center"
           >
-            {desk.sessionTitle ?? desk.currentTask}
+            {deskTopic(desk)}
           </Text>
         )}
       </Billboard>

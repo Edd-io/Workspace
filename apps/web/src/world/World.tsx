@@ -1,14 +1,16 @@
 import { Canvas } from '@react-three/fiber';
 import { useMemo } from 'react';
-import { sortedRooms, useOffice } from '../state/officeStore';
+import { desksOfRoom, sortedRooms, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
 import { DeskStation } from './DeskStation';
 import { computeLayout, CORRIDOR_HALF_WIDTH } from './layout';
 import { RoomView } from './RoomView';
+import { Whiteboard } from './Whiteboard';
 
 export function World() {
   const rooms = useOffice((state) => state.rooms);
   const desks = useOffice((state) => state.desks);
+  const boards = useOffice((state) => state.boards);
   const focusDesk = useOffice((state) => state.focusDesk);
   const layout = useMemo(() => computeLayout(sortedRooms(rooms), Object.values(desks)), [rooms, desks]);
   const corridorLength = layout.corridor.maxX - layout.corridor.minX;
@@ -48,7 +50,17 @@ export function World() {
       </mesh>
 
       {layout.rooms.map((room) => (
-        <RoomView key={room.room.id} layout={room} />
+        <group key={room.room.id}>
+          <RoomView layout={room} />
+          <Whiteboard
+            roomId={room.room.id}
+            roomName={room.room.name}
+            board={boards[room.room.id]}
+            desks={desksOfRoom(desks, room.room.id)}
+            position={[room.whiteboard.x, 0, room.whiteboard.z]}
+            rotation={room.whiteboard.rotation}
+          />
+        </group>
       ))}
       {layout.desks.map((desk) => (
         <DeskStation key={desk.desk.id} layout={desk} />

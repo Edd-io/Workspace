@@ -52,7 +52,9 @@
     "hide": "Hide",
     "empty": "No room yet. Create one for your first project.",
     "addDesk": "Add a desk",
-    "newRoom": "New room"
+    "newRoom": "New room",
+    "board": "Board",
+    "openBoard": "Open the room board"
   },
   "desk": {
     "menu": "Desk actions",
@@ -125,5 +127,26 @@
   },
   "world": {
     "addDesk": "+ Add a desk"
+  },
+  "whiteboard": {
+    "title": "{{room}} — board",
+    "whoDoesWhat": "Who does what",
+    "notes": "Pinned notes",
+    "messages": "Messages",
+    "nobody": "Nobody here yet",
+    "noNotes": "No note yet",
+    "human": "You",
+    "room": "everyone"
+  },
+  "board": {
+    "formerDesk": "Former desk",
+    "removeNote": "Remove this note",
+    "notePlaceholder": "A decision, a convention, a warning…",
+    "pin": "Pin",
+    "noMessages": "No message yet.",
+    "toRoom": "Whole room",
+    "messagePlaceholder": "Write to the desks…",
+    "send": "Send",
+    "deliveryHint": "Desks receive messages at their next prompt or tool use."
   }
 }

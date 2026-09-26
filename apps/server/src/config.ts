@@ -11,6 +11,8 @@ export interface Config {
   claudeBin: string;
   /** Absolute path of the `tmux` executable. */
   tmuxBin: string;
+  /** Node binary used to run the office MCP server (stable PATH entry, not a versioned install path). */
+  nodeBin: string;
   /** Name of the dedicated tmux server socket (`tmux -L <name>`). */
   tmuxSocket: string;
   /** Base URL Claude Code hooks use to reach this server. */
@@ -36,6 +38,14 @@ function resolveBinary(name: string, override: string | undefined): string {
   }
 }
 
+function tryResolveBinary(name: string): string | null {
+  try {
+    return resolveBinary(name, undefined);
+  } catch {
+    return null;
+  }
+}
+
 function expandHome(path: string): string {
   return path === '~' || path.startsWith('~/') ? join(homedir(), path.slice(1)) : path;
 }
@@ -52,6 +62,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     dataDir,
     claudeBin: resolveBinary('claude', env.WORKSPACE_CLAUDE_BIN),
     tmuxBin: resolveBinary('tmux', env.WORKSPACE_TMUX_BIN),
+    nodeBin: env.WORKSPACE_NODE_BIN ?? tryResolveBinary('node') ?? process.execPath,
     tmuxSocket: env.WORKSPACE_TMUX_SOCKET ?? 'workspace',
     hookBaseUrl: env.WORKSPACE_HOOK_BASE_URL ?? `http://${hookHost}:${port}`,
     secureCookies: env.WORKSPACE_SECURE_COOKIES === '1',

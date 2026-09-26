@@ -2,7 +2,9 @@ import { ATTENTION_STATES, DESK_STATES, type DeskState } from '@workspace/shared
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../api/http';
+import { deskTopic } from '../../lib/desk';
 import { desksOfRoom, sortedRooms, useOffice } from '../../state/officeStore';
+import { RoomBoardDialog } from '../board/RoomBoardDialog';
 import { CreateDeskDialog } from './CreateDeskDialog';
 import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
@@ -101,6 +103,13 @@ function OfficeSidebar() {
               </span>
               <button
                 className="button button--ghost button--small"
+                onClick={() => setPanel({ kind: 'board', roomId: room.id })}
+                title={t('sidebar.openBoard')}
+              >
+                {t('sidebar.board')}
+              </button>
+              <button
+                className="button button--ghost button--small"
                 onClick={() => setPanel({ kind: 'createDesk', roomId: room.id })}
                 title={t('sidebar.addDesk')}
               >
@@ -117,7 +126,7 @@ function OfficeSidebar() {
                     <StateDot state={desk.state} />
                     <span className="sidebar-desk__name">{desk.name}</span>
                     <span className="sidebar-desk__task muted">
-                      {desk.sessionTitle ?? desk.currentTask ?? t(`states.${desk.state}`)}
+                      {deskTopic(desk) ?? t(`states.${desk.state}`)}
                     </span>
                   </button>
                   <button
@@ -150,5 +159,6 @@ function Dialogs() {
   if (!panel) return null;
   const close = () => setPanel(null);
   if (panel.kind === 'createRoom') return <CreateRoomDialog onClose={close} />;
+  if (panel.kind === 'board') return <RoomBoardDialog roomId={panel.roomId} onClose={close} />;
   return <CreateDeskDialog roomId={panel.roomId} onClose={close} />;
 }

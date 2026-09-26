@@ -38,7 +38,6 @@ export class SessionManager {
   private readonly runtimes = new Map<string, DeskRuntime>();
   private readonly timers: NodeJS.Timeout[] = [];
   private hookResponder: HookResponder = () => ({});
-  mcpConfigPathFor: (desk: DeskRecord) => string | null = () => null;
 
   constructor(store: OfficeStore, host: TmuxHost, config: Config) {
     this.store = store;
@@ -97,7 +96,10 @@ export class SessionManager {
       claudeBin: this.config.claudeBin,
       hookBaseUrl: this.config.hookBaseUrl,
       dataDir: this.config.dataDir,
-      mcpConfigPath: this.mcpConfigPathFor(desk),
+      officeMcp: {
+        nodePath: this.config.nodeBin,
+        scriptPath: join(this.config.repoRoot, 'packages/office-mcp/src/index.ts'),
+      },
       systemPrompt: buildSystemPrompt(room, desk),
     });
   }
@@ -254,6 +256,10 @@ export class SessionManager {
     }
 
     const effect = reduceHook({ state: desk.state, inTurn: desk.inTurn, blockers: desk.blockers }, payload);
+    if (payload.hook_event_name === 'SessionStart' && payload.source === 'clear') {
+      // A cleared conversation starts from scratch: forget the declared task and topic.
+      this.store.updateDesk(deskId, { currentTask: null, sessionTitle: null });
+    }
     const { state, ...rest } = effect;
     this.store.updateDesk(deskId, {
       ...rest,

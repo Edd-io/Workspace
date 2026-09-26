@@ -31,8 +31,8 @@ export interface LaunchContext {
   claudeBin: string;
   hookBaseUrl: string;
   dataDir: string;
-  /** Extra MCP configuration file (office MCP), if any. */
-  mcpConfigPath: string | null;
+  /** Office MCP server entry point, started by Claude Code with the Node binary running the server. */
+  officeMcp: { nodePath: string; scriptPath: string } | null;
   systemPrompt: string;
 }
 
@@ -63,6 +63,8 @@ export function buildHookSettings(hookUrl: string): object {
     timeout: 10,
   };
   return {
+    // The office tools only reach the Workspace server: never ask the human before using them.
+    permissions: { allow: ['mcp__office'] },
     hooks: Object.fromEntries(
       HOOK_EVENTS.map((event) => [
         event,
@@ -99,6 +101,22 @@ export function writeLaunchFiles(context: LaunchContext): string {
     JSON.stringify(buildHookSettings(`${context.hookBaseUrl}/internal/hooks/${desk.id}`), null, 2),
   );
 
+  let mcpConfigPath: string | null = null;
+  if (context.officeMcp) {
+    mcpConfigPath = join(dir, 'mcp.json');
+    const office = {
+      type: 'stdio',
+      command: context.officeMcp.nodePath,
+      args: ['--disable-warning=ExperimentalWarning', context.officeMcp.scriptPath],
+      env: {
+        WORKSPACE_URL: context.hookBaseUrl,
+        WORKSPACE_DESK_ID: desk.id,
+        WORKSPACE_DESK_TOKEN: desk.token,
+      },
+    };
+    writeFileSync(mcpConfigPath, JSON.stringify({ mcpServers: { office } }, null, 2), { mode: 0o600 });
+  }
+
   const promptPath = join(dir, 'system-prompt.md');
   writeFileSync(promptPath, context.systemPrompt);
 
@@ -111,7 +129,7 @@ export function writeLaunchFiles(context: LaunchContext): string {
     '--settings',
     settingsPath,
   ];
-  if (context.mcpConfigPath) args.push('--mcp-config', context.mcpConfigPath);
+  if (mcpConfigPath) args.push('--mcp-config', mcpConfigPath);
   if (desk.model) args.push('--model', desk.model);
   if (desk.permissionMode) args.push('--permission-mode', desk.permissionMode);
   if (!resume && desk.initialPrompt) args.push(desk.initialPrompt);

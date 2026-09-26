@@ -33,6 +33,8 @@ export interface RoomLayout {
   towardCorridor: 1 | -1;
   /** Next free desk slot, used to show the "add desk" placeholder. */
   nextSlot: { x: number; z: number; rotation: number };
+  /** Standing whiteboard in the back corner, facing the corridor. */
+  whiteboard: { x: number; z: number; rotation: number };
 }
 
 export interface DeskLayout {
@@ -105,6 +107,11 @@ export function computeLayout(rooms: Room[], desks: Desk[]): OfficeLayout {
       depth,
       towardCorridor,
       nextSlot: slotPosition(roomDesks.length, columns, geometry),
+      whiteboard: {
+        x: x + width / 2 - 1.3,
+        z: z - towardCorridor * (depth / 2 - 0.55),
+        rotation: towardCorridor === 1 ? 0 : Math.PI,
+      },
     });
   });
 

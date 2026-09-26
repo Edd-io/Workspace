@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { WebSocket } from 'ws';
 import { clientMessageSchema, type ServerMessage } from '@workspace/shared';
+import type { BoardStore } from '../office/boardStore.ts';
 import type { TerminalSubscriber } from '../sessions/deskRuntime.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import { toPublicDesk, type OfficeStore } from '../store/officeStore.ts';
@@ -11,6 +12,7 @@ const MAX_BUFFERED_BYTES = 2 * 1024 * 1024;
 interface Deps {
   store: OfficeStore;
   sessions: SessionManager;
+  boards: BoardStore;
 }
 
 class ClientConnection implements TerminalSubscriber {
@@ -31,7 +33,7 @@ class ClientConnection implements TerminalSubscriber {
   }
 }
 
-export function registerWebSocket(app: FastifyInstance, { store, sessions }: Deps): void {
+export function registerWebSocket(app: FastifyInstance, { store, sessions, boards }: Deps): void {
   const clients = new Set<ClientConnection>();
 
   const broadcast = (message: ServerMessage): void => {
@@ -41,6 +43,7 @@ export function registerWebSocket(app: FastifyInstance, { store, sessions }: Dep
   store.on('roomRemoved', (roomId) => broadcast({ t: 'room.removed', roomId }));
   store.on('deskUpsert', (desk) => broadcast({ t: 'desk.upsert', desk }));
   store.on('deskRemoved', (deskId) => broadcast({ t: 'desk.removed', deskId }));
+  boards.on('boardChanged', (roomId) => broadcast({ t: 'board.update', board: boards.board(roomId) }));
 
   app.get('/ws', { websocket: true }, (socket) => {
     const client = new ClientConnection(socket);
@@ -49,6 +52,7 @@ export function registerWebSocket(app: FastifyInstance, { store, sessions }: Dep
       t: 'office.snapshot',
       rooms: store.listRooms(),
       desks: store.listDesks().map(toPublicDesk),
+      boards: store.listRooms().map((room) => boards.board(room.id)),
     });
 
     socket.on('message', (raw) => {
