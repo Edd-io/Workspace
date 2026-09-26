@@ -8,3 +8,5 @@ data/
 !.env.example
 coverage/
 *.tsbuildinfo
+__pycache__/
+*.pyc
