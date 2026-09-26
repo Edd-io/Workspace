@@ -1,7 +1,8 @@
 # Workspace
 
 A 3D office in the browser where each room is a project and each desk is a live Claude Code session.
-See [`PLAN.md`](PLAN.md) for the design and roadmap, and [`IDEAS.md`](IDEAS.md) for the backlog.
+See [`PLAN.md`](PLAN.md) for the design and roadmap, [`IDEAS.md`](IDEAS.md) for the backlog and
+[`docs/deployment.md`](docs/deployment.md) to run it on a Linux server.
 
 ## Requirements
 
@@ -9,15 +10,24 @@ See [`PLAN.md`](PLAN.md) for the design and roadmap, and [`IDEAS.md`](IDEAS.md) 
 - `tmux` (sessions run in a dedicated tmux server so they survive restarts)
 - `git`, `curl`
 - Claude Code CLI (`claude`), logged in with the subscription that will be used by every desk
+- Blender 5.1+ only to regenerate the 3D assets (`assets/blender/`)
 
 ## Development
 
 ```sh
 pnpm install
-pnpm --filter @workspace/server set-password   # once
-pnpm dev                                       # server on :4317 (+ web client once it exists)
+pnpm set-password     # once
+pnpm dev              # server on :4317 + Vite on :5317 (open http://localhost:5317)
 pnpm test
 pnpm typecheck
+```
+
+## Production
+
+```sh
+pnpm build            # builds the web client; the server then serves it
+pnpm start            # http://127.0.0.1:4317
+SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke test (installed Chrome)
 ```
 
 ## Configuration (environment variables)
@@ -32,3 +42,14 @@ pnpm typecheck
 | `WORKSPACE_HOOK_BASE_URL` | `http://<host>:<port>` | URL Claude Code hooks call back |
 | `WORKSPACE_SECURE_COOKIES` | unset | Set to `1` when served over HTTPS |
 | `WORKSPACE_RECORD_HOOKS` | unset | Set to `1` to log raw hook payloads to `<data>/hook-log.jsonl` |
+
+## Using the office
+
+- **Overview** (default): the building seen from above with walls cut away. Click a desk to fly to
+  it and open its terminal, a whiteboard to open the room board, `+` placeholders to add desks or
+  rooms. `Esc` goes back to the overview.
+- **Walk** (`V` or the top bar): first-person visit. Click to look around, WASD / ZQSD / arrows to
+  move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you.
+- **Master office** (at the entrance): live map, Haiku briefing, inbox and the day's timeline.
+- Desk lamps: blue = working, orange = needs you, green = idle, purple = compacting,
+  yellow = usage limit, red = error, off = stopped.

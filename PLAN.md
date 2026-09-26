@@ -270,10 +270,16 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
 - [x] Synthesized soundscape (no audio files): room tone, positional keyboard typing at the desks
       that are actually working (nearest 8), footsteps when walking, alert chimes; mute toggle
 
-### Phase 8 — Hardening & Linux
-- [ ] Performance pass (LOD, preview subscriptions, instancing), many-desk stress test
-- [ ] Deployment notes: systemd unit, reverse proxy HTTPS, data directory, backups
-- [ ] Test suite (server unit + integration, client smoke via browser)
+### Phase 8 — Hardening & Linux ✅ (first pass)
+- [x] Performance: instanced props, layout rebuilt only on structural changes, screen previews
+      streamed only for nearby/focused desks (periodic snapshots for the others), nearest-8 typing sounds
+- [x] WebSocket origin check (on top of the SameSite session cookie)
+- [x] Production mode: the server serves the built client (SPA fallback); `pnpm build` / `pnpm start`
+- [x] Deployment guide (`docs/deployment.md`): systemd with `KillMode=process` so desk sessions
+      survive restarts, HTTPS reverse proxy, Claude authentication, backups
+- [x] Tests: server unit tests (state machine, attention, timeline), client unit tests (layout,
+      locales, markdown), browser smoke test (`pnpm smoke`)
+- [ ] Many-desk stress test (dozens of real sessions) and a graphics quality setting
 
 ## 4. Risks & open points
 

@@ -70,6 +70,20 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     const needsSession = (path.startsWith('/api/') && !path.startsWith('/api/auth/')) || path === '/ws';
     if (needsSession && !isAuthenticated(request)) {
       await reply.code(401).send({ error: 'unauthorized' });
+      return;
+    }
+    // Defense in depth against cross-site WebSocket hijacking (on top of the SameSite cookie).
+    if (path === '/ws' && request.headers.origin) {
+      let originHost: string | null = null;
+      try {
+        originHost = new URL(request.headers.origin).host;
+      } catch {
+        originHost = null;
+      }
+      const allowed = [request.headers.host, request.headers['x-forwarded-host']].filter(Boolean);
+      if (!originHost || !allowed.includes(originHost)) {
+        await reply.code(403).send({ error: 'forbidden_origin' });
+      }
     }
   });
 

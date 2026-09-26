@@ -13,10 +13,14 @@
     "test": "pnpm -r test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "postinstall": "node scripts/fix-node-pty.mjs"
+    "postinstall": "node scripts/fix-node-pty.mjs",
+    "start": "pnpm --filter @workspace/server start",
+    "set-password": "pnpm --filter @workspace/server set-password",
+    "smoke": "node scripts/smoke.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",
+    "playwright-core": "^1.63.0",
     "prettier": "^3.9.9",
     "typescript": "^7.0.2",
     "vitest": "^5.0.2"

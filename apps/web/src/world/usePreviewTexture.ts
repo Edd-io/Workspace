@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { subscribePreview } from '../state/previews';
 import { drawFrame, drawMessage, PREVIEW_HEIGHT, PREVIEW_WIDTH } from './previewCanvas';
 
+const SNAPSHOT_MS = 20_000;
+
 export interface ScreenMessage {
   title: string;
   subtitle: string;
@@ -10,13 +12,15 @@ export interface ScreenMessage {
 }
 
 /**
- * Canvas texture showing a desk's terminal. While `live` is true it follows the server preview
- * frames; otherwise it shows `message` (offline screen).
+ * Canvas texture showing a desk's terminal. While `live` is true it shows the server preview
+ * frames (streamed only while `stream` is true, the last frame stays otherwise); when not live it
+ * shows `message` (offline screen).
  */
 export function usePreviewTexture(
   deskId: string,
   live: boolean,
   message: ScreenMessage,
+  stream = true,
 ): THREE.CanvasTexture {
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -30,15 +34,35 @@ export function usePreviewTexture(
 
   useEffect(() => () => texture.dispose(), [texture]);
 
-  // Live frames: subscribe once per desk, independently of state changes.
+  // Live frames: subscribe once per desk, independently of state changes. Far desks only take a
+  // snapshot now and then instead of streaming.
   useEffect(() => {
     if (!live) return;
     const canvas = texture.image as HTMLCanvasElement;
-    return subscribePreview(deskId, (frame) => {
+    const draw = (frame: Parameters<typeof drawFrame>[1]) => {
       drawFrame(canvas, frame);
       texture.needsUpdate = true;
-    });
-  }, [deskId, live, texture]);
+    };
+    if (stream) return subscribePreview(deskId, draw);
+    let close: (() => void) | null = null;
+    const snapshot = () => {
+      close?.();
+      close = subscribePreview(deskId, (frame) => {
+        draw(frame);
+        // First frame received: stop listening until the next snapshot.
+        queueMicrotask(() => {
+          close?.();
+          close = null;
+        });
+      });
+    };
+    snapshot();
+    const timer = window.setInterval(snapshot, SNAPSHOT_MS);
+    return () => {
+      window.clearInterval(timer);
+      close?.();
+    };
+  }, [deskId, live, stream, texture]);
 
   // Offline screen.
   useEffect(() => {

@@ -29,6 +29,20 @@ The full design and roadmap live in `PLAN.md`; the idea backlog lives in `IDEAS.
 - `packages/shared`: protocol types and zod schemas shared by server and web.
 - `packages/office-mcp`: stdio MCP server used by each desk session.
 
+## Working on the project
+
+- Commands: `pnpm dev`, `pnpm test`, `pnpm typecheck`, `pnpm format`, `pnpm build`, `pnpm smoke`.
+- Never test against the user's real office (`~/.workspace`, tmux socket `workspace`). Run an isolated
+  instance instead: `WORKSPACE_DATA_DIR=<scratch>/data WORKSPACE_PORT=4318 WORKSPACE_TMUX_SOCKET=workspace-e2e`
+  for the server (with `node --watch`), and `WORKSPACE_PORT=4318 npx vite --port 5318` for the client.
+- Browser checks: headless Chrome through `playwright-core` (see `scripts/smoke.mjs`). In dev builds,
+  `window.__office.goTo(x, z, yaw)` moves the viewer, which helps scripted screenshots.
+- Stopping a test server: kill the process *listening* on its port (`lsof -ti tcp:PORT -sTCP:LISTEN`),
+  not every process connected to it (that includes the Vite proxy).
+- Hooks: every event is an `http` hook except `SessionStart` (not delivered over HTTP by Claude
+  Code), relayed with `curl`. Recorded payloads (`WORKSPACE_RECORD_HOOKS=1`) are the reference for
+  `stateMachine.ts` tests.
+
 ## Tooling
 
 - Blender 5.2 at `/Applications/Blender.app/Contents/MacOS/Blender`; headless generation:

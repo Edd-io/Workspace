@@ -36,6 +36,11 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 - 💡 **Animated doors**, elevator if the office grows beyond one floor (one floor per project group?).
 - 💡 **Easter eggs**: a plant wilting when a desk has been in error for a long time, confetti when a long task finishes.
 
+## Performance
+- 💡 **Character LOD**: simplified or frozen characters far from the camera; share materials between characters with the same colors.
+- 💡 **Smaller assets**: meshopt compression of the GLBs, code-splitting the 3D bundle (1.8 MB today).
+- 💡 **Adaptive preview rate**: server-side frame rate per subscriber (focused desk faster, others slower).
+
 ## Platform
 - 👍 **Two-factor authentication** (TOTP) — requested for later.
 - 👍 **More languages** besides FR/EN — the i18n architecture is designed for it.

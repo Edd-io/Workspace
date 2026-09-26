@@ -15,6 +15,9 @@ import { usePreviewTexture } from './usePreviewTexture';
 
 const SCREEN_WIDTH = 0.6;
 const SCREEN_HEIGHT = 0.341;
+/** Live screen previews only stream for desks this close to the viewer (meters), with hysteresis. */
+const PREVIEW_NEAR = 16;
+const PREVIEW_FAR = 19;
 
 /** How the status lamp animates for each state. */
 function lampIntensity(state: DeskState, time: number): number {
@@ -42,7 +45,10 @@ export function DeskStation({ layout, showLabel }: { layout: DeskLayout; showLab
   const desk = useOffice((state) => state.desks[layout.desk.id]) ?? layout.desk;
   const openTerminal = useOffice((state) => state.openTerminal);
   const [hovered, setHovered] = useState(false);
+  const [near, setNear] = useState(false);
+  const focused = useOffice((state) => state.focusedDeskId === layout.desk.id);
   const lampMaterial = useRef<THREE.MeshStandardMaterial>(null);
+  const lastDistanceCheck = useRef(-1);
   const appearance = useMemo(() => appearanceFromSeed(desk.appearanceSeed), [desk.appearanceSeed]);
   const stateColor = DESK_STATE_COLORS[desk.state];
   const live = desk.state !== 'offline';
@@ -52,11 +58,21 @@ export function DeskStation({ layout, showLabel }: { layout: DeskLayout; showLab
     () => ({ title: desk.name, subtitle: t(`states.${desk.state}`), color: stateColor }),
     [desk.name, desk.state, stateColor, t],
   );
-  const screen = usePreviewTexture(desk.id, live, screenMessage);
+  // Far desks keep their last frame instead of streaming (bandwidth and CPU with many desks).
+  const screen = usePreviewTexture(desk.id, live, screenMessage, near || focused);
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock, camera }) => {
     const material = lampMaterial.current;
     if (material) material.emissiveIntensity = lampIntensity(desk.state, clock.elapsedTime);
+    if (clock.elapsedTime - lastDistanceCheck.current < 0.5) return;
+    lastDistanceCheck.current = clock.elapsedTime;
+    const distance = Math.hypot(
+      camera.position.x - layout.x,
+      camera.position.y - 1,
+      camera.position.z - layout.z,
+    );
+    if (!near && distance < PREVIEW_NEAR) setNear(true);
+    else if (near && distance > PREVIEW_FAR) setNear(false);
   });
 
   const onClick = (event: ThreeEvent<MouseEvent>) => {
