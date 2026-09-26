@@ -20,6 +20,10 @@ files by hand.
   colors are baked into vertex colors and faces are regrouped into five shared class materials
   (`matte`, `glossy`, `metal`, `emissive`, `glass`), so each prop costs 1–3 draw calls and can be
   instanced in the browser.
+- Open containers (bins, cups, pots) use `vessel()`: a hollow shell with an optional fill surface.
+  A solid cylinder with a disk on top either hides the disk or flickers with it.
+- The build refuses to export when two parts of a prop have overlapping faces in the same plane with
+  different colors (they would z-fight in the browser): offset one of them by a few millimeters.
 - Adding a prop: write a builder returning `join(parts, "<name>")` in `props/*.py`, register it in
   that module's `PROPS`, add the name to `PROP_NAMES` in `apps/web/src/world/props/propLibrary.ts`,
   then place it in `apps/web/src/world/decor.ts`.

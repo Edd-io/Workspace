@@ -7,7 +7,9 @@ Conventions for every prop:
 """
 
 import math
+from collections import defaultdict
 
+import bmesh
 import bpy
 from mathutils import Euler, Vector
 
@@ -140,6 +142,43 @@ def cylinder(radius, depth, location=(0, 0, 0), mat="plastic_gray", vertices=16,
     return _finish(obj, mat, bevel, segments, smooth, location, rotation)
 
 
+def vessel(radius, height, location=(0, 0, 0), mat="plastic_gray", vertices=16, radius_top=None, wall=0.006,
+           fill=None, rotation=(0, 0, 0)):
+    """Open container (cup, pot, bin): a hollow cylinder or cone with a bottom, centered at `location`
+    like `cylinder`. `fill=(level, mat)` adds a surface (coffee, soil, bin bag) `level` meters above
+    its base. Returns a list of parts.
+
+    A solid cylinder with a disk on top would either hide the disk or z-fight with it."""
+    radius_top = radius if radius_top is None else radius_top
+    bm = bmesh.new()
+    rings = []
+    for z, r in ((-height / 2, radius), (height / 2, radius_top)):
+        rings.append([bm.verts.new((r * math.cos(i / vertices * math.tau), r * math.sin(i / vertices * math.tau), z))
+                      for i in range(vertices)])
+    for i in range(vertices):
+        j = (i + 1) % vertices
+        bm.faces.new((rings[0][i], rings[0][j], rings[1][j], rings[1][i]))
+    bm.faces.new(list(reversed(rings[0])))
+    mesh = bpy.data.meshes.new("vessel")
+    bm.to_mesh(mesh)
+    bm.free()
+    obj = _link(bpy.data.objects.new("vessel", mesh))
+    # Normals point outward: a negative offset grows the wall inward, the rim closes its top.
+    solidify = obj.modifiers.new("Solidify", "SOLIDIFY")
+    solidify.thickness = wall
+    solidify.offset = -1.0
+    solidify.use_even_offset = True
+    solidify.use_rim = True
+    parts = [_finish(obj, mat, 0, 1, True, location, rotation)]
+    if fill:
+        level, fill_mat = fill
+        outer = radius + (radius_top - radius) * level / height
+        # The disk edge ends inside the wall, so no gap shows around it.
+        parts.append(cylinder(outer - wall / 2, 0.004, (location[0], location[1], location[2] - height / 2 + level),
+                              fill_mat, vertices=vertices, rotation=rotation))
+    return parts
+
+
 def sphere(radius, location=(0, 0, 0), mat="plastic_gray", segments=16, rings=10, scale=(1, 1, 1), rotation=(0, 0, 0)):
     bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=rings, radius=radius)
     obj = bpy.context.active_object
@@ -203,6 +242,84 @@ def join(objects, name):
                                    selected_editable_objects=[root]):
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     return root
+
+
+def _islands(mesh):
+    """Index of the connected part (as built, before joining) of every face of `mesh`."""
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    bm.faces.ensure_lookup_table()
+    island_of = [-1] * len(bm.faces)
+    island = 0
+    for start in bm.faces:
+        if island_of[start.index] != -1:
+            continue
+        stack = [start]
+        island_of[start.index] = island
+        while stack:
+            face = stack.pop()
+            for edge in face.edges:
+                for other in edge.link_faces:
+                    if island_of[other.index] == -1:
+                        island_of[other.index] = island
+                        stack.append(other)
+        island += 1
+    bm.free()
+    return island_of
+
+
+def _inside(point, polygon):
+    """Whether 2D `point` is strictly inside the convex-ish 2D `polygon` (even-odd rule, 1 mm margin)."""
+    x, y = point
+    inside = False
+    for (x0, y0), (x1, y1) in zip(polygon, polygon[1:] + polygon[:1]):
+        if (y0 > y) != (y1 > y):
+            cross = x0 + (y - y0) * (x1 - x0) / (y1 - y0)
+            if cross > x:
+                inside = not inside
+            if abs(cross - x) < 0.001:
+                return False
+    return inside
+
+
+def find_coplanar_overlaps(obj, tolerance=0.0005):
+    """Faces of different parts lying in the same plane with the same orientation and overlapping:
+    they z-fight (flicker) in the browser. Returns (material, material, height) triples."""
+    mesh = obj.data
+    island_of = _islands(mesh)
+    buckets = defaultdict(list)
+    for polygon in mesh.polygons:
+        normal = polygon.normal
+        distance = normal.dot(polygon.center)
+        key = (round(normal.x, 2), round(normal.y, 2), round(normal.z, 2), round(distance / (tolerance * 4)))
+        buckets[key].append(polygon)
+    names = [slot.material.name if slot.material else "?" for slot in obj.material_slots]
+    found = []
+    for faces in buckets.values():
+        # Undersides resting on the floor are never seen.
+        faces = [face for face in faces if not (face.normal.z < -0.99 and face.center.z < 0.001)]
+        if len(faces) < 2:
+            continue
+        axis = max(range(3), key=lambda i: abs(faces[0].normal[i]))
+        keep = [i for i in range(3) if i != axis]
+
+        def flat(polygon):
+            return [(mesh.vertices[v].co[keep[0]], mesh.vertices[v].co[keep[1]]) for v in polygon.vertices]
+
+        for i, a in enumerate(faces):
+            for b in faces[i + 1:]:
+                # Two parts of the same color flicker invisibly.
+                if island_of[a.index] == island_of[b.index] or a.material_index == b.material_index:
+                    continue
+                if abs(a.normal.dot(a.center) - b.normal.dot(b.center)) > tolerance:
+                    continue
+                pa, pb = flat(a), flat(b)
+                ca = (a.center[keep[0]], a.center[keep[1]])
+                cb = (b.center[keep[0]], b.center[keep[1]])
+                if _inside(ca, pb) or _inside(cb, pa) or any(_inside(p, pb) for p in pa) or any(
+                        _inside(p, pa) for p in pb):
+                    found.append((names[a.material_index], names[b.material_index], round(a.center.z, 4)))
+    return sorted(set(found))
 
 
 def mirror_x(builder, offset):

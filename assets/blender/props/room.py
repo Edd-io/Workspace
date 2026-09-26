@@ -3,7 +3,7 @@
 import math
 import random
 
-from lib.kit import box, cylinder, ico, join, sphere, torus
+from lib.kit import box, cylinder, ico, join, sphere, torus, vessel
 
 BOOK_COLORS = ["book_1", "book_2", "book_3", "book_4", "book_5", "book_6", "paper"]
 
@@ -30,7 +30,9 @@ def bookshelf():
     parts = [
         box((0.025, depth, height), (-width / 2 + 0.0125, 0, height / 2), "wood_mid", bevel=0.003),
         box((0.025, depth, height), (width / 2 - 0.0125, 0, height / 2), "wood_mid", bevel=0.003),
-        box((width, 0.012, height), (0, depth / 2 - 0.006, height / 2), "wood_dark", bevel=0.0),
+        # Back panel between the sides and under the top board, never flush with them.
+        box((width - 0.05, 0.012, height - 0.025), (0, depth / 2 - 0.006, (height - 0.025) / 2), "wood_dark",
+            bevel=0.0),
     ]
     shelves = [0.06, 0.42, 0.78, 1.14, 1.5, height - 0.0125]
     for z in shelves:
@@ -55,9 +57,11 @@ def filing_cabinet():
 
 def trash_bin():
     parts = [
-        cylinder(0.14, 0.32, (0, 0, 0.16), "plastic_gray", vertices=20, radius_top=0.16),
-        cylinder(0.145, 0.004, (0, 0, 0.318), "rubber", vertices=20),
-        box((0.08, 0.08, 0.06), (0.02, 0.01, 0.33), "paper", bevel=0.02, rotation=(20, 30, 10)),
+        *vessel(0.14, 0.32, (0, 0, 0.16), "plastic_gray", vertices=20, radius_top=0.16, wall=0.008,
+                fill=(0.12, "plastic_black")),
+        # Crumpled paper on the bag.
+        ico(0.04, (0.03, 0.02, 0.15), "paper", subdivisions=1, scale=(1, 0.9, 0.8), rotation=(20, 30, 10)),
+        ico(0.03, (-0.05, -0.03, 0.14), "paper", subdivisions=1, rotation=(-10, 50, 0)),
     ]
     return join(parts, "trash_bin")
 
@@ -65,8 +69,8 @@ def trash_bin():
 def plant_tall():
     rng = random.Random(21)
     parts = [
-        cylinder(0.17, 0.42, (0, 0, 0.21), "ceramic_white", vertices=20, radius_top=0.2),
-        cylinder(0.19, 0.01, (0, 0, 0.41), "soil", vertices=20),
+        *vessel(0.17, 0.42, (0, 0, 0.21), "ceramic_white", vertices=20, radius_top=0.2, wall=0.012,
+                fill=(0.39, "soil")),
     ]
     for i in range(9):
         angle = i / 9 * math.tau + rng.uniform(-0.2, 0.2)
@@ -85,7 +89,8 @@ def plant_tall():
 
 def plant_snake():
     rng = random.Random(5)
-    parts = [cylinder(0.13, 0.3, (0, 0, 0.15), "terracotta", vertices=16, radius_top=0.15)]
+    parts = vessel(0.13, 0.3, (0, 0, 0.15), "terracotta", vertices=16, radius_top=0.15, wall=0.01,
+                   fill=(0.27, "soil"))
     for i in range(11):
         angle = rng.uniform(0, math.tau)
         radius = rng.uniform(0, 0.08)
@@ -208,7 +213,7 @@ def storage_boxes():
 
 
 def umbrella_stand():
-    parts = [cylinder(0.12, 0.5, (0, 0, 0.25), "metal_dark", vertices=16)]
+    parts = vessel(0.12, 0.5, (0, 0, 0.25), "metal_dark", vertices=16, wall=0.004)
     for i, color in enumerate(("blue", "red", "plastic_black")):
         angle = i / 3 * math.tau
         parts.append(cylinder(0.01, 0.85, (0.04 * math.cos(angle), 0.04 * math.sin(angle), 0.55), "plastic_black",
@@ -236,13 +241,15 @@ def poster(name, colors):
         box((0.56, 0.004, 0.76), (0, -0.013, 0), "paper", bevel=0.0),
     ]
     rng = random.Random(sum(map(ord, name)))
-    for color in colors:
+    for index, color in enumerate(colors):
         w, h = rng.uniform(0.12, 0.4), rng.uniform(0.12, 0.45)
         x, z = rng.uniform(-0.25 + w / 2, 0.25 - w / 2), rng.uniform(-0.35 + h / 2, 0.35 - h / 2)
+        # Each shape stands 2 mm in front of the previous one: overlapping shapes in one plane flicker.
+        y = -0.016 - index * 0.002
         if rng.random() < 0.4:
-            parts.append(cylinder(min(w, h) / 2, 0.004, (x, -0.016, z), color, vertices=24, rotation=(90, 0, 0)))
+            parts.append(cylinder(min(w, h) / 2, 0.002, (x, y, z), color, vertices=24, rotation=(90, 0, 0)))
         else:
-            parts.append(box((w, 0.004, h), (x, -0.016, z), color, bevel=0.0))
+            parts.append(box((w, 0.002, h), (x, y, z), color, bevel=0.0))
     return join(parts, name)
 
 

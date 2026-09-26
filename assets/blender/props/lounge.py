@@ -2,7 +2,7 @@
 
 import math
 
-from lib.kit import box, cylinder, ico, join, sphere, torus
+from lib.kit import box, cylinder, ico, join, sphere, torus, vessel
 
 
 def sofa():
@@ -180,11 +180,13 @@ def bean_bag():
 
 
 def fruit_bowl():
-    parts = [cylinder(0.14, 0.07, (0, 0, 0.035), "wood_light", vertices=20, radius_top=0.18)]
-    for i, color in enumerate(("red", "yellow", "green", "red", "yellow")):
-        angle = i / 5 * math.tau
-        parts.append(sphere(0.045, (0.07 * math.cos(angle), 0.07 * math.sin(angle), 0.09), color, segments=10,
+    parts = vessel(0.14, 0.07, (0, 0, 0.035), "wood_light", vertices=20, radius_top=0.18, wall=0.01)
+    # Fruits resting in the bowl, one on top of the others.
+    for i, color in enumerate(("red", "yellow", "green", "red")):
+        angle = i / 4 * math.tau
+        parts.append(sphere(0.045, (0.075 * math.cos(angle), 0.075 * math.sin(angle), 0.06), color, segments=10,
                             rings=6))
+    parts.append(sphere(0.045, (0.0, 0.0, 0.11), "yellow", segments=10, rings=6))
     return join(parts, "fruit_bowl")
 
 

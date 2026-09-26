@@ -3,7 +3,7 @@
 import math
 import random
 
-from lib.kit import box, cylinder, ico, join, rod, sphere, torus
+from lib.kit import box, cylinder, ico, join, rod, sphere, torus, vessel
 
 DESK_HEIGHT = 0.74
 
@@ -82,8 +82,7 @@ def mouse():
 
 def mug(name="mug", color="ceramic_white"):
     parts = [
-        cylinder(0.04, 0.095, (0, 0, 0.0475), color, vertices=20),
-        cylinder(0.035, 0.002, (0, 0, 0.085), "coffee", vertices=20),
+        *vessel(0.04, 0.095, (0, 0, 0.0475), color, vertices=20, wall=0.004, fill=(0.078, "coffee")),
         torus(0.025, 0.007, (0.045, 0, 0.05), color, rotation=(90, 0, 0)),
     ]
     return join(parts, name)
@@ -117,8 +116,8 @@ def desk_lamp():
 def plant_small():
     rng = random.Random(7)
     parts = [
-        cylinder(0.06, 0.09, (0, 0, 0.045), "terracotta", vertices=16, radius_top=0.07),
-        cylinder(0.062, 0.004, (0, 0, 0.085), "soil", vertices=16),
+        *vessel(0.06, 0.09, (0, 0, 0.045), "terracotta", vertices=16, radius_top=0.07, wall=0.006,
+                fill=(0.075, "soil")),
     ]
     for i in range(7):
         angle = i / 7 * math.tau
@@ -138,7 +137,7 @@ def notebook():
 
 
 def pen_holder():
-    parts = [cylinder(0.035, 0.1, (0, 0, 0.05), "metal_dark", vertices=16)]
+    parts = vessel(0.035, 0.1, (0, 0, 0.05), "metal_dark", vertices=16, wall=0.003)
     for i, color in enumerate(("blue", "red", "plastic_black", "yellow")):
         angle = i / 4 * math.tau
         parts.append(cylinder(0.005, 0.15, (0.015 * math.cos(angle), 0.015 * math.sin(angle), 0.1), color,
