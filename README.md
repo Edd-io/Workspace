@@ -72,6 +72,11 @@ by `pnpm screenshots` (see [Development](#development)).
   through a Discord webhook, sent only while no Workspace tab is visible; each message links to the
   desk's terminal.
 
+**Languages**
+
+- The interface, the phone notifications and the briefing are available in English, French,
+  German, Spanish, Italian, Portuguese (Brazil), Russian, Japanese, Korean and Chinese (Simplified).
+
 ## Controls
 
 | Where | Input | Action |

@@ -61,6 +61,19 @@ The codebase follows a few rules; pull requests are expected to keep them.
 The same rules are in [`CLAUDE.md`](CLAUDE.md), which Claude Code reads automatically if you use it
 to work on the project.
 
+## Translations
+
+Translation fixes are welcome: each language is one file, `apps/web/src/locales/<lang>/common.json`.
+
+- **A new text**: add its key to every locale. English is the reference and the fallback; if you
+  cannot translate a language yourself, say so in the pull request.
+- **A new language**: add its code and its BCP 47 tag to `packages/shared/src/languages.ts`, then
+  create `apps/web/src/locales/<code>/common.json` with every key. The client loads it when chosen,
+  and the server uses it for notifications and the briefing without further changes.
+- `pnpm test` checks every locale: the same keys as English, the plural forms the language needs
+  (e.g. `_one`/`_few`/`_many`/`_other` in Russian, `_other` only in Japanese) and the same
+  `{{variables}}`.
+
 ## Code style
 
 - TypeScript strict, ESM only; Prettier formats everything (`pnpm format`).
