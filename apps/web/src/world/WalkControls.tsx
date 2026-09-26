@@ -9,7 +9,7 @@ import type { OfficeLayout, Vec2 } from './layout';
 import { playerPose } from './playerPose';
 import { aimedSeat, seatsOf, type Seat } from './seats';
 import { footsteps } from './Soundscape';
-import { useWalk, type WalkAim } from './walkState';
+import { useWalk, walkMemory, type WalkAim } from './walkState';
 
 const EYE_HEIGHT = 1.62;
 const WALK_SPEED = 2.4;
@@ -25,6 +25,8 @@ const SIT_DURATION = 0.45;
 const SEATED_PITCH = -0.12;
 /** How often the target under the crosshair is looked up for the hint (seconds). */
 const AIM_INTERVAL = 0.15;
+/** How long to wait, once the mouse is released, to tell Escape from switching to another app. */
+const RELEASE_SETTLE_MS = 150;
 
 type Interactive =
   | { kind: 'desk'; deskId: string }
@@ -92,8 +94,28 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
   const seated = useRef<{ seat: Seat; standing: Vec2 } | null>(null);
   const transition = useRef<{ from: Pose; to: Pose; progress: number } | null>(null);
   const aimClock = useRef(0);
+  // View requests already applied: the one current when the walk starts is used (or ignored) once,
+  // and must not move the visitor again later.
+  const handledTarget = useRef(viewTarget?.seq);
 
-  // Start where the camera is when it is inside the building, otherwise at the entrance.
+  /**
+   * Captures the mouse. Browsers allow it right after a key press or a click, or after the page
+   * released it itself (a window opening); otherwise the hint asks for a click.
+   */
+  const capture = () => {
+    const canvas = gl.domElement;
+    if (document.pointerLockElement === canvas) return;
+    try {
+      // A promise in recent browsers, rejected when a click is needed first.
+      Promise.resolve(canvas.requestPointerLock()).catch(() => undefined);
+    } catch {
+      // Same, in browsers that throw.
+    }
+  };
+
+  // Start at a place picked in the overview, or resume where the last walk ended; otherwise where
+  // the camera is when it is inside the building, or at the entrance. First person always
+  // captures the mouse.
   useEffect(() => {
     const { bounds } = layout;
     const inside =
@@ -102,7 +124,14 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
       camera.position.z > bounds.z0 &&
       camera.position.z < bounds.z1 &&
       camera.position.y < 3;
-    if (inside) {
+    const picked = viewTarget && viewTarget.seq !== walkMemory.targetSeq ? viewTarget : null;
+    if (picked) {
+      position.current = [picked.x, picked.z];
+      yaw.current = picked.yaw ?? yaw.current;
+    } else if (walkMemory.pose) {
+      position.current = [walkMemory.pose.x, walkMemory.pose.z];
+      yaw.current = walkMemory.pose.yaw;
+    } else if (inside) {
       position.current = [camera.position.x, camera.position.z];
       const direction = new THREE.Vector3();
       camera.getWorldDirection(direction);
@@ -112,13 +141,18 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
       yaw.current = -Math.PI / 2;
     }
     pitch.current = 0;
+    capture();
     return () => {
+      const [x, z] = seated.current?.standing ?? position.current;
+      walkMemory.pose = { x, z, yaw: yaw.current };
+      walkMemory.targetSeq = handledTarget.current;
       if (document.pointerLockElement === gl.domElement) document.exitPointerLock();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!viewTarget) return;
+    if (!viewTarget || viewTarget.seq === handledTarget.current) return;
+    handledTarget.current = viewTarget.seq;
     seated.current = null;
     transition.current = null;
     useWalk.setState({ seated: false });
@@ -246,7 +280,7 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
       // The same click may open a desk, board or screen under the cursor (handled by the 3D
       // scene after this listener): only take the mouse once it is clear that nothing opened.
       setTimeout(() => {
-        if (!windowOpen() && document.pointerLockElement !== canvas) void canvas.requestPointerLock();
+        if (!windowOpen()) capture();
       }, 0);
     };
     const onMouseMove = (event: MouseEvent) => {
@@ -279,17 +313,35 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
 
   useEffect(() => {
     // Any window opening (terminal, dialog, whatever opened it: E, a shortcut, a notification)
-    // gives the mouse back.
-    const offWindows = useOffice.subscribe((state) => {
-      if ((state.terminalDeskId || state.panel) && document.pointerLockElement) document.exitPointerLock();
+    // gives the mouse back; closing the last one captures it again.
+    const offWindows = useOffice.subscribe((state, previous) => {
+      const open = state.terminalDeskId !== null || state.panel !== null;
+      const wasOpen = previous.terminalDeskId !== null || previous.panel !== null;
+      if (open && document.pointerLockElement) document.exitPointerLock();
+      if (!open && wasOpen) capture();
     });
     // While the mouse is captured, only the crosshair counts: the 3D scene's own pointer events
     // would raycast from wherever the cursor was when it got captured.
     const setSceneEvents = (enabled: boolean) =>
       setThree((state) => ({ events: { ...state.events, enabled } }));
-    const onLockChange = () => setSceneEvents(document.pointerLockElement !== gl.domElement);
+    let settle: ReturnType<typeof setTimeout> | undefined;
+    const onLockChange = () => {
+      const locked = document.pointerLockElement === gl.domElement;
+      setSceneEvents(!locked);
+      clearTimeout(settle);
+      if (locked) return;
+      // Released while no window opened: by Escape, which in first person means leaving it (the
+      // mouse is always captured there), or because another app took the focus (then a click
+      // resumes the walk).
+      settle = setTimeout(() => {
+        const { terminalDeskId, panel, viewMode, setViewMode } = useOffice.getState();
+        if (terminalDeskId || panel || viewMode !== 'walk' || document.pointerLockElement) return;
+        if (document.hasFocus() && document.visibilityState === 'visible') setViewMode('overview');
+      }, RELEASE_SETTLE_MS);
+    };
     document.addEventListener('pointerlockchange', onLockChange);
     return () => {
+      clearTimeout(settle);
       offWindows();
       document.removeEventListener('pointerlockchange', onLockChange);
       setSceneEvents(true);

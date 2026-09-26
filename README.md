@@ -48,8 +48,8 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
 - **Overview** (default): the building seen from above with walls cut away. Click a desk to fly to
   it and open its terminal, a whiteboard to open the room board, `+` placeholders to add desks or
   rooms. `Esc` goes back to the overview.
-- **Walk** (`V` or the top bar): first-person visit. Click to look around, WASD / ZQSD / arrows to
-  move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you, or to sit
+- **Walk** (`V` or the top bar): first-person visit, the mouse captured to look around (`Esc` goes
+  back to the overview, `V` resumes where you left). WASD / ZQSD / arrows to move, Shift to run, `E` or click to use the desk, whiteboard or screen in front of you, or to sit
   down on a free seat (your chair at the master desk, sofas, stools, benches); walk away to stand up.
 - **Master office** (at the entrance): live map, Haiku briefing, inbox and the day's timeline, and a
   gallery wall of empty frames: walk up to one and press `E` to put your own picture in it (pick a
