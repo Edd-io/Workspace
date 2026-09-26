@@ -11,7 +11,7 @@ import { DESK_TOP, MASTER_MONITORS, masterDeskPose } from './decor';
 import { deskToWorld, type OfficeLayout, type RoomRect } from './layout';
 import { PREVIEW_HEIGHT, PREVIEW_WIDTH } from './previewCanvas';
 
-const SCREEN: [number, number, number] = [0, 0.338, 0.0172];
+const SCREEN: [number, number, number] = [0, 0.338, 0.0215];
 const BACKGROUND = '#0f141b';
 const TEXT = '#e6edf3';
 const MUTED = '#8b949e';

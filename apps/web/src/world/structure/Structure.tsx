@@ -3,7 +3,31 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { CORRIDOR_HALF_WIDTH, WALL_HEIGHT, type OfficeLayout, type RoomLayout } from '../layout';
 import { carpetColor, carpetTexture, tileTexture, woodTexture } from '../textures';
-import { buildWallBoxes, type WallMaterial } from './buildWalls';
+import { buildWallBoxes, type WallBox, type WallMaterial } from './buildWalls';
+
+/** Floors sit at y = 0; the slab under them and the ceiling are unions of the room rectangles. */
+function useSlabGeometry(layout: OfficeLayout, y: number, thickness: number, margin: number) {
+  const geometry = useMemo(() => {
+    const rects = [
+      ...layout.rooms.map((room) => ({ x0: room.x0, x1: room.x1, z0: room.z0, z1: room.z1 })),
+      { x0: layout.corridor.x0, x1: layout.corridor.x1, z0: -CORRIDOR_HALF_WIDTH, z1: CORRIDOR_HALF_WIDTH },
+    ];
+    const parts = rects.map((rect) => {
+      const box = new THREE.BoxGeometry(
+        rect.x1 - rect.x0 + margin * 2,
+        thickness,
+        rect.z1 - rect.z0 + margin * 2,
+      );
+      box.translate((rect.x0 + rect.x1) / 2, y + thickness / 2, (rect.z0 + rect.z1) / 2);
+      return box;
+    });
+    const merged = mergeGeometries(parts)!;
+    parts.forEach((part) => part.dispose());
+    return merged;
+  }, [layout.rooms, layout.corridor, y, thickness, margin]);
+  useEffect(() => () => geometry.dispose(), [geometry]);
+  return geometry;
+}
 
 const WALL_MATERIALS: Record<WallMaterial, THREE.Material> = {
   wall: new THREE.MeshStandardMaterial({ color: '#ecebe7', roughness: 0.92 }),
@@ -19,9 +43,48 @@ const WALL_MATERIALS: Record<WallMaterial, THREE.Material> = {
   trim: new THREE.MeshStandardMaterial({ color: '#8c8780', roughness: 0.7 }),
 };
 
-function useWallGeometries(layout: OfficeLayout, cut: number): [WallMaterial, THREE.BufferGeometry][] {
-  const geometries = useMemo(() => {
-    const byMaterial = new Map<WallMaterial, THREE.BufferGeometry[]>();
+/**
+ * The end faces of the wall boxes that remain (free wall ends, corners) are drawn apart, slightly
+ * pushed back in depth, so they never win against the face of a wall they touch edge-on.
+ */
+const WALL_END_MATERIALS = Object.fromEntries(
+  Object.entries(WALL_MATERIALS).map(([name, material]) => {
+    const ends = material.clone();
+    ends.polygonOffset = true;
+    ends.polygonOffsetFactor = 1;
+    ends.polygonOffsetUnits = 1;
+    return [name, ends];
+  }),
+) as Record<WallMaterial, THREE.Material>;
+
+/** Builds the faces of a wall box: its long sides, or its end faces that `box.ends` keeps. */
+function boxFaces(box: WallBox, geometry: THREE.BoxGeometry, ends: boolean): THREE.BufferGeometry | null {
+  // BoxGeometry groups: 0 is the +X face (the box's end along the wall), 1 the −X face (its start).
+  const keep = (group: number) => (group === 0 ? box.ends[1] : group === 1 ? box.ends[0] : false);
+  const source = geometry.getIndex()!.array;
+  const indices: number[] = [];
+  for (const group of geometry.groups) {
+    const index = group.materialIndex ?? 0;
+    if (ends ? !keep(index) : index <= 1) continue;
+    for (let i = group.start; i < group.start + group.count; i++) indices.push(source[i]!);
+  }
+  if (indices.length === 0) return null;
+  const faces = new THREE.BufferGeometry();
+  for (const name of ['position', 'normal', 'uv']) faces.setAttribute(name, geometry.getAttribute(name));
+  faces.setIndex(indices);
+  return faces;
+}
+
+interface WallMesh {
+  key: string;
+  material: WallMaterial;
+  ends: boolean;
+  geometry: THREE.BufferGeometry;
+}
+
+function useWallGeometries(layout: OfficeLayout, cut: number): WallMesh[] {
+  const meshes = useMemo(() => {
+    const byKey = new Map<string, { material: WallMaterial; ends: boolean; parts: THREE.BufferGeometry[] }>();
     const matrix = new THREE.Matrix4();
     const quaternion = new THREE.Quaternion();
     const up = new THREE.Vector3(0, 1, 0);
@@ -30,18 +93,24 @@ function useWallGeometries(layout: OfficeLayout, cut: number): [WallMaterial, TH
       quaternion.setFromAxisAngle(up, box.rotation);
       matrix.compose(new THREE.Vector3(...box.center), quaternion, new THREE.Vector3(1, 1, 1));
       geometry.applyMatrix4(matrix);
-      const list = byMaterial.get(box.material) ?? [];
-      list.push(geometry);
-      byMaterial.set(box.material, list);
+      for (const ends of [false, true]) {
+        const faces = boxFaces(box, geometry, ends);
+        if (!faces) continue;
+        const key = `${box.material}${ends ? '-ends' : ''}`;
+        const entry = byKey.get(key) ?? { material: box.material, ends, parts: [] };
+        entry.parts.push(faces);
+        byKey.set(key, entry);
+      }
+      geometry.dispose();
     }
-    return [...byMaterial].map(([material, list]): [WallMaterial, THREE.BufferGeometry] => {
-      const merged = mergeGeometries(list)!;
-      list.forEach((geometry) => geometry.dispose());
-      return [material, merged];
+    return [...byKey].map(([key, { material, ends, parts }]): WallMesh => {
+      const geometry = mergeGeometries(parts)!;
+      parts.forEach((part) => part.dispose());
+      return { key, material, ends, geometry };
     });
   }, [layout.walls, cut]);
-  useEffect(() => () => geometries.forEach(([, geometry]) => geometry.dispose()), [geometries]);
-  return geometries;
+  useEffect(() => () => meshes.forEach((mesh) => mesh.geometry.dispose()), [meshes]);
+  return meshes;
 }
 
 function floorMaterial(room: RoomLayout): THREE.MeshStandardMaterial {
@@ -72,7 +141,7 @@ function RoomFloor({ room }: { room: RoomLayout }) {
   );
   return (
     <mesh
-      position={[(room.x0 + room.x1) / 2, 0.002, (room.z0 + room.z1) / 2]}
+      position={[(room.x0 + room.x1) / 2, 0, (room.z0 + room.z1) / 2]}
       rotation={[-Math.PI / 2, 0, 0]}
       receiveShadow
       material={material}
@@ -98,7 +167,7 @@ function CorridorFloor({ layout }: { layout: OfficeLayout }) {
   );
   return (
     <mesh
-      position={[(layout.corridor.x0 + layout.corridor.x1) / 2, 0.003, 0]}
+      position={[(layout.corridor.x0 + layout.corridor.x1) / 2, 0, 0]}
       rotation={[-Math.PI / 2, 0, 0]}
       receiveShadow
       material={material}
@@ -111,6 +180,10 @@ function CorridorFloor({ layout }: { layout: OfficeLayout }) {
 /** Walls, floors, ceiling and the ground around the building. */
 export function Structure({ layout, cutaway }: { layout: OfficeLayout; cutaway: boolean }) {
   const walls = useWallGeometries(layout, cutaway ? 1.15 : WALL_HEIGHT);
+  // The slab top stays 3 cm under the floors, so floors never fight with it.
+  const slab = useSlabGeometry(layout, -0.15, 0.12, 0.12);
+  // The ceiling's underside is 3 cm below the wall tops: walls go into it, no light leaks at the joint.
+  const ceiling = useSlabGeometry(layout, WALL_HEIGHT - 0.03, 0.12, 0.1);
   const { bounds } = layout;
   const width = bounds.x1 - bounds.x0;
   const depth = bounds.z1 - bounds.z0;
@@ -119,11 +192,11 @@ export function Structure({ layout, cutaway }: { layout: OfficeLayout; cutaway: 
 
   return (
     <group>
-      {walls.map(([material, geometry]) => (
+      {walls.map(({ key, material, ends, geometry }) => (
         <mesh
-          key={material}
+          key={key}
           geometry={geometry}
-          material={WALL_MATERIALS[material]}
+          material={(ends ? WALL_END_MATERIALS : WALL_MATERIALS)[material]}
           castShadow={material !== 'glass'}
           receiveShadow
         />
@@ -134,23 +207,20 @@ export function Structure({ layout, cutaway }: { layout: OfficeLayout; cutaway: 
       <CorridorFloor layout={layout} />
 
       {/* Building slab, ground and the path to the entrance. */}
-      <mesh position={[centerX, -0.06, centerZ]} receiveShadow>
-        <boxGeometry args={[width + 0.4, 0.12, depth + 0.4]} />
+      <mesh geometry={slab} receiveShadow>
         <meshStandardMaterial color="#8d877d" roughness={0.9} />
       </mesh>
-      <mesh position={[centerX, -0.13, centerZ]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh position={[centerX, -0.2, centerZ]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[width + 160, depth + 160]} />
         <meshStandardMaterial color="#7e9a62" roughness={1} />
       </mesh>
-      <mesh position={[bounds.x0 - 6, -0.11, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh position={[bounds.x0 - 6, -0.17, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[12, 3]} />
         <meshStandardMaterial color="#b8b2a6" roughness={0.9} />
       </mesh>
 
       {!cutaway && (
-        // A thin slab (not a plane) so it casts shadows: sunlight only comes in through windows.
-        <mesh position={[centerX, WALL_HEIGHT + 0.05, centerZ]} castShadow receiveShadow>
-          <boxGeometry args={[width + 0.4, 0.1, depth + 0.4]} />
+        <mesh geometry={ceiling} castShadow receiveShadow>
           <meshStandardMaterial color="#f1f0ec" emissive="#6d6b66" roughness={0.95} />
         </mesh>
       )}

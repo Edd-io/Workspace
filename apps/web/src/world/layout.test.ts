@@ -85,6 +85,50 @@ describe('computeLayout', () => {
     expect(layout.rooms.some((entry) => entry.kind === 'lounge')).toBe(true);
   });
 
+  it('keeps tall furniture, wall decorations and whiteboards away from windows', () => {
+    const blocking = new Set([
+      'bookshelf',
+      'fridge',
+      'water_cooler',
+      'filing_cabinet',
+      'coat_rack',
+      'wall_clock',
+      'poster_a',
+      'poster_b',
+      'poster_c',
+      'tv_screen',
+      'fire_extinguisher',
+    ]);
+    const obstacles = [
+      ...officeProps(layout)
+        .filter((prop) => blocking.has(prop.model))
+        .map((prop) => ({ name: prop.model, x: prop.x, z: prop.z, halfWidth: 0.3 })),
+      ...layout.projectRooms.map((entry) => ({
+        name: 'whiteboard',
+        x: entry.whiteboard.x,
+        z: entry.whiteboard.z,
+        halfWidth: 0.9,
+      })),
+    ];
+    for (const wall of layout.walls) {
+      const length = Math.hypot(wall.b[0] - wall.a[0], wall.b[1] - wall.a[1]);
+      const ux = (wall.b[0] - wall.a[0]) / length;
+      const uz = (wall.b[1] - wall.a[1]) / length;
+      for (const window of wall.windows) {
+        for (const obstacle of obstacles) {
+          const dx = obstacle.x - wall.a[0];
+          const dz = obstacle.z - wall.a[1];
+          const along = dx * ux + dz * uz;
+          const distance = Math.abs(dx * uz - dz * ux);
+          const overlaps =
+            along + obstacle.halfWidth > window.offset &&
+            along - obstacle.halfWidth < window.offset + window.width;
+          expect(overlaps && distance < 1, `${obstacle.name} at ${obstacle.x},${obstacle.z}`).toBe(false);
+        }
+      }
+    }
+  });
+
   it('lets a visitor stand in the corridor but not walk through walls', () => {
     const colliders = buildColliders(layout, officeProps(layout));
     const [x, z] = resolveCollisions(layout.entrance, 0.28, colliders);

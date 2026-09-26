@@ -25,7 +25,7 @@ export interface PropPlacement {
 
 export const DESK_TOP = 0.74;
 /** Where the web client draws the live screen, relative to the desk (local frame). */
-export const SCREEN_CENTER: [number, number, number] = [0, DESK_TOP + 0.338, -0.22 + 0.0172];
+export const SCREEN_CENTER: [number, number, number] = [0, DESK_TOP + 0.338, -0.22 + 0.0215];
 export const STATUS_LAMP: [number, number, number] = [0.62, DESK_TOP, -0.26];
 export const CHAIR: [number, number, number] = [0, 0, 0.72];
 /** Where the seated character's root goes: on the front half of the seat, facing the desk. */
@@ -135,18 +135,23 @@ function ceilingLights(list: PropPlacement[], room: RoomRect): void {
   }
 }
 
+/** One radiator centered under each window of the back wall (except over `skip` ranges). */
 function backWallRadiators(
   list: PropPlacement[],
   room: RoomRect,
   frame: RoomFrame,
   skip: [number, number][] = [],
 ) {
-  const count = Math.max(1, Math.floor((room.x1 - room.x0) / 2.4));
-  for (let i = 0; i < count; i++) {
-    const x = room.x0 + ((i + 0.5) * (room.x1 - room.x0)) / count;
+  for (const window of room.backWindows) {
+    const x = room.x0 + window.offset + window.width / 2;
     if (skip.some(([a, b]) => x > a && x < b)) continue;
     place(list, 'radiator', [x, 0, frame.backZ + frame.toward * (INSET + 0.06)], frame.facingCorridor);
   }
+}
+
+/** Rotation that makes a prop (front toward +Z) face from `from` toward `to` on the floor. */
+function facing(from: [number, number], to: [number, number]): number {
+  return Math.atan2(to[0] - from[0], to[1] - from[1]);
 }
 
 const POSTERS: PropName[] = ['poster_a', 'poster_b', 'poster_c'];
@@ -158,32 +163,31 @@ export function projectRoomProps(room: RoomRect, seed: string, whiteboardX: numb
   const back = (offset: number) => frame.backZ + frame.toward * (INSET + offset);
   const front = (offset: number) => frame.frontZ - frame.toward * (INSET + offset);
 
-  // Storage along the back wall, on the side opposite the whiteboard.
-  place(list, 'bookshelf', [room.x0 + 0.75, 0, back(0.17)], frame.facingCorridor);
-  if (random() < 0.7) place(list, 'bookshelf', [room.x0 + 1.7, 0, back(0.17)], frame.facingCorridor);
-  else place(list, 'filing_cabinet', [room.x0 + 1.5, 0, back(0.31)], frame.facingCorridor);
-  if (random() < 0.5) place(list, 'printer_stand', [room.x0 + 2.8, 0, back(0.26)], frame.facingCorridor);
-  if (list.at(-1)?.model === 'printer_stand') {
-    place(list, 'printer', [room.x0 + 2.8, 0.7, back(0.26)], frame.facingCorridor);
+  // Storage in the windowless corner of the back wall (see BACK_WALL_SOLID).
+  place(list, 'bookshelf', [room.x0 + 0.6, 0, back(0.17)], frame.facingCorridor);
+  if (random() < 0.6) {
+    place(list, 'bookshelf', [room.x0 + 1.55, 0, back(0.17)], frame.facingCorridor);
+  } else {
+    place(list, 'printer_stand', [room.x0 + 1.45, 0, back(0.26)], frame.facingCorridor);
+    place(list, 'printer', [room.x0 + 1.45, 0.7, back(0.26)], frame.facingCorridor);
+    place(list, 'filing_cabinet', [room.x0 + 2.08, 0, back(0.31)], frame.facingCorridor);
   }
-  place(list, 'plant_tall', [whiteboardX + 1.05, 0, back(0.3)], 0);
-  place(list, 'wall_clock', [(room.x0 + room.x1) / 2, 2.25, back(0.02)], frame.facingCorridor);
+  place(list, 'plant_tall', [room.x1 - 0.4, 0, back(0.35)], 0);
 
   // Near the corridor: plant and coat rack by the door.
   place(list, 'plant_snake', [room.x1 - 0.45, 0, front(0.35)], random() * Math.PI);
   place(list, 'coat_rack', [room.x0 + 0.4, 0, front(0.4)], random() * Math.PI);
   if (random() < 0.5) place(list, 'umbrella_stand', [room.x0 + 0.35, 0, front(0.95)], 0);
 
-  // Posters on the west wall, always shared with the previous room (the east one may have windows).
-  // A prop faces +Z at rotation 0; π/2 makes it face +X.
-  const sideZ = (room.z0 + room.z1) / 2 + (random() - 0.5) * 1.2;
-  place(list, POSTERS[Math.floor(random() * 3)]!, [room.x0 + INSET + 0.015, 1.6, sideZ - 0.5], Math.PI / 2);
-  if (random() < 0.6) {
-    place(list, POSTERS[Math.floor(random() * 3)]!, [room.x0 + INSET + 0.015, 1.6, sideZ + 0.5], Math.PI / 2);
-  }
+  // The west wall is shared with the previous room at least as deep as the minimum room depth:
+  // clock and posters go there, never on a wall with windows. π/2 makes a prop face +X.
+  const wallX = room.x0 + INSET + 0.015;
+  place(list, 'wall_clock', [room.x0 + INSET + 0.02, 2.15, front(1.6)], Math.PI / 2);
+  place(list, POSTERS[Math.floor(random() * 3)]!, [wallX, 1.6, front(2.9)], Math.PI / 2);
+  if (random() < 0.6) place(list, POSTERS[Math.floor(random() * 3)]!, [wallX, 1.6, front(4.1)], Math.PI / 2);
   place(list, 'fire_extinguisher', [room.x1 - INSET - 0.1, 0.05, front(1.3)], -Math.PI / 2);
 
-  backWallRadiators(list, room, frame, [[room.x0, room.x0 + 2.2]]);
+  backWallRadiators(list, room, frame);
   ceilingLights(list, room);
   return list;
 }
@@ -218,7 +222,6 @@ export const MASTER_MONITORS: { x: number; angle: number }[] = [
 function masterRoomProps(room: SpecialRoomLayout): PropPlacement[] {
   const list: PropPlacement[] = [];
   const frame = frameOf(room);
-  const cx = (room.x0 + room.x1) / 2;
   const back = (offset: number) => frame.backZ + frame.toward * (INSET + offset);
   const front = (offset: number) => frame.frontZ - frame.toward * (INSET + offset);
   const pose = masterDeskPose(room);
@@ -247,11 +250,12 @@ function masterRoomProps(room: SpecialRoomLayout): PropPlacement[] {
   place(list, 'sofa', [room.x1 - 3.15, 0, cz], Math.PI / 2);
   place(list, 'coffee_table', [room.x1 - 2.05, 0, cz], Math.PI / 2);
   place(list, 'floor_lamp', [room.x1 - 3.2, 0, cz - 1.35], 0);
-  place(list, 'wall_clock', [cx, 2.3, back(0.02)], frame.facingCorridor);
+  // Clock above the door, on the inside of the corridor wall.
+  place(list, 'wall_clock', [room.x0 + 1.5, 2.45, front(0.02)], frame.facingCorridor + Math.PI);
   place(list, 'coat_rack', [room.x0 + 2.4, 0, front(0.4)], 0);
   const tv = masterTvPose(room);
   place(list, 'tv_screen', tv.position, tv.rotation);
-  backWallRadiators(list, room, frame, [[room.x0, room.x0 + 2.3]]);
+  backWallRadiators(list, room, frame);
   ceilingLights(list, room);
   return list;
 }
@@ -261,38 +265,43 @@ function loungeProps(room: SpecialRoomLayout): PropPlacement[] {
   const frame = frameOf(room);
   const back = (offset: number) => frame.backZ + frame.toward * (INSET + offset);
   const front = (offset: number) => frame.frontZ - frame.toward * (INSET + offset);
-  // Kitchen along the back wall.
-  const counterX = room.x0 + 2.0;
+  // Kitchen along the back wall: the fridge in the windowless corner, the counter under the windows.
+  place(list, 'fridge', [room.x0 + 0.45, 0, back(0.37)], frame.facingCorridor);
+  const counterX = room.x0 + 2.05;
   place(list, 'kitchen_counter', [counterX, 0, back(0.33)], frame.facingCorridor);
   place(list, 'coffee_machine', [counterX - 0.3, 0.9, back(0.3)], frame.facingCorridor);
-  place(list, 'microwave', [counterX + 0.1, 0.9, back(0.3)], frame.facingCorridor);
-  place(list, 'fridge', [room.x0 + 3.65, 0, back(0.37)], frame.facingCorridor);
-  place(list, 'water_cooler', [room.x0 + 4.4, 0, back(0.25)], frame.facingCorridor);
-  place(list, 'high_table', [room.x0 + 2.2, 0, back(2.1)], 0);
-  place(list, 'fruit_bowl', [room.x0 + 2.2, 1.08, back(2.1)], 0);
+  place(list, 'microwave', [counterX + 0.25, 0.9, back(0.3)], frame.facingCorridor);
+  place(list, 'trash_bin', [counterX + 1.5, 0, back(0.3)], 0);
+  place(list, 'high_table', [room.x0 + 2.2, 0, back(2.2)], 0);
+  place(list, 'fruit_bowl', [room.x0 + 2.2, 1.08, back(2.2)], 0);
   for (let i = 0; i < 3; i++) {
     const angle = (i / 3) * Math.PI * 2 + 0.4;
-    place(
-      list,
-      'bar_stool',
-      [room.x0 + 2.2 + Math.cos(angle) * 0.62, 0, back(2.1) + Math.sin(angle) * 0.62],
-      0,
-    );
+    const stool: [number, number] = [
+      room.x0 + 2.2 + Math.cos(angle) * 0.62,
+      back(2.2) + Math.sin(angle) * 0.62,
+    ];
+    place(list, 'bar_stool', [stool[0], 0, stool[1]], 0);
   }
-  // Sofa corner.
+  // Sofa corner around a coffee table.
   const cx = room.x1 - 2.6;
   const cz = (room.z0 + room.z1) / 2 + frame.toward * 0.3;
+  const table: [number, number] = [cx + 0.1, cz];
   place(list, 'rug', [cx, 0, cz], Math.PI / 2);
   place(list, 'sofa', [cx + 1.25, 0, cz], -Math.PI / 2);
-  place(list, 'armchair', [cx - 0.3, 0, cz - frame.toward * 1.2], frame.facingCorridor + Math.PI + 0.4);
-  place(list, 'coffee_table', [cx + 0.1, 0, cz], Math.PI / 2);
-  place(list, 'bean_bag', [cx - 1.1, 0, cz + frame.toward * 0.6], 0.8);
+  const armchair: [number, number] = [cx - 0.5, cz - frame.toward * 1.25];
+  place(list, 'armchair', [armchair[0], 0, armchair[1]], facing(armchair, table));
+  place(list, 'coffee_table', [table[0], 0, table[1]], Math.PI / 2);
+  const beanBag: [number, number] = [cx - 1.2, cz + frame.toward * 0.5];
+  place(list, 'bean_bag', [beanBag[0], 0, beanBag[1]], facing(beanBag, table));
   place(list, 'floor_lamp', [room.x1 - 0.45, 0, back(0.45)], 0);
   place(list, 'plant_tall', [room.x1 - 0.55, 0, front(0.6)], 1.2);
   place(list, 'planter_box', [room.x0 + 0.85, 0, front(1.9)], Math.PI / 2);
-  place(list, 'poster_a', [room.x1 - INSET - 0.015, 1.6, cz], -Math.PI / 2);
-  place(list, 'wall_clock', [room.x0 + INSET + 0.02, 2.2, cz], Math.PI / 2);
-  place(list, 'trash_bin', [room.x0 + 0.45, 0, back(0.35)], 0);
+  place(list, 'water_cooler', [room.x1 - INSET - 0.22, 0, back(1.4)], -Math.PI / 2);
+  // Clock and poster on the inside of the two short wall returns along the corridor (always solid).
+  const inward = frame.facingCorridor + Math.PI;
+  place(list, 'wall_clock', [room.x0 + 0.6, 2.15, front(0.02)], inward);
+  place(list, 'poster_a', [room.x1 - 0.6, 1.6, front(0.015)], inward);
+  backWallRadiators(list, room, frame, [[counterX - 1.3, counterX + 1.3]]);
   ceilingLights(list, room);
   return list;
 }

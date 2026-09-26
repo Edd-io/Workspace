@@ -1,6 +1,6 @@
 import { Sky } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import { Suspense, useMemo } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
+import { Suspense, useEffect, useMemo } from 'react';
 import { desksOfRoom, useOffice } from '../state/officeStore';
 import { CameraRig } from './CameraRig';
 import type { PropPlacement } from './decor';
@@ -24,7 +24,23 @@ const HIDDEN_IN_CUTAWAY = new Set<PropPlacement['model']>([
   'poster_c',
   'wall_shelf',
   'door',
+  'tv_screen',
 ]);
+
+/**
+ * Depth precision depends on the near plane: the overview camera stays meters away from everything,
+ * so a larger near plane there keeps close surfaces (screens on monitors, boards on frames) from
+ * z-fighting at a distance.
+ */
+function CameraClipping({ walking }: { walking: boolean }) {
+  const camera = useThree((state) => state.camera);
+  useEffect(() => {
+    camera.near = walking ? 0.05 : 0.2;
+    camera.far = 400;
+    camera.updateProjectionMatrix();
+  }, [camera, walking]);
+  return null;
+}
 
 export function World() {
   const layout = useOfficeLayout();
@@ -34,6 +50,8 @@ export function World() {
   const viewMode = useOffice((state) => state.viewMode);
   const focusDesk = useOffice((state) => state.focusDesk);
   const walking = viewMode === 'walk';
+  // Handle for automated browser checks during development.
+  if (import.meta.env.DEV) (window as unknown as { __layout?: unknown }).__layout = layout;
   const visibleProps = useMemo(
     () => (walking ? props : props.filter((prop) => !HIDDEN_IN_CUTAWAY.has(prop.model))),
     [props, walking],
@@ -47,7 +65,7 @@ export function World() {
       className="world"
       shadows="percentage"
       dpr={[1, 2]}
-      camera={{ fov: 50, near: 0.05, far: 600, position: [10, 20, 20] }}
+      camera={{ fov: 50, near: 0.2, far: 400, position: [10, 20, 20] }}
       onPointerMissed={() => {
         if (!walking) focusDesk(null);
       }}
@@ -96,12 +114,13 @@ export function World() {
         <DeskStation key={desk.desk.id} layout={desk} showLabel={!walking} />
       ))}
       <MasterScreens layout={layout} />
-      {layout.rooms
-        .filter((room) => room.kind === 'master')
-        .map((room) => (
-          <TimelineTV key="timeline-tv" room={room} />
-        ))}
+      {/* The wall TV hangs above the cut walls of the overview: only shown indoors. */}
+      {walking &&
+        layout.rooms
+          .filter((room) => room.kind === 'master')
+          .map((room) => <TimelineTV key="timeline-tv" room={room} />)}
 
+      <CameraClipping walking={walking} />
       {walking ? <WalkControls layout={layout} props={props} /> : <CameraRig layout={layout} />}
       <Soundscape layout={layout} />
     </Canvas>

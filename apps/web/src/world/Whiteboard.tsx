@@ -87,7 +87,7 @@ export function Whiteboard({ roomId, roomName, board, desks, position, rotation 
           <boxGeometry args={[BOARD_WIDTH + 0.06, BOARD_HEIGHT + 0.06, 0.04]} />
           <meshStandardMaterial color={hovered ? '#e3e7ec' : FRAME} metalness={0.3} roughness={0.4} />
         </mesh>
-        <mesh position={[0, BOARD_BOTTOM + BOARD_HEIGHT / 2, 0.021]} userData={{ boardRoomId: roomId }}>
+        <mesh position={[0, BOARD_BOTTOM + BOARD_HEIGHT / 2, 0.026]} userData={{ boardRoomId: roomId }}>
           <planeGeometry args={[BOARD_WIDTH, BOARD_HEIGHT]} />
           <meshStandardMaterial map={texture} roughness={0.35} />
         </mesh>

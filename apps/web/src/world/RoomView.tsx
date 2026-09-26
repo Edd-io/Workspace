@@ -1,4 +1,4 @@
-import { Text } from '@react-three/drei';
+import { Billboard, Text } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,18 +83,22 @@ export function RoomView({ layout }: { layout: RoomLayout }) {
               depthWrite={false}
             />
           </mesh>
-          <Text
-            font={FONT_TEXT_BOLD}
-            position={[0, 0.76, 0]}
-            rotation={[-Math.PI / 2, 0, 0]}
-            fontSize={0.13}
-            color="#ffffff"
-            fillOpacity={slot.hovered ? 1 : 0.7}
-            anchorX="center"
-            anchorY="middle"
-          >
-            {t('world.addDesk')}
-          </Text>
+          {/* A sign facing the camera: text lying on the desk would read mirrored from behind. */}
+          <Billboard position={[0, 1.02, 0]}>
+            <Text
+              font={FONT_TEXT_BOLD}
+              fontSize={0.14}
+              color="#ffffff"
+              fillOpacity={slot.hovered ? 1 : 0.75}
+              outlineWidth={0.008}
+              outlineColor="#1b1f24"
+              outlineOpacity={0.35}
+              anchorX="center"
+              anchorY="middle"
+            >
+              {t('world.addDesk')}
+            </Text>
+          </Billboard>
         </group>
       )}
 

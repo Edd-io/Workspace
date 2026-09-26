@@ -63,7 +63,7 @@ export function TimelineTV({ room }: { room: RoomRect }) {
   return (
     <group position={pose.position} rotation={[0, pose.rotation, 0]}>
       <mesh
-        position={[0, 0.42, 0.028]}
+        position={[0, 0.42, 0.034]}
         onClick={onClick}
         onPointerOver={(event) => {
           event.stopPropagation();
