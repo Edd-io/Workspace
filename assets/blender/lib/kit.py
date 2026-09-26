@@ -25,6 +25,9 @@ PALETTE = {
     "plastic_black": ("#1f2328", 0.5, 0.0),
     "plastic_gray": ("#6b7280", 0.55, 0.0),
     "plastic_white": ("#eef0f2", 0.45, 0.0),
+    "plastic_silver": ("#c3c7cd", 0.45, 0.0),
+    "key_dark": ("#2b2f36", 0.6, 0.0),
+    "key_mid": ("#4d535d", 0.6, 0.0),
     "screen_black": ("#0b0e13", 0.2, 0.0),
     "fabric_gray": ("#5b6270", 0.95, 0.0),
     "fabric_dark": ("#30343b", 0.95, 0.0),
@@ -142,6 +145,15 @@ def box(size, location=(0, 0, 0), mat="plastic_gray", bevel=0.004, segments=2, r
     obj.scale = Vector(size)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     return _finish(obj, mat, bevel, segments, smooth, location, rotation)
+
+
+def polyhedron(vertices, faces, mat="plastic_gray", bevel=0.0, segments=2, smooth=False, name="polyhedron"):
+    """Mesh built from explicit `vertices` (x, y, z) and `faces` (vertex index lists), in place."""
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata([Vector(v) for v in vertices], [], faces)
+    mesh.validate()
+    obj = _link(bpy.data.objects.new(name, mesh))
+    return _finish(obj, mat, bevel, segments, smooth, (0, 0, 0), (0, 0, 0))
 
 
 def cylinder(radius, depth, location=(0, 0, 0), mat="plastic_gray", vertices=16, bevel=0.0, segments=2,

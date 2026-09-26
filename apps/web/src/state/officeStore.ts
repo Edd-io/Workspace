@@ -57,11 +57,11 @@ interface OfficeState {
   /** Development only: hour of the day forced for the day/night cycle (null: the real clock). */
   clockOverride: number | null;
   /** Pending request to move the view to a floor point (minimap clicks, teleports). */
-  viewTarget: { x: number; z: number; yaw?: number; seq: number } | null;
+  viewTarget: { x: number; z: number; yaw?: number; pitch?: number; seq: number } | null;
   focusDesk: (deskId: string | null) => void;
   setViewMode: (mode: ViewMode) => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
-  goTo: (x: number, z: number, yaw?: number) => void;
+  goTo: (x: number, z: number, yaw?: number, pitch?: number) => void;
   setSummary: (summary: OfficeSummary) => void;
   pushToast: (deskId: string) => void;
   pushUsageToast: (alert: UsageAlert) => void;
@@ -117,9 +117,9 @@ export const useOffice = create<OfficeState>((set) => ({
       ].slice(-4),
     })),
   dismissToast: (id) => set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) })),
-  goTo: (x, z, yaw) =>
+  goTo: (x, z, yaw, pitch) =>
     set((state) => ({
-      viewTarget: { x, z, yaw, seq: (state.viewTarget?.seq ?? 0) + 1 },
+      viewTarget: { x, z, yaw, pitch, seq: (state.viewTarget?.seq ?? 0) + 1 },
       focusedDeskId: null,
     })),
   openTerminal: (deskId) => set({ focusedDeskId: deskId, terminalDeskId: deskId }),
@@ -130,7 +130,7 @@ export const useOffice = create<OfficeState>((set) => ({
 if (import.meta.env.DEV) {
   // Handle for automated browser checks during development.
   (window as unknown as { __office?: unknown }).__office = {
-    goTo: (x: number, z: number, yaw?: number) => useOffice.getState().goTo(x, z, yaw),
+    goTo: (x: number, z: number, yaw?: number, pitch?: number) => useOffice.getState().goTo(x, z, yaw, pitch),
     setHour: (hour: number | null) => useOffice.setState({ clockOverride: hour }),
   };
 }

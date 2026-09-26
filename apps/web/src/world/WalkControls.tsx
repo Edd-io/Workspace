@@ -124,7 +124,7 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
     position.current = [viewTarget.x, viewTarget.z];
     if (viewTarget.yaw !== undefined) {
       yaw.current = viewTarget.yaw;
-      pitch.current = -0.15;
+      pitch.current = viewTarget.pitch ?? -0.15;
     }
   }, [viewTarget]);
 
