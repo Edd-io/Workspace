@@ -75,18 +75,18 @@ describe('TranscriptIndex', () => {
 
 describe('search', () => {
   it('ignores case and accents', () => {
-    expect(fold('Tâche Réglée')).toBe('tache reglee');
-    const text = 'Il reste une tâche à finir';
-    const range = findFolded(text, fold('TACHE'))!;
-    expect(text.slice(...range)).toBe('tâche');
+    expect(fold('Crème Brûlée')).toBe('creme brulee');
+    const text = 'Update the résumé page before Friday';
+    const range = findFolded(text, fold('RESUME'))!;
+    expect(text.slice(...range)).toBe('résumé');
   });
 
   it('finds prompts and answers, not tool output or wake-ups', async () => {
     const path = join(mkdtempSync(join(tmpdir(), 'transcript-')), 's.jsonl');
     writeFileSync(
       path,
-      line({ type: 'user', timestamp: at(1), message: { content: 'Migre la base vers Postgres' } }) +
-        assistant(2, 'm1', [{ type: 'text', text: 'La migration Postgres est faite.' }]) +
+      line({ type: 'user', timestamp: at(1), message: { content: 'Move the database to Postgres' } }) +
+        assistant(2, 'm1', [{ type: 'text', text: 'The Postgres migration is done.' }]) +
         line({
           type: 'user',
           timestamp: at(3),
@@ -99,13 +99,13 @@ describe('search', () => {
       ['user', 'Postgres'],
       ['assistant', 'Postgres'],
     ]);
-    expect(hits[1]).toMatchObject({ before: 'La migration ', after: ' est faite.' });
+    expect(hits[1]).toMatchObject({ before: 'The ', after: ' migration is done.' });
   });
 });
 
 describe('looseRegex', () => {
   it('matches any case and accent, and escapes regular expression syntax', () => {
-    expect('La TÂCHE est finie'.match(looseRegex(fold('tache')))?.[0]).toBe('TÂCHE');
+    expect('Meet at the CAFÉ at noon'.match(looseRegex(fold('cafe')))?.[0]).toBe('CAFÉ');
     expect(looseRegex(fold('a.b-c (d)')).test('a.b-c (d)')).toBe(true);
     expect(looseRegex(fold('a.b')).test('axb')).toBe(false);
   });

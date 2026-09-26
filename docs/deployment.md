@@ -94,6 +94,7 @@ Everything lives in `WORKSPACE_DATA_DIR`:
 
 - `workspace.db` (SQLite, WAL mode): rooms, desks, events, boards, summary — back it up with
   `sqlite3 workspace.db ".backup backup.db"`;
+- `pictures/` (the pictures put in the office's frames);
 - `desks/` (generated per-desk launch files, regenerated on launch);
 - `worktrees/` (git worktrees: the work itself is on each desk's `workspace/*` branch in the project
   repository, never deleted by Workspace).

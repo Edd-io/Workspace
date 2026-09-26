@@ -42,6 +42,14 @@ const delegateSchema = z.object({
   task: z.string().trim().min(1).max(4000),
 });
 
+/**
+ * The task a desk declares, or null when it says it is done: the tool asks for an empty string, and
+ * models sometimes send the quotes themselves ("" or '').
+ */
+export function declaredTask(task: string): string | null {
+  return task === '' || /^(["'`])\1$/.test(task) ? null : task;
+}
+
 /** The first line of a delegated task, short enough for the desk's topic. */
 function oneLineTask(task: string): string {
   const line = task.split('\n')[0]!.trim();
@@ -92,7 +100,7 @@ export function registerOfficeRoutes(app: FastifyInstance, { store, boards, awar
     const desk = authenticateDesk(store, request, reply);
     if (!desk) return reply;
     const { task } = setTaskSchema.parse(request.body);
-    store.updateDesk(desk.id, { currentTask: task === '' ? null : task });
+    store.updateDesk(desk.id, { currentTask: declaredTask(task) });
     return { ok: true };
   });
 

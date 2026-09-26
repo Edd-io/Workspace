@@ -170,7 +170,8 @@ export function DeskStation({ layout, showLabel }: { layout: DeskLayout; showLab
         </group>
       )}
 
-      {(showLabel || hovered) && (
+      {/* Not over the focused desk: the camera is right there, the label would fill the screen. */}
+      {(showLabel || hovered) && !focused && (
         <Billboard position={[0, 1.9, 0.35]}>
           <Text
             font={FONT_TEXT_BOLD}

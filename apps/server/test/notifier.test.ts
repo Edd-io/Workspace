@@ -65,7 +65,7 @@ function setup() {
     async (_webhook, body) => void sent.push(body as never),
     0,
   );
-  notifier.update({ webhook: WEBHOOK, language: 'fr', publicUrl: 'https://office.example/' });
+  notifier.update({ webhook: WEBHOOK, language: 'en', publicUrl: 'https://office.example/' });
   notifier.start();
   return { store, presence, notifier, sent };
 }
@@ -74,12 +74,18 @@ const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
 
 describe('translate', () => {
   it('interpolates and picks plural forms', () => {
-    expect(translate(locales.fr, 'fr', 'notifications.discord.waiting', { count: 1 })).toBe(
-      "1 poste t'attend",
+    expect(translate(locales.en, 'en', 'notifications.discord.waiting', { count: 1 })).toBe(
+      '1 desk is waiting for you',
     );
     expect(translate(locales.en, 'en', 'notifications.discord.waiting', { count: 3 })).toBe(
       '3 desks are waiting for you',
     );
+  });
+
+  it('finds the same keys in every language', () => {
+    for (const key of ['notifications.discord.waiting', 'notifications.discord.attentionTitle']) {
+      expect(translate(locales.fr, 'fr', key, { count: 2, desk: 'Ken', room: 'Demo' })).not.toBe(key);
+    }
   });
 });
 
@@ -100,10 +106,10 @@ describe('Notifier', () => {
     await tick();
     await notifier.flush();
     expect(sent).toHaveLength(1);
-    expect(sent[0]!.content).toBe("2 postes t'attendent");
+    expect(sent[0]!.content).toBe('2 desks are waiting for you');
     expect(sent[0]!.embeds!.map((embed) => embed.title)).toEqual([
-      "Ken (Demo) t'attend",
-      "Ada (Demo) t'attend",
+      'Ken (Demo) needs you',
+      'Ada (Demo) needs you',
     ]);
     expect(sent[0]!.embeds![0]!.description).toBe('Which database?');
     expect(sent[0]!.embeds![0]!.url).toBe('https://office.example/?desk=Ken');

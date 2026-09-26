@@ -51,6 +51,8 @@ export class DeskRuntime {
     const pty = this.host.attach(this.deskId, this.mirror.cols, this.mirror.rows);
     this.pty = pty;
     pty.onData((data) => {
+      // A detached tmux client still prints its last words ("[lost tty]"): not the session's screen.
+      if (this.pty !== pty) return;
       this.mirror.write(data);
       if (this.interactive.size === 0) return;
       this.pendingOutput += data;

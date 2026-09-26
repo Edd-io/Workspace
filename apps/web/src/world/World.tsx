@@ -36,11 +36,6 @@ const HIDDEN_IN_CUTAWAY = new Set<PropPlacement['model']>([
   'tv_screen',
 ]);
 
-/**
- * Depth precision depends on the near plane: the overview camera stays meters away from everything,
- * so a larger near plane there keeps close surfaces (screens on monitors, boards on frames) from
- * z-fighting at a distance.
- */
 /** Handle for automated browser checks during development (frame and draw-call counts). */
 function DevHandles() {
   const gl = useThree((state) => state.gl);
@@ -85,6 +80,11 @@ function Sun({ layout, size, sky }: { layout: OfficeLayout; size: number; sky: D
   );
 }
 
+/**
+ * Depth precision depends on the near plane: the overview camera stays meters away from everything,
+ * so a larger near plane there keeps close surfaces (screens on monitors, boards on frames) from
+ * z-fighting at a distance.
+ */
 function CameraClipping({ walking }: { walking: boolean }) {
   const camera = useThree((state) => state.camera);
   useEffect(() => {

@@ -199,7 +199,7 @@ function countLines(text: string): number {
 const CONTEXT_BEFORE = 70;
 const CONTEXT_AFTER = 150;
 
-/** Lower case without accents, so "tache" finds "tâche". */
+/** Lower case without accents, so "cafe" finds "café". */
 export function fold(text: string): string {
   return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
 }

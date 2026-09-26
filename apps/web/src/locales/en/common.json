@@ -94,8 +94,7 @@
     },
     "confirmDelete": "The session stops and its worktree is removed. The branch {{branch}} is kept.",
     "confirmDeleteUncommitted": "This desk has uncommitted changes. They will be lost if you delete it.",
-    "saveRole": "Save",
-    "noRole": "No role"
+    "saveRole": "Save"
   },
   "errors": {
     "path_not_found": "This folder does not exist on the server.",
@@ -192,8 +191,7 @@
     "human": "You",
     "room": "everyone",
     "autoWake": "Wake idle desks up when someone writes to them",
-    "autoWakeHint": "A message to an idle desk is typed in as a prompt (at most 4 times per 10 minutes).",
-    "deliveryHint": "A working desk gets messages at its next tool use; an idle desk is woken up right away when waking is on."
+    "autoWakeHint": "A message to an idle desk is typed in as a prompt (at most 4 times per 10 minutes)."
   },
   "board": {
     "formerDesk": "Former desk",
@@ -204,7 +202,7 @@
     "toRoom": "Whole room",
     "messagePlaceholder": "Write to the desks…",
     "send": "Send",
-    "deliveryHint": "Desks receive messages at their next prompt or tool use."
+    "deliveryHint": "A working desk gets messages at its next tool use; an idle desk is woken up right away when waking is on."
   },
   "inbox": {
     "title": "Inbox",

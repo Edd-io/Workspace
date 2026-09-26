@@ -130,9 +130,12 @@ export function StatsView() {
       case 'outputTokens':
         return entry.outputTokens ? compact.format(entry.outputTokens) : '—';
       case 'contextTokens': {
+        // One unit for the whole column: tokens (from the transcript), the share of the window
+        // (from the status line) as a tooltip when known.
         const percent = deskStats[entry.deskId]?.contextPercent;
-        if (percent !== null && percent !== undefined) return `${Math.round(percent)} %`;
-        return entry.contextTokens ? compact.format(entry.contextTokens) : '—';
+        const share = percent === null || percent === undefined ? undefined : `${Math.round(percent)} %`;
+        if (entry.contextTokens) return <span title={share}>{compact.format(entry.contextTokens)}</span>;
+        return share ?? '—';
       }
       case 'integrations':
         return entry.merges + entry.pullRequests === 0

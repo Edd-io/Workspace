@@ -46,6 +46,20 @@ function setLevel(audio: THREE.Audio<AudioNode>, value: number): void {
   gain.setValueAtTime(value, audio.context.currentTime);
 }
 
+/**
+ * Stops a sound for good and unplugs all its nodes. three wires every sound to the listener when it
+ * is created and never unwires it: dropped sounds would pile up in the audio graph and keep costing
+ * CPU (keyboards come and go all day as desks start and stop working).
+ */
+function releaseAudio(audio: THREE.Audio<AudioNode>): void {
+  if (audio.isPlaying) audio.stop();
+  audio.disconnect();
+  for (const filter of audio.getFilters()) filter.disconnect();
+  audio.getOutput().disconnect();
+  audio.gain.disconnect();
+  audio.removeFromParent();
+}
+
 function loopingAudio(listener: THREE.AudioListener, sound: LoopSound): THREE.Audio {
   const audio = new THREE.Audio(listener);
   audio.setBuffer(sound.buffer);
@@ -154,13 +168,10 @@ export function Soundscape({ layout, night }: { layout: OfficeLayout; night: num
     const currentTypists = typists.current;
     return () => {
       footsteps.step = () => undefined;
-      for (const layer of Object.values(layers)) if (layer.isPlaying) layer.stop();
-      for (const voice of voices) if (voice.isPlaying) voice.stop();
+      for (const layer of Object.values(layers)) releaseAudio(layer);
+      for (const voice of voices) releaseAudio(voice);
       ambience.current = null;
-      for (const { sound } of currentTypists.values()) {
-        if (sound.isPlaying) sound.stop();
-        sound.removeFromParent();
-      }
+      for (const { sound } of currentTypists.values()) releaseAudio(sound);
       currentTypists.clear();
     };
   }, [context, ears, library, listener, surfaceAt]);
@@ -201,8 +212,7 @@ export function Soundscape({ layout, night }: { layout: OfficeLayout; night: num
     const wanted = new Set(candidates.map(({ entry }) => entry.desk.id));
     for (const [deskId, typist] of typists.current) {
       if (wanted.has(deskId)) continue;
-      if (typist.sound.isPlaying) typist.sound.stop();
-      typist.sound.removeFromParent();
+      releaseAudio(typist.sound);
       typists.current.delete(deskId);
     }
     for (const { entry } of candidates) {

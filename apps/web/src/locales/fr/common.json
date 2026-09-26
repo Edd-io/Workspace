@@ -94,8 +94,7 @@
     },
     "confirmDelete": "La session s'arrête et son worktree est supprimé. La branche {{branch}} est conservée.",
     "confirmDeleteUncommitted": "Ce poste a des modifications non commitées. Elles seront perdues si tu le supprimes.",
-    "saveRole": "Enregistrer",
-    "noRole": "Aucun rôle"
+    "saveRole": "Enregistrer"
   },
   "errors": {
     "path_not_found": "Ce dossier n'existe pas sur le serveur.",
@@ -192,8 +191,7 @@
     "human": "Toi",
     "room": "tout le monde",
     "autoWake": "Réveiller les postes inactifs quand on leur écrit",
-    "autoWakeHint": "Un message à un poste au repos lui est tapé comme consigne (4 fois au plus par 10 minutes).",
-    "deliveryHint": "Un poste qui travaille reçoit les messages à sa prochaine utilisation d'outil ; un poste au repos est réveillé tout de suite si le réveil est activé."
+    "autoWakeHint": "Un message à un poste au repos lui est tapé comme consigne (4 fois au plus par 10 minutes)."
   },
   "board": {
     "formerDesk": "Ancien poste",
@@ -204,7 +202,7 @@
     "toRoom": "Toute la salle",
     "messagePlaceholder": "Écris aux postes…",
     "send": "Envoyer",
-    "deliveryHint": "Les postes reçoivent les messages à leur prochaine consigne ou utilisation d'outil."
+    "deliveryHint": "Un poste qui travaille reçoit les messages à sa prochaine utilisation d'outil ; un poste au repos est réveillé tout de suite si le réveil est activé."
   },
   "inbox": {
     "title": "Boîte de réception",
