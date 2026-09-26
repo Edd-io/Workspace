@@ -19,7 +19,7 @@ import { PropInstances } from './props/PropInstances';
 import { RoomView } from './RoomView';
 import { Structure } from './structure/Structure';
 import { useOfficeLayout, useOfficeProps } from './useOfficeLayout';
-import { useDaylight, useViewerIndoors } from './useDaylight';
+import { AmbientLights, useDaylight } from './useDaylight';
 import { WalkControls } from './WalkControls';
 import { Whiteboard } from './Whiteboard';
 
@@ -109,7 +109,9 @@ export function World() {
     [props, walking],
   );
   const profile = GRAPHICS_PROFILES[useGraphicsQuality()];
-  const light = useDaylight(useViewerIndoors(layout, walking));
+  const daylight = useDaylight();
+  // Sky, sun, fog and outdoor tint do not depend on where the viewer stands: the outdoor values.
+  const light = daylight.outdoor;
   const [sunX, sunY, sunZ] = light.skySun;
 
   return (
@@ -134,8 +136,7 @@ export function World() {
       {light.night > 0.4 && <Stars radius={180} depth={40} count={2500} factor={5} saturation={0} fade />}
       <fog attach="fog" args={[light.fog, 60, 260]} />
       {/* Indoors (walk mode) the ceiling blocks the sun: ambient light stands in for the ceiling lights. */}
-      <hemisphereLight args={[light.hemisphere.sky, light.hemisphere.ground, light.hemisphere.intensity]} />
-      <ambientLight intensity={light.ambient} />
+      <AmbientLights layout={layout} walking={walking} light={daylight} />
       <Sun layout={layout} size={profile.shadowMapSize} sky={light.light} />
 
       <Suspense fallback={null}>
