@@ -191,6 +191,13 @@ export class SessionManager {
     this.runtimes.get(deskId)?.input(data);
   }
 
+  /** Types a prompt into a desk's Claude Code and submits it. */
+  sendPrompt(deskId: string, text: string): void {
+    this.input(deskId, text.replace(/\s*\n\s*/g, ' '));
+    // A separate Enter: sent together with the text it would be taken as part of a paste.
+    setTimeout(() => this.input(deskId, '\r'), 150);
+  }
+
   resize(deskId: string, cols: number, rows: number): void {
     this.runtimes.get(deskId)?.resize(cols, rows);
   }

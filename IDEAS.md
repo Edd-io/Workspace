@@ -7,11 +7,9 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 
 ## Agent collaboration
 - 💡 **Room lead**: a "lead" desk that splits a request and delegates to the other desks through the office MCP.
-- 💡 **Visible messaging**: when desk A messages desk B, A's character stands up and walks to B's desk (or throws a paper plane).
 - 💡 **Meeting room**: gather several agents around a table for a shared task (brainstorm, cross review).
 - 💡 **File locks** (`office_claim_file`) in "shared folder" mode, to avoid concurrent edits.
 - 💡 **Auto wake-up**: an idle desk receiving a message from a colleague gets it injected into its terminal (per-room setting).
-- 💡 **Assisted merge**: "integrate this desk's branch" button (diff, merge or PR) once a worktree is done.
 - 💡 **Room templates**: pre-configured rooms (e.g. "front + back + tests") with initial prompts per desk.
 
 ## Supervision / master room
@@ -20,15 +18,13 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 - 💡 **Free-text question detection**: Haiku classifies a desk's last message ("it is asking you something" vs "it is done").
 - 💡 **Text-to-speech** reading of the summary on login.
 - 💡 **Per-desk stats**: tokens, estimated cost, duration, git branch, changed files, diff viewer.
-- 💡 **Subscription usage gauge** (5h / weekly windows) with a warning before hitting the limit.
 - 💡 **Global search** across all transcripts of all sessions.
 - 💡 **Day replay**: time-lapse of the office built from the timeline.
 - 💡 **Import** existing Claude Code sessions (`claude agents`) into a desk.
 
 ## 3D world / ambience
-- 💡 **Day/night cycle** matching real time (window light, desk lamps turning on in the evening).
 - 💡 **Real weather** behind the windows (rain, sun) through a weather API.
-- 💡 **Character life**: an agent idle for a long time goes to the coffee machine, stretches, chats at the water cooler.
+- 💡 **More character life** (beyond phase 9): stretching, chatting at the water cooler in pairs, lunch breaks.
 - 💡 **Master office customization** (decoration, posters, plants).
 - 💡 **More realistic rendering**: PBR materials, lightmaps baked in Blender, post-processing (SSAO, bloom), more detailed characters.
 - 💡 **Post-processing on the Max graphics level**: ambient occlusion (N8AO), bloom on lamps and screens.

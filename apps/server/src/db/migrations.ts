@@ -91,4 +91,7 @@ export const MIGRATIONS: string[] = [
   `
   ALTER TABLE desks ADD COLUMN attention TEXT;
   `,
+  `
+  ALTER TABLE desks ADD COLUMN base_branch TEXT;
+  `,
 ];

@@ -285,6 +285,33 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
       audio graph suspended when muted
 - [ ] Many-desk stress test (dozens of real sessions)
 
+### Phase 9 — Integration, usage & a living office
+Integrate a desk's work:
+- [x] Record each worktree desk's base branch (the project's branch when the desk was created)
+- [x] Integration status: commits ahead/behind the target branch, changed files, uncommitted changes,
+      conflicts predicted with `git merge-tree`
+- [x] Integration dialog (desk menu): target branch, commits, diff viewer, commit pending changes
+- [x] Merge into the target branch: inside the worktree that has it checked out (only when clean),
+      or without any checkout (`merge-tree` + `commit-tree` + `update-ref`) when nobody has it
+- [x] Pull request: push the desk branch and `gh pr create` (when a remote and `gh` are available)
+- [x] Conflicts: ask the desk itself to merge the target into its branch; update a desk from its target
+
+Subscription usage gauge:
+- [ ] Each desk relays its status line JSON (`rate_limits`, context window, cost) to the server with
+      `curl`; the server answers with the status line text shown in the terminal
+- [ ] Account usage (5-hour and weekly windows) kept in the database and pushed to the clients
+- [ ] Gauge in the top bar and on the master office map screen; alerts at 80 % and 95 % of a window
+- [ ] Per-desk context usage and model in the terminal header; usage included in the Haiku briefing
+
+A living office:
+- [ ] Day/night cycle following the local time: sun course, golden hour, night sky with stars, dim
+      moonlight outside while the office lights stay on
+- [ ] Standing animations (walk, stand, stand with a coffee, talk) and a coffee cup
+- [ ] Navigation grid over the floor plan (A* between walls and furniture)
+- [ ] Idle characters take coffee breaks in the lounge; a desk sending a message walks to its
+      colleague, a desk posting on the board walks to the whiteboard; everyone heads back to their
+      desk as soon as their session needs them
+
 ## 4. Risks & open points
 
 - **Subscription limits**: many parallel sessions drain the usage windows fast → the `limited` state

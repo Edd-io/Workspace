@@ -25,6 +25,7 @@ function desk(id: string, roomId: string, position: number): Desk {
     mode: 'worktree',
     workdir: '/w',
     branch: null,
+    baseBranch: null,
     sessionId: id,
     model: null,
     permissionMode: null,

@@ -91,6 +91,7 @@ function toDeskRecord(row: Row): DeskRecord {
     mode: row.mode as DeskMode,
     workdir: row.workdir as string,
     branch: (row.branch as string | null) ?? null,
+    baseBranch: (row.base_branch as string | null) ?? null,
     sessionId: row.session_id as string,
     model: (row.model as string | null) ?? null,
     permissionMode: (row.permission_mode as PermissionMode | null) ?? null,
@@ -233,8 +234,8 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         `INSERT INTO desks (id, room_id, name, slug, mode, workdir, branch, session_id, model, permission_mode,
            appearance_seed, position, token, desired_running, initial_prompt, transcript_path, state, state_since,
            in_turn, current_task, current_tool, last_prompt, last_assistant_message, created_at, blockers, session_title,
-           attention)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           attention, base_branch)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         desk.id,
@@ -264,6 +265,7 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         JSON.stringify(desk.blockers),
         desk.sessionTitle,
         desk.attention ? JSON.stringify(desk.attention) : null,
+        desk.baseBranch,
       );
     this.emit('deskUpsert', toPublicDesk(desk));
   }

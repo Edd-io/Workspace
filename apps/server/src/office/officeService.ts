@@ -9,7 +9,14 @@ import type {
   UpdateRoomInput,
 } from '@workspace/shared';
 import type { Config } from '../config.ts';
-import { createWorktree, GitError, hasUncommittedChanges, isGitRepo, removeWorktree } from '../git/git.ts';
+import {
+  createWorktree,
+  currentBranch,
+  GitError,
+  hasUncommittedChanges,
+  isGitRepo,
+  removeWorktree,
+} from '../git/git.ts';
 import { deskDir } from '../sessions/launchConfig.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import type { DeskRecord, OfficeStore } from '../store/officeStore.ts';
@@ -165,9 +172,12 @@ export class OfficeService {
     const slug = this.uniqueSlug(room.id, name);
     let workdir = room.projectPath;
     let branch: string | null = null;
+    let baseBranch: string | null = null;
 
     if (input.mode === 'worktree') {
       branch = `workspace/${slug}-${id.slice(0, 4)}`;
+      // The worktree starts from the project's HEAD: remember its branch as the integration target.
+      baseBranch = await currentBranch(room.projectPath);
       try {
         workdir = await createWorktree(
           room.projectPath,
@@ -189,6 +199,7 @@ export class OfficeService {
       mode: input.mode,
       workdir,
       branch,
+      baseBranch,
       sessionId: randomUUID(),
       model: input.model ?? null,
       permissionMode: input.permissionMode ?? null,

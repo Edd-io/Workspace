@@ -79,7 +79,8 @@
       "stop": "Stop",
       "restart": "Restart",
       "delete": "Delete desk",
-      "confirmDelete": "Delete"
+      "confirmDelete": "Delete",
+      "integrate": "Integrate the work…"
     },
     "confirmDelete": "The session stops and its worktree is removed. The branch {{branch}} is kept.",
     "confirmDeleteUncommitted": "This desk has uncommitted changes. They will be lost if you delete it."
@@ -231,5 +232,87 @@
       "normal": "balanced",
       "max": "smoothest, most demanding"
     }
+  },
+  "integration": {
+    "title": "Integrate {{desk}}'s work",
+    "loading": "Loading…",
+    "target": "Into",
+    "base": "starting branch",
+    "nothingToMerge": "Nothing to integrate: {{target}} already has all the desk's committed work.",
+    "ahead_one": "{{count}} commit to integrate · changed files: {{files}} (+{{additions}} −{{deletions}})",
+    "ahead_other": "{{count}} commits to integrate · changed files: {{files}} (+{{additions}} −{{deletions}})",
+    "behind_one": "{{target}} has {{count}} commit the desk does not have",
+    "behind_other": "{{target}} has {{count}} commits the desk does not have",
+    "uncommitted": {
+      "title_one": "{{count}} uncommitted file in the desk",
+      "title_other": "{{count}} uncommitted files in the desk",
+      "hint": "Only committed work is integrated. Commit these changes here, or ask the desk to do it.",
+      "placeholder": "Work in progress from {{desk}}",
+      "commit": "Commit these changes",
+      "done": "Changes committed.",
+      "tag": "uncommitted"
+    },
+    "busy": "The desk is working: wait until it is done.",
+    "notIdle": "Available when the desk is waiting for instructions.",
+    "conflicts": {
+      "title": "Conflicts expected with {{target}}",
+      "hint": "{{desk}} can merge the target into its branch and resolve the conflicts itself.",
+      "ask": "Ask {{desk}} to merge {{target}}",
+      "prompt": "Merge the branch `{{target}}` into your branch `{{branch}}`, resolve the conflicts, check that everything works (run the tests if there are any) and commit the result.",
+      "asked": "Request sent to {{desk}}."
+    },
+    "commits": "Commits",
+    "moreCommits": "… and {{count}} more",
+    "files": "Files",
+    "binary": "binary",
+    "untracked": "New file, not tracked by git yet.",
+    "noDiff": "No difference to show.",
+    "truncated": "The diff is too long: it was truncated.",
+    "moreLines": "… {{count}} more lines",
+    "targetDirty": "{{path}}, where {{target}} is checked out, has uncommitted changes: commit or stash them before merging.",
+    "mergeInCheckout": "The merge will happen in {{path}}, where {{target}} is checked out.",
+    "mergeWithoutCheckout": "{{target}} is not checked out anywhere: the branch will be updated directly, without touching any file.",
+    "update": "Update the desk from {{target}}",
+    "updateHint": "Merges the new commits of {{target}} into the desk's branch.",
+    "merge": "Merge into {{target}}",
+    "merging": "Merging…",
+    "merged_one": "{{count}} commit integrated into {{target}}.",
+    "merged_other": "{{count}} commits integrated into {{target}}.",
+    "upToDate": "Already up to date.",
+    "conflictsFound": "Conflicts in: {{files}}. Nothing was changed.",
+    "pr": {
+      "start": "Create a pull request",
+      "open": "Open the pull request",
+      "title": "New pull request",
+      "titleField": "Title",
+      "body": "Description",
+      "create": "Create the pull request",
+      "creating": "Creating…",
+      "created": "Pull request created:",
+      "defaultBody": "Work of desk {{desk}} (Workspace).\n\nCommits:\n{{commits}}",
+      "unavailable": {
+        "no_remote": "The repository has no remote.",
+        "no_gh": "The GitHub CLI (gh) is not installed on the server.",
+        "gh_not_authenticated": "The GitHub CLI (gh) is not logged in: run `gh auth login` on the server."
+      }
+    },
+    "errors": {
+      "generic": "Failed: {{message}}",
+      "desk_busy": "The desk is working: wait until it is done.",
+      "desk_not_idle": "The desk is not waiting for instructions right now.",
+      "target_dirty": "{{path}} has uncommitted changes: commit or stash them first.",
+      "desk_dirty": "The desk has uncommitted changes: commit them first.",
+      "target_missing": "The branch {{target}} does not exist.",
+      "branch_missing": "The desk's branch no longer exists.",
+      "not_a_worktree_desk": "This desk works directly in the project folder: there is nothing to integrate.",
+      "push_failed": "The push failed: {{message}}",
+      "pr_failed": "Creating the pull request failed: {{message}}",
+      "commit_failed": "The commit failed: {{message}}",
+      "merge_failed": "The merge failed: {{message}}",
+      "no_remote": "The repository has no remote.",
+      "no_gh": "The GitHub CLI (gh) is not installed on the server.",
+      "gh_not_authenticated": "The GitHub CLI (gh) is not logged in."
+    },
+    "open": "Integrate…"
   }
 }

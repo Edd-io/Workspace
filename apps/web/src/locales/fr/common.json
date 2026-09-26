@@ -79,7 +79,8 @@
       "stop": "Arrêter",
       "restart": "Redémarrer",
       "delete": "Supprimer le poste",
-      "confirmDelete": "Supprimer"
+      "confirmDelete": "Supprimer",
+      "integrate": "Intégrer le travail…"
     },
     "confirmDelete": "La session s'arrête et son worktree est supprimé. La branche {{branch}} est conservée.",
     "confirmDeleteUncommitted": "Ce poste a des modifications non commitées. Elles seront perdues si tu le supprimes."
@@ -231,5 +232,87 @@
       "normal": "bon compromis",
       "max": "le plus fluide, le plus gourmand"
     }
+  },
+  "integration": {
+    "title": "Intégrer le travail de {{desk}}",
+    "loading": "Chargement…",
+    "target": "Vers",
+    "base": "branche de départ",
+    "nothingToMerge": "Rien à intégrer : {{target}} contient déjà tout le travail commité du poste.",
+    "ahead_one": "{{count}} commit à intégrer · fichiers modifiés : {{files}} (+{{additions}} −{{deletions}})",
+    "ahead_other": "{{count}} commits à intégrer · fichiers modifiés : {{files}} (+{{additions}} −{{deletions}})",
+    "behind_one": "{{target}} a {{count}} commit que le poste n'a pas",
+    "behind_other": "{{target}} a {{count}} commits que le poste n'a pas",
+    "uncommitted": {
+      "title_one": "{{count}} fichier non commité dans le poste",
+      "title_other": "{{count}} fichiers non commités dans le poste",
+      "hint": "Seul le travail commité est intégré. Commite ces changements ici, ou demande au poste de le faire.",
+      "placeholder": "Travail en cours de {{desk}}",
+      "commit": "Commiter ces changements",
+      "done": "Changements commités.",
+      "tag": "non commité"
+    },
+    "busy": "Le poste travaille : attends qu'il ait fini.",
+    "notIdle": "Possible quand le poste attend une consigne.",
+    "conflicts": {
+      "title": "Conflits prévus avec {{target}}",
+      "hint": "{{desk}} peut fusionner la cible dans sa branche et résoudre les conflits lui-même.",
+      "ask": "Demander à {{desk}} de fusionner {{target}}",
+      "prompt": "Fusionne la branche `{{target}}` dans ta branche `{{branch}}`, résous les conflits, vérifie que tout fonctionne (lance les tests s'il y en a) puis commite le résultat.",
+      "asked": "Demande envoyée à {{desk}}."
+    },
+    "commits": "Commits",
+    "moreCommits": "… et {{count}} de plus",
+    "files": "Fichiers",
+    "binary": "binaire",
+    "untracked": "Nouveau fichier, pas encore suivi par git.",
+    "noDiff": "Pas de différence à afficher.",
+    "truncated": "Le diff est trop long : il a été tronqué.",
+    "moreLines": "… {{count}} lignes de plus",
+    "targetDirty": "{{path}}, où {{target}} est extraite, a des modifications non commitées : commite-les ou mets-les de côté avant de fusionner.",
+    "mergeInCheckout": "La fusion se fera dans {{path}}, où {{target}} est extraite.",
+    "mergeWithoutCheckout": "{{target}} n'est extraite nulle part : la branche sera mise à jour directement, sans toucher à aucun fichier.",
+    "update": "Mettre le poste à jour depuis {{target}}",
+    "updateHint": "Fusionne les nouveaux commits de {{target}} dans la branche du poste.",
+    "merge": "Fusionner dans {{target}}",
+    "merging": "Fusion…",
+    "merged_one": "{{count}} commit intégré dans {{target}}.",
+    "merged_other": "{{count}} commits intégrés dans {{target}}.",
+    "upToDate": "Déjà à jour.",
+    "conflictsFound": "Conflits sur : {{files}}. Rien n'a été modifié.",
+    "pr": {
+      "start": "Créer une pull request",
+      "open": "Voir la pull request",
+      "title": "Nouvelle pull request",
+      "titleField": "Titre",
+      "body": "Description",
+      "create": "Créer la pull request",
+      "creating": "Création…",
+      "created": "Pull request créée :",
+      "defaultBody": "Travail du poste {{desk}} (Workspace).\n\nCommits :\n{{commits}}",
+      "unavailable": {
+        "no_remote": "Le dépôt n'a pas de remote.",
+        "no_gh": "La CLI GitHub (gh) n'est pas installée sur le serveur.",
+        "gh_not_authenticated": "La CLI GitHub (gh) n'est pas connectée : lance « gh auth login » sur le serveur."
+      }
+    },
+    "errors": {
+      "generic": "Échec : {{message}}",
+      "desk_busy": "Le poste travaille : attends qu'il ait fini.",
+      "desk_not_idle": "Le poste n'attend pas de consigne pour le moment.",
+      "target_dirty": "{{path}} a des modifications non commitées : commite-les ou mets-les de côté d'abord.",
+      "desk_dirty": "Le poste a des modifications non commitées : commite-les d'abord.",
+      "target_missing": "La branche {{target}} n'existe pas.",
+      "branch_missing": "La branche du poste n'existe plus.",
+      "not_a_worktree_desk": "Ce poste travaille directement dans le dossier du projet : il n'y a rien à intégrer.",
+      "push_failed": "Le push a échoué : {{message}}",
+      "pr_failed": "La création de la pull request a échoué : {{message}}",
+      "commit_failed": "Le commit a échoué : {{message}}",
+      "merge_failed": "La fusion a échoué : {{message}}",
+      "no_remote": "Le dépôt n'a pas de remote.",
+      "no_gh": "La CLI GitHub (gh) n'est pas installée sur le serveur.",
+      "gh_not_authenticated": "La CLI GitHub (gh) n'est pas connectée."
+    },
+    "open": "Intégrer…"
   }
 }

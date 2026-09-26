@@ -5,16 +5,22 @@ import websocket from '@fastify/websocket';
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import {
+  commitPendingSchema,
   createDeskSchema,
   createRoomSchema,
+  deskPromptSchema,
+  integrationTargetSchema,
   loginSchema,
+  pullRequestSchema,
   summaryRequestSchema,
   updateDeskSchema,
   updateRoomSchema,
 } from '@workspace/shared';
 import { SESSION_COOKIE, SESSION_COOKIE_MAX_AGE_S, type AuthService } from '../auth/authService.ts';
 import type { Config } from '../config.ts';
+import { IntegrationError } from '../git/integration.ts';
 import type { BoardStore } from '../office/boardStore.ts';
+import type { IntegrationService } from '../office/integrationService.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
 import type { RoomAwareness } from '../office/roomAwareness.ts';
 import type { Summarizer } from '../office/summarizer.ts';
@@ -35,11 +41,15 @@ export interface AppDeps {
   boards: BoardStore;
   awareness: RoomAwareness;
   summarizer: Summarizer;
+  integration: IntegrationService;
 }
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
   if (error instanceof OfficeError) {
     return reply.code(error.status).send({ error: error.code, message: error.message });
+  }
+  if (error instanceof IntegrationError) {
+    return reply.code(409).send({ error: error.code, message: error.message, ...error.details });
   }
   if (error instanceof z.ZodError) {
     return reply.code(400).send({ error: 'invalid_input', message: z.prettifyError(error) });
@@ -48,7 +58,7 @@ function sendError(reply: FastifyReply, error: unknown): FastifyReply {
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
-  const { config, store, auth, office, sessions, boards, awareness, summarizer } = deps;
+  const { config, store, auth, office, sessions, boards, awareness, summarizer, integration } = deps;
   const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' }, bodyLimit: 1024 * 1024 });
 
   app.setErrorHandler((error, _request, reply) => {
@@ -201,6 +211,70 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       return sendError(reply, error);
     }
   });
+
+  // ---- integration of a desk's work (worktree desks) ------------------------------------------
+
+  type DeskRoute = { Params: { id: string } };
+  type TargetQuery = { Params: { id: string }; Querystring: { target?: string } };
+  const handle =
+    <T extends DeskRoute>(action: (request: FastifyRequest<T>) => Promise<unknown>) =>
+    async (request: FastifyRequest<T>, reply: FastifyReply) => {
+      try {
+        return await action(request);
+      } catch (error) {
+        return sendError(reply, error);
+      }
+    };
+
+  app.get<TargetQuery>(
+    '/api/desks/:id/integration',
+    handle<TargetQuery>((request) =>
+      integration.status(request.params.id, request.query.target || undefined),
+    ),
+  );
+  app.get<TargetQuery>(
+    '/api/desks/:id/integration/diff',
+    handle<TargetQuery>((request) =>
+      integration.diff(request.params.id, integrationTargetSchema.parse(request.query).target),
+    ),
+  );
+  app.get<DeskRoute>(
+    '/api/desks/:id/integration/pull-request',
+    handle((request) => integration.pullRequestInfo(request.params.id)),
+  );
+  app.post<DeskRoute>(
+    '/api/desks/:id/integration/commit',
+    handle(async (request) => {
+      await integration.commit(request.params.id, commitPendingSchema.parse(request.body).message);
+      return { ok: true };
+    }),
+  );
+  app.post<DeskRoute>(
+    '/api/desks/:id/integration/merge',
+    handle((request) =>
+      integration.merge(request.params.id, integrationTargetSchema.parse(request.body).target),
+    ),
+  );
+  app.post<DeskRoute>(
+    '/api/desks/:id/integration/update',
+    handle((request) =>
+      integration.updateFromTarget(request.params.id, integrationTargetSchema.parse(request.body).target),
+    ),
+  );
+  app.post<DeskRoute>(
+    '/api/desks/:id/integration/pull-request',
+    handle((request) => {
+      const { target, title, body } = pullRequestSchema.parse(request.body);
+      return integration.createPullRequest(request.params.id, target, title, body);
+    }),
+  );
+  app.post<DeskRoute>(
+    '/api/desks/:id/prompt',
+    handle(async (request) => {
+      integration.sendPrompt(request.params.id, deskPromptSchema.parse(request.body).text);
+      return { ok: true };
+    }),
+  );
 
   app.get<{ Querystring: { deskId?: string; since?: string; limit?: string } }>(
     '/api/events',

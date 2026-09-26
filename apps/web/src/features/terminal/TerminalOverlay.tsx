@@ -27,6 +27,7 @@ function TerminalWindow({ deskId }: { deskId: string }) {
   const desk = useOffice((state) => state.desks[deskId]);
   const room = useOffice((state) => (desk ? state.rooms[desk.roomId] : undefined));
   const closeTerminal = useOffice((state) => state.closeTerminal);
+  const setPanel = useOffice((state) => state.setPanel);
   const containerRef = useRef<HTMLDivElement>(null);
   const [closedReason, setClosedReason] = useState<'offline' | 'removed' | null>(null);
 
@@ -117,6 +118,11 @@ function TerminalWindow({ deskId }: { deskId: string }) {
           </div>
           <StateBadge state={desk.state} />
           <div className="terminal-window__actions">
+            {desk.mode === 'worktree' && (
+              <button className="button" onClick={() => setPanel({ kind: 'integrate', deskId: desk.id })}>
+                {t('integration.open')}
+              </button>
+            )}
             {offline ? (
               <button className="button" onClick={start}>
                 {t('desk.actions.start')}

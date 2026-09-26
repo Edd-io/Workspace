@@ -5,6 +5,7 @@ import { loadConfig } from './config.ts';
 import { openDatabase } from './db/database.ts';
 import { buildApp } from './http/app.ts';
 import { BoardStore } from './office/boardStore.ts';
+import { IntegrationService } from './office/integrationService.ts';
 import { OfficeService } from './office/officeService.ts';
 import { RoomAwareness } from './office/roomAwareness.ts';
 import { Summarizer } from './office/summarizer.ts';
@@ -25,8 +26,19 @@ const boards = new BoardStore(db);
 const awareness = new RoomAwareness(store, boards);
 sessions.setHookResponder((desk, payload) => awareness.respond(desk, payload));
 const summarizer = new Summarizer(store, boards, config);
+const integration = new IntegrationService(store, sessions);
 
-const app = await buildApp({ config, store, auth, office, sessions, boards, awareness, summarizer });
+const app = await buildApp({
+  config,
+  store,
+  auth,
+  office,
+  sessions,
+  boards,
+  awareness,
+  summarizer,
+  integration,
+});
 await sessions.init();
 auth.purgeExpired();
 await app.listen({ host: config.host, port: config.port });

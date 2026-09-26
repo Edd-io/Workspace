@@ -2,11 +2,13 @@ import type { Desk } from '@workspace/shared';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, ApiError } from '../../api/http';
+import { useOffice } from '../../state/officeStore';
 
 export function DeskMenu({ desk, onClose }: { desk: Desk; onClose: () => void }) {
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<'normal' | 'force' | null>(null);
+  const setPanel = useOffice((state) => state.setPanel);
 
   const run = async (action: () => Promise<unknown>) => {
     setError(null);
@@ -51,6 +53,17 @@ export function DeskMenu({ desk, onClose }: { desk: Desk; onClose: () => void })
             {t('desk.actions.stop')}
           </button>
         </>
+      )}
+      {desk.mode === 'worktree' && (
+        <button
+          className="desk-menu__item"
+          onClick={() => {
+            setPanel({ kind: 'integrate', deskId: desk.id });
+            onClose();
+          }}
+        >
+          {t('desk.actions.integrate')}
+        </button>
       )}
       {confirmDelete === null ? (
         <button

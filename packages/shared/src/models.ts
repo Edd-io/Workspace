@@ -43,6 +43,8 @@ export interface Desk {
   mode: DeskMode;
   workdir: string;
   branch: string | null;
+  /** Project branch the desk's worktree started from (worktree desks). */
+  baseBranch: string | null;
   sessionId: string;
   model: string | null;
   permissionMode: PermissionMode | null;

@@ -1,13 +1,53 @@
 import { execFile } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, realpathSync } from 'node:fs';
 import { dirname, relative, join } from 'node:path';
 import { promisify } from 'node:util';
 
 const execFileAsync = promisify(execFile);
 
-async function git(cwd: string, args: string[]): Promise<string> {
-  const { stdout } = await execFileAsync('git', ['-C', cwd, ...args], { encoding: 'utf8' });
+export async function git(cwd: string, args: string[]): Promise<string> {
+  const { stdout } = await execFileAsync('git', ['-C', cwd, ...args], {
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
   return stdout.trim();
+}
+
+export interface CommandResult {
+  code: number;
+  stdout: string;
+  stderr: string;
+}
+
+/** Runs a command without throwing on a non-zero exit code (merge-tree reports conflicts that way). */
+export async function run(
+  command: string,
+  args: string[],
+  options: { cwd?: string; timeoutMs?: number } = {},
+): Promise<CommandResult> {
+  try {
+    const { stdout, stderr } = await execFileAsync(command, args, {
+      cwd: options.cwd,
+      encoding: 'utf8',
+      timeout: options.timeoutMs ?? 30_000,
+      maxBuffer: 64 * 1024 * 1024,
+      // Never wait for a credential prompt: the server has no terminal.
+      env: { ...process.env, GIT_TERMINAL_PROMPT: '0', GH_PROMPT_DISABLED: '1' },
+    });
+    return { code: 0, stdout, stderr };
+  } catch (error) {
+    const failure = error as NodeJS.ErrnoException & {
+      code?: number | string;
+      stdout?: string;
+      stderr?: string;
+    };
+    if (failure.code === 'ENOENT') return { code: 127, stdout: '', stderr: `${command}: command not found` };
+    return {
+      code: typeof failure.code === 'number' ? failure.code : 1,
+      stdout: failure.stdout ?? '',
+      stderr: failure.stderr ?? failure.message,
+    };
+  }
 }
 
 export async function isGitRepo(path: string): Promise<boolean> {
@@ -20,6 +60,15 @@ export async function isGitRepo(path: string): Promise<boolean> {
 
 export async function repoRoot(path: string): Promise<string> {
   return git(path, ['rev-parse', '--show-toplevel']);
+}
+
+/** Branch checked out at `path`, or null when HEAD is detached. */
+export async function currentBranch(path: string): Promise<string | null> {
+  try {
+    return (await git(path, ['symbolic-ref', '--quiet', '--short', 'HEAD'])) || null;
+  } catch {
+    return null;
+  }
 }
 
 async function hasCommits(root: string): Promise<boolean> {
@@ -69,7 +118,13 @@ export async function createWorktree(
   } else {
     await git(root, ['worktree', 'add', '-b', branch, worktreePath, 'HEAD']);
   }
-  return join(worktreePath, relative(root, projectPath));
+  // `root` comes back with symlinks resolved (e.g. /var → /private/var on macOS): resolve the project
+  // path too, or the relative path climbs out of the worktree back into the project folder itself.
+  const inside = relative(root, realpathSync(projectPath));
+  if (inside.startsWith('..')) {
+    throw new GitError('worktree_failed', `${projectPath} is not inside the repository ${root}.`);
+  }
+  return join(worktreePath, inside);
 }
 
 export async function hasUncommittedChanges(path: string): Promise<boolean> {

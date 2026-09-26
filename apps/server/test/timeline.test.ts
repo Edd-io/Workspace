@@ -12,6 +12,7 @@ function desk(id: string, createdAt: number): DeskRecord {
     mode: 'shared',
     workdir: '/w',
     branch: null,
+    baseBranch: null,
     sessionId: id,
     model: null,
     permissionMode: null,

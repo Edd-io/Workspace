@@ -15,6 +15,7 @@ import { RoomBoardDialog } from '../board/RoomBoardDialog';
 import { CreateDeskDialog } from './CreateDeskDialog';
 import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
+import { IntegrationDialog } from '../integration/IntegrationDialog';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Minimap } from './Minimap';
 import { Toasts } from './Toasts';
@@ -295,5 +296,6 @@ function Dialogs() {
   if (panel.kind === 'summary') return <SummaryPanel onClose={close} />;
   if (panel.kind === 'map') return <MapPanel onClose={close} />;
   if (panel.kind === 'timeline') return <TimelinePanel onClose={close} />;
+  if (panel.kind === 'integrate') return <IntegrationDialog deskId={panel.deskId} onClose={close} />;
   return <CreateDeskDialog roomId={panel.roomId} onClose={close} />;
 }
