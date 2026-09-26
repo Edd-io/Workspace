@@ -4,6 +4,7 @@ import { api } from '../../api/http';
 import { GRAPHICS_QUALITIES, setGraphicsQuality, useGraphicsQuality } from '../../world/graphicsSettings';
 import { browserNotificationsEnabled, setBrowserNotifications } from '../notifications/useAttentionAlerts';
 import { onSoundEnabledChange, setSoundEnabled, soundEnabled } from '../sound/soundSettings';
+import { useOffice } from '../../state/officeStore';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 function Toggle({
@@ -105,6 +106,15 @@ export function SettingsMenu({ onLoggedOut }: { onLoggedOut: () => void }) {
               label={t('settings.notifications')}
             />
           </div>
+          <button
+            className="button settings__logout"
+            onClick={() => {
+              setOpen(false);
+              useOffice.getState().setPanel({ kind: 'notifications' });
+            }}
+          >
+            {t('phoneNotifications.menu')}
+          </button>
           <div className="settings__row">
             <span className="settings__label">{t('hud.language')}</span>
             <LanguageSwitcher />

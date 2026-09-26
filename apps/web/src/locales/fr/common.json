@@ -229,7 +229,15 @@
     "hint": "Clique sur un poste pour ouvrir son terminal, ailleurs pour t'y rendre."
   },
   "notifications": {
-    "title": "{{desk}} ({{room}}) t'attend"
+    "title": "{{desk}} ({{room}}) t'attend",
+    "discord": {
+      "waiting_one": "{{count}} poste t'attend",
+      "waiting_other": "{{count}} postes t'attendent",
+      "attentionTitle": "{{desk}} ({{room}}) t'attend",
+      "finishedTitle": "{{desk}} ({{room}}) a terminé",
+      "finishedBody": "Travail terminé après {{minutes}} min.",
+      "test": "Test de Workspace : les notifications arrivent bien ici. 👋"
+    }
   },
   "timeline": {
     "title": "Journée",
@@ -386,6 +394,39 @@
     "docs": {
       "label": "Documentation",
       "description": "README, guides et commentaires utiles, à jour avec le code."
+    }
+  },
+  "phoneNotifications": {
+    "title": "Notifications sur le téléphone",
+    "intro": "Workspace envoie les notifications dans un salon Discord : active les notifications de ce salon dans l'app Discord de ton téléphone.",
+    "steps": {
+      "channel": "Dans Discord, crée un salon privé (sur ton propre serveur, par exemple).",
+      "webhook": "Paramètres du salon → Intégrations → Webhooks → Nouveau webhook → Copier l'URL du webhook.",
+      "paste": "Colle l'URL ci-dessous, enregistre, puis envoie un test."
+    },
+    "webhook": "URL du webhook Discord",
+    "webhookSet": "Webhook enregistré ({{hint}}) — colle une nouvelle URL pour le remplacer",
+    "removeWebhook": "Supprimer le webhook",
+    "events": "Me prévenir quand",
+    "eventLabels": {
+      "attention": "un poste m'attend (question, autorisation, erreur, limite)",
+      "usage": "l'abonnement atteint 80 % puis 95 %",
+      "finished": "un poste termine une tâche de plus de 5 minutes"
+    },
+    "hideContent": "Masquer le contenu (seulement le nom du poste)",
+    "whenAway": "Rien n'est envoyé tant qu'un onglet Workspace est ouvert et visible ; les notifications partent 30 secondes après ton départ.",
+    "publicUrl": "Adresse de Workspace depuis le téléphone",
+    "publicUrlHint": "Pour que la notification ouvre directement le terminal du poste (par exemple une adresse Tailscale). Laisse vide pour ne pas mettre de lien.",
+    "save": "Enregistrer",
+    "saved": "Réglages enregistrés.",
+    "test": "Envoyer un test",
+    "testSent": "Test envoyé : regarde ton salon Discord.",
+    "testFailed": "L'envoi a échoué : {{error}}",
+    "lastSent": "Dernière notification envoyée {{ago}}.",
+    "menu": "Notifications téléphone…",
+    "errors": {
+      "invalid_input": "URL invalide : il faut une URL de webhook Discord (https://discord.com/api/webhooks/…) et une adresse http(s).",
+      "no_webhook": "Enregistre d'abord une URL de webhook."
     }
   }
 }

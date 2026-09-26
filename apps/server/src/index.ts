@@ -11,6 +11,7 @@ import { RoomAwareness } from './office/roomAwareness.ts';
 import { Summarizer } from './office/summarizer.ts';
 import { UsageTracker } from './office/usageTracker.ts';
 import { WakeService } from './office/wakeService.ts';
+import { loadLocales, Notifier, Presence } from './office/notifier.ts';
 import { SessionManager } from './sessions/sessionManager.ts';
 import { TmuxHost } from './sessions/tmuxHost.ts';
 import { OfficeStore } from './store/officeStore.ts';
@@ -34,6 +35,10 @@ store.on('deskRemoved', (deskId) => usage.forgetDesk(deskId));
 summarizer.setUsageSource(() => usage.usage());
 const wake = new WakeService(store, boards, sessions);
 wake.start();
+const presence = new Presence();
+const notifier = new Notifier(store, presence, loadLocales(config.repoRoot));
+notifier.start();
+usage.on('alert', (alert) => notifier.onUsageAlert(alert));
 
 const app = await buildApp({
   config,
@@ -46,6 +51,8 @@ const app = await buildApp({
   summarizer,
   integration,
   usage,
+  notifier,
+  presence,
 });
 await sessions.init();
 auth.purgeExpired();
@@ -60,6 +67,7 @@ const shutdown = async (): Promise<void> => {
   if (shuttingDown) return;
   shuttingDown = true;
   wake.stop();
+  notifier.stop();
   sessions.shutdown();
   await app.close();
   db.close();

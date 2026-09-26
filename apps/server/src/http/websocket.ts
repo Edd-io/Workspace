@@ -3,6 +3,7 @@ import type { WebSocket } from 'ws';
 import { clientMessageSchema, type ServerMessage } from '@workspace/shared';
 import type { BoardStore } from '../office/boardStore.ts';
 import type { Summarizer } from '../office/summarizer.ts';
+import type { Presence } from '../office/notifier.ts';
 import type { UsageTracker } from '../office/usageTracker.ts';
 import type { TerminalSubscriber } from '../sessions/deskRuntime.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
@@ -17,6 +18,7 @@ interface Deps {
   boards: BoardStore;
   summarizer: Summarizer;
   usage: UsageTracker;
+  presence: Presence;
 }
 
 class ClientConnection implements TerminalSubscriber {
@@ -39,7 +41,7 @@ class ClientConnection implements TerminalSubscriber {
 
 export function registerWebSocket(
   app: FastifyInstance,
-  { store, sessions, boards, summarizer, usage }: Deps,
+  { store, sessions, boards, summarizer, usage, presence }: Deps,
 ): void {
   const clients = new Set<ClientConnection>();
 
@@ -102,11 +104,15 @@ export function registerWebSocket(
         case 'ping':
           client.send({ t: 'pong' });
           break;
+        case 'presence':
+          presence.set(client, message.visible);
+          break;
       }
     });
 
     socket.on('close', () => {
       clients.delete(client);
+      presence.remove(client);
       sessions.unsubscribeAll(client);
     });
   });

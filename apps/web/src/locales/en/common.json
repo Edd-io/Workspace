@@ -229,7 +229,15 @@
     "hint": "Click a desk to open its terminal, anywhere else to go there."
   },
   "notifications": {
-    "title": "{{desk}} ({{room}}) needs you"
+    "title": "{{desk}} ({{room}}) needs you",
+    "discord": {
+      "waiting_one": "{{count}} desk is waiting for you",
+      "waiting_other": "{{count}} desks are waiting for you",
+      "attentionTitle": "{{desk}} ({{room}}) needs you",
+      "finishedTitle": "{{desk}} ({{room}}) is done",
+      "finishedBody": "Work finished after {{minutes}} min.",
+      "test": "Workspace test: notifications arrive here. 👋"
+    }
   },
   "timeline": {
     "title": "Timeline",
@@ -386,6 +394,39 @@
     "docs": {
       "label": "Documentation",
       "description": "README, guides and useful comments, kept up to date with the code."
+    }
+  },
+  "phoneNotifications": {
+    "title": "Phone notifications",
+    "intro": "Workspace posts notifications to a Discord channel: turn on the notifications of that channel in the Discord app on your phone.",
+    "steps": {
+      "channel": "In Discord, create a private channel (on your own server, for instance).",
+      "webhook": "Channel settings → Integrations → Webhooks → New webhook → Copy webhook URL.",
+      "paste": "Paste the URL below, save, then send a test."
+    },
+    "webhook": "Discord webhook URL",
+    "webhookSet": "Webhook saved ({{hint}}) — paste a new URL to replace it",
+    "removeWebhook": "Remove the webhook",
+    "events": "Tell me when",
+    "eventLabels": {
+      "attention": "a desk needs me (question, permission, error, limit)",
+      "usage": "the subscription reaches 80% then 95%",
+      "finished": "a desk finishes a task longer than 5 minutes"
+    },
+    "hideContent": "Hide the content (desk name only)",
+    "whenAway": "Nothing is sent while a Workspace tab is open and visible; notifications go out 30 seconds after you leave.",
+    "publicUrl": "Workspace address from the phone",
+    "publicUrlHint": "So that the notification opens the desk's terminal directly (e.g. a Tailscale address). Leave empty for no link.",
+    "save": "Save",
+    "saved": "Settings saved.",
+    "test": "Send a test",
+    "testSent": "Test sent: check your Discord channel.",
+    "testFailed": "Sending failed: {{error}}",
+    "lastSent": "Last notification sent {{ago}}.",
+    "menu": "Phone notifications…",
+    "errors": {
+      "invalid_input": "Invalid URL: a Discord webhook URL (https://discord.com/api/webhooks/…) and an http(s) address are needed.",
+      "no_webhook": "Save a webhook URL first."
     }
   }
 }

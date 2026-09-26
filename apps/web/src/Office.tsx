@@ -20,6 +20,18 @@ export function Office({ onLoggedOut }: { onLoggedOut: () => void }) {
 
   useAttentionAlerts();
 
+  // Links from phone notifications: /?desk=<id> opens that desk's terminal once the office is loaded.
+  const loaded = useOffice((state) => state.loaded);
+  useEffect(() => {
+    if (!loaded) return;
+    const url = new URL(window.location.href);
+    const deskId = url.searchParams.get('desk');
+    if (!deskId) return;
+    url.searchParams.delete('desk');
+    window.history.replaceState(null, '', url);
+    if (useOffice.getState().desks[deskId]) useOffice.getState().openTerminal(deskId);
+  }, [loaded]);
+
   // Keyboard shortcuts outside the terminal and dialogs (which handle their own keys):
   // Escape leaves the focused desk, V switches between the overview and the walk.
   useEffect(() => {

@@ -21,6 +21,8 @@ export const clientMessageSchema = z.discriminatedUnion('t', [
     rows: z.number().int().min(5).max(200),
   }),
   z.object({ t: z.literal('ping') }),
+  /** Whether this tab is visible: phone notifications are only sent when nobody is watching. */
+  z.object({ t: z.literal('presence'), visible: z.boolean() }),
 ]);
 export type ClientMessage = z.infer<typeof clientMessageSchema>;
 

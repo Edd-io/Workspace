@@ -12,6 +12,7 @@ import {
   integrationTargetSchema,
   loginSchema,
   pullRequestSchema,
+  updateNotificationSettingsSchema,
   summaryRequestSchema,
   updateDeskSchema,
   updateRoomSchema,
@@ -24,6 +25,7 @@ import type { IntegrationService } from '../office/integrationService.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
 import type { RoomAwareness } from '../office/roomAwareness.ts';
 import type { Summarizer } from '../office/summarizer.ts';
+import type { Notifier, Presence } from '../office/notifier.ts';
 import type { UsageTracker } from '../office/usageTracker.ts';
 import { buildTimeline } from '../office/timeline.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
@@ -44,6 +46,8 @@ export interface AppDeps {
   summarizer: Summarizer;
   integration: IntegrationService;
   usage: UsageTracker;
+  notifier: Notifier;
+  presence: Presence;
 }
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
@@ -60,7 +64,20 @@ function sendError(reply: FastifyReply, error: unknown): FastifyReply {
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
-  const { config, store, auth, office, sessions, boards, awareness, summarizer, integration, usage } = deps;
+  const {
+    config,
+    store,
+    auth,
+    office,
+    sessions,
+    boards,
+    awareness,
+    summarizer,
+    integration,
+    usage,
+    notifier,
+    presence,
+  } = deps;
   const app = Fastify({ logger: { level: process.env.LOG_LEVEL ?? 'info' }, bodyLimit: 1024 * 1024 });
 
   app.setErrorHandler((error, _request, reply) => {
@@ -317,9 +334,24 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     return reason === 'visit' ? summarizer.visit(language) : summarizer.refresh(language);
   });
 
+  // ---- phone notifications (Discord) ------------------------------------------------------------
+
+  app.get('/api/notifications', async () => notifier.publicSettings());
+  app.patch('/api/notifications', async (request) =>
+    notifier.update(updateNotificationSettingsSchema.parse(request.body)),
+  );
+  app.post('/api/notifications/test', async (request, reply) => {
+    try {
+      await notifier.test();
+    } catch {
+      return reply.code(409).send({ error: 'no_webhook' });
+    }
+    return notifier.publicSettings();
+  });
+
   // ---- realtime -------------------------------------------------------------------------------
 
-  registerWebSocket(app, { store, sessions, boards, summarizer, usage });
+  registerWebSocket(app, { store, sessions, boards, summarizer, usage, presence });
 
   // ---- web client (production build) ----------------------------------------------------------
 

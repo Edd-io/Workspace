@@ -13,6 +13,7 @@ import { CreateDeskDialog } from './CreateDeskDialog';
 import { CreateRoomDialog } from './CreateRoomDialog';
 import { DeskMenu } from './DeskMenu';
 import { IntegrationDialog } from '../integration/IntegrationDialog';
+import { NotificationsDialog } from '../notifications/NotificationsDialog';
 import { UsageGauge } from '../usage/UsageGauge';
 import { Minimap } from './Minimap';
 import { SettingsMenu } from './SettingsMenu';
@@ -238,6 +239,7 @@ function Dialogs() {
   if (panel.kind === 'summary') return <SummaryPanel onClose={close} />;
   if (panel.kind === 'map') return <MapPanel onClose={close} />;
   if (panel.kind === 'timeline') return <TimelinePanel onClose={close} />;
+  if (panel.kind === 'notifications') return <NotificationsDialog onClose={close} />;
   if (panel.kind === 'integrate') return <IntegrationDialog deskId={panel.deskId} onClose={close} />;
   return <CreateDeskDialog roomId={panel.roomId} onClose={close} />;
 }

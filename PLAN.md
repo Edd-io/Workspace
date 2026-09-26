@@ -336,9 +336,9 @@ Room lead and templates:
 - [x] Room templates (e.g. lead + front + back + tests) creating desks with roles and first prompts
 
 Phone notifications (Discord):
-- [ ] Discord webhook settings (masked, test button, events, hide content), messages in the UI language
-- [ ] Sent only when no Workspace tab is visible; one per attention episode, grouped
-- [ ] Links open the desk's terminal (`?desk=` deep link, public URL setting)
+- [x] Discord webhook settings (masked, test button, events, hide content), messages in the UI language
+- [x] Sent only when no Workspace tab is visible; one per attention episode, grouped
+- [x] Links open the desk's terminal (`?desk=` deep link, public URL setting)
 
 Stats and search:
 - [ ] Per-desk statistics over a period: working time, prompts, lines changed, context, integrations

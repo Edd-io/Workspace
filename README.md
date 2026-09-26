@@ -57,6 +57,11 @@ SMOKE_URL=http://127.0.0.1:4317 SMOKE_PASSWORD=... pnpm smoke   # browser smoke 
   subscription, relayed by the desks' status lines, with alerts at 80 % and 95 %.
 - **Integrate a desk's work** (desk menu or terminal header): diff, merge into a branch, or pull
   request through `gh`.
+- **Teamwork**: room templates (solo, duo, team) create desks with roles; desks message each other
+  and `delegate` tasks, and an idle desk is woken up when it gets a message (per room, rate-limited).
+- **Phone notifications** (⚙ → Phone notifications): posts to a Discord channel through a webhook
+  when a desk needs you, the subscription runs low or a long task ends — only while no Workspace tab
+  is visible. Set the public URL (e.g. a Tailscale address) so each message opens the desk's terminal.
 - **Surroundings**: entrance plaza, streets, car park, the lounge's terrace, a park and neighboring
   buildings, lit by street lamps at night; walk out through the entrance to visit them.
 - **Living office**: the light follows the time of day; idle characters take coffee breaks in the

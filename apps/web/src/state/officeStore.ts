@@ -21,6 +21,7 @@ export type Panel =
   | { kind: 'map' }
   | { kind: 'timeline' }
   | { kind: 'integrate'; deskId: string }
+  | { kind: 'notifications' }
   | null;
 
 /** Short-lived in-app notification: a desk started waiting for the human, or usage is running out. */
@@ -193,7 +194,14 @@ export function startOfficeSync(): void {
   if (started) return;
   started = true;
   officeSocket.onMessage(applyMessage);
-  officeSocket.onStatus((connection) => useOffice.setState({ connection }));
+  // The server sends phone notifications only when no tab is visible.
+  const reportPresence = () =>
+    officeSocket.send({ t: 'presence', visible: document.visibilityState === 'visible' });
+  officeSocket.onStatus((connection) => {
+    useOffice.setState({ connection });
+    if (connection === 'open') reportPresence();
+  });
+  document.addEventListener('visibilitychange', reportPresence);
   officeSocket.start();
 }
 
