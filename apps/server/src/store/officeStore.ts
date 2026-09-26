@@ -305,6 +305,37 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
     this.emit('deskEvent', { id: Number(result.lastInsertRowid), deskId, ts, kind, state, data });
   }
 
+  /** State changes and prompts of every desk between `from` and `to`, oldest first. */
+  timelineEvents(
+    from: number,
+    to: number,
+  ): { deskId: string; ts: number; kind: string; state: DeskState | null; event: string | null }[] {
+    const rows = this.db
+      .prepare(
+        `SELECT desk_id, ts, kind, state, json_extract(data, '$.event') AS event FROM desk_events
+         WHERE ts >= ? AND ts <= ? AND (kind = 'state' OR (kind = 'hook' AND json_extract(data, '$.event') = 'UserPromptSubmit'))
+         ORDER BY ts, id`,
+      )
+      .all(from, to) as Row[];
+    return rows.map((row) => ({
+      deskId: row.desk_id as string,
+      ts: row.ts as number,
+      kind: row.kind as string,
+      state: (row.state as DeskState | null) ?? null,
+      event: (row.event as string | null) ?? null,
+    }));
+  }
+
+  /** The state a desk was in at `ts` (latest state change before it), if known. */
+  stateAt(deskId: string, ts: number): DeskState | null {
+    const row = this.db
+      .prepare(
+        `SELECT state FROM desk_events WHERE desk_id = ? AND kind = 'state' AND ts < ? ORDER BY ts DESC, id DESC LIMIT 1`,
+      )
+      .get(deskId, ts) as Row | undefined;
+    return (row?.state as DeskState | undefined) ?? null;
+  }
+
   listDeskEvents(options: { deskId?: string; since?: number; limit?: number }): DeskEvent[] {
     const clauses: string[] = [];
     const params: (string | number)[] = [];

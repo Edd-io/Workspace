@@ -16,6 +16,7 @@ export type Panel =
   | { kind: 'inbox' }
   | { kind: 'summary' }
   | { kind: 'map' }
+  | { kind: 'timeline' }
   | null;
 
 /** Short-lived in-app notification (a desk started waiting for the human). */

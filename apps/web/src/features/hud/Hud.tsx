@@ -6,7 +6,9 @@ import { deskTopic } from '../../lib/desk';
 import { InboxPanel } from '../inbox/InboxPanel';
 import { MapPanel } from '../map/MapPanel';
 import { browserNotificationsEnabled, setBrowserNotifications } from '../notifications/useAttentionAlerts';
+import { onSoundEnabledChange, setSoundEnabled, soundEnabled } from '../sound/soundSettings';
 import { SummaryPanel } from '../summary/SummaryPanel';
+import { TimelinePanel } from '../timeline/TimelinePanel';
 import { attentionDesks, desksOfRoom, sortedRooms, useOffice } from '../../state/officeStore';
 import { RoomBoardDialog } from '../board/RoomBoardDialog';
 import { CreateDeskDialog } from './CreateDeskDialog';
@@ -69,7 +71,11 @@ function TopBar({ onLoggedOut }: { onLoggedOut: () => void }) {
         <button className="button button--ghost" onClick={() => setPanel({ kind: 'summary' })}>
           {t('summary.button')}
         </button>
+        <button className="button button--ghost" onClick={() => setPanel({ kind: 'timeline' })}>
+          {t('timeline.button')}
+        </button>
         <NotificationToggle />
+        <SoundToggle />
         <ViewModeSwitch />
         <LanguageSwitcher />
         <button className="button button--ghost" onClick={() => void logout()}>
@@ -201,6 +207,22 @@ function NotificationToggle() {
   );
 }
 
+function SoundToggle() {
+  const { t } = useTranslation();
+  const [enabled, setEnabled] = useState(soundEnabled);
+  useEffect(() => onSoundEnabledChange(setEnabled), []);
+  return (
+    <button
+      className="button button--ghost button--icon"
+      onClick={() => setSoundEnabled(!enabled)}
+      title={enabled ? t('sound.mute') : t('sound.unmute')}
+      aria-pressed={enabled}
+    >
+      {enabled ? '🔊' : '🔇'}
+    </button>
+  );
+}
+
 function ViewModeSwitch() {
   const { t } = useTranslation();
   const viewMode = useOffice((state) => state.viewMode);
@@ -251,5 +273,6 @@ function Dialogs() {
   if (panel.kind === 'inbox') return <InboxPanel onClose={close} />;
   if (panel.kind === 'summary') return <SummaryPanel onClose={close} />;
   if (panel.kind === 'map') return <MapPanel onClose={close} />;
+  if (panel.kind === 'timeline') return <TimelinePanel onClose={close} />;
   return <CreateDeskDialog roomId={panel.roomId} onClose={close} />;
 }

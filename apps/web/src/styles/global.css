@@ -927,3 +927,37 @@ textarea.input {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
+
+/* ---- timeline -------------------------------------------------------------------------------- */
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.timeline__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+.timeline__canvas {
+  position: relative;
+  max-height: 65vh;
+  overflow: auto;
+  border-radius: 8px;
+}
+.timeline__canvas canvas {
+  cursor: pointer;
+}
+.timeline__tooltip {
+  position: absolute;
+  z-index: 2;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #0b0e13;
+  border: 1px solid var(--panel-border);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}

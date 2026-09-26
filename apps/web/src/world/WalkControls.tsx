@@ -6,6 +6,7 @@ import { buildColliders, resolveCollisions } from './collision';
 import type { PropPlacement } from './decor';
 import type { OfficeLayout, Vec2 } from './layout';
 import { playerPose } from './playerPose';
+import { footsteps } from './Soundscape';
 
 const EYE_HEIGHT = 1.62;
 const WALK_SPEED = 2.4;
@@ -40,6 +41,7 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
   const position = useRef<Vec2>([...layout.entrance]);
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const viewTarget = useOffice((state) => state.viewTarget);
+  const stride = useRef(0);
 
   // Start where the camera is when it is inside the building, otherwise at the entrance.
   useEffect(() => {
@@ -83,7 +85,7 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
         const data = hit.object.userData as {
           deskId?: string;
           boardRoomId?: string;
-          panel?: 'map' | 'summary' | 'inbox';
+          panel?: 'map' | 'summary' | 'inbox' | 'timeline';
         };
         if (data.deskId) {
           document.exitPointerLock();
@@ -149,11 +151,18 @@ export function WalkControls({ layout, props }: { layout: OfficeLayout; props: P
       // Forward is −Z rotated by yaw; right is +X rotated by yaw.
       const dx = ((-sin * forward + cos * strafe) / length) * speed * step;
       const dz = ((-cos * forward - sin * strafe) / length) * speed * step;
+      const before = position.current;
       position.current = resolveCollisions(
         [position.current[0] + dx, position.current[1] + dz],
         RADIUS,
         colliders,
       );
+      // One footstep every ~0.75 m actually walked.
+      stride.current += Math.hypot(position.current[0] - before[0], position.current[1] - before[1]);
+      if (stride.current > 0.75) {
+        stride.current = 0;
+        footsteps.step();
+      }
     }
     camera.position.set(position.current[0], EYE_HEIGHT, position.current[1]);
     camera.rotation.set(pitch.current, yaw.current, 0, 'YXZ');

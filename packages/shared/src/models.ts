@@ -147,6 +147,25 @@ export const updateDeskSchema = z.object({
 });
 export type UpdateDeskInput = z.infer<typeof updateDeskSchema>;
 
+export interface TimelineSegment {
+  state: DeskState;
+  from: number;
+  to: number;
+}
+
+export interface DeskTimeline {
+  deskId: string;
+  segments: TimelineSegment[];
+  /** Timestamps of the prompts the desk received. */
+  prompts: number[];
+}
+
+export interface Timeline {
+  from: number;
+  to: number;
+  desks: DeskTimeline[];
+}
+
 export const summaryRequestSchema = z.object({
   reason: z.enum(['visit', 'refresh']),
   language: z.enum(['fr', 'en']),

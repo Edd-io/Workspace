@@ -199,6 +199,15 @@ export function masterDeskPose(room: RoomRect): { x: number; z: number; rotation
   };
 }
 
+/** Wall TV of the master office: on the east wall, facing west, above the lounge corner. */
+export function masterTvPose(room: RoomRect): { position: [number, number, number]; rotation: number } {
+  const frame = frameOf(room);
+  return {
+    position: [room.x1 - INSET - 0.03, 1.12, (room.z0 + room.z1) / 2 + frame.toward * 0.4],
+    rotation: -Math.PI / 2,
+  };
+}
+
 /** The three monitors of the master desk (map, summary, inbox), in the desk's local frame. */
 export const MASTER_MONITORS: { x: number; angle: number }[] = [
   { x: -0.72, angle: 0.28 },
@@ -232,15 +241,16 @@ function masterRoomProps(room: SpecialRoomLayout): PropPlacement[] {
   place(list, 'bookshelf', [room.x0 + 0.8, 0, back(0.17)], frame.facingCorridor);
   place(list, 'bookshelf', [room.x0 + 1.75, 0, back(0.17)], frame.facingCorridor);
   place(list, 'plant_tall', [room.x1 - 0.6, 0, back(0.4)], 0.4);
-  place(list, 'floor_lamp', [room.x1 - 0.5, 0, front(2.2)], 0);
-  // Small lounge corner.
-  place(list, 'rug', [room.x1 - 2.2, 0, front(1.6)], 0);
-  place(list, 'sofa', [room.x1 - 2.2, 0, front(0.55)], frame.facingCorridor + Math.PI);
-  place(list, 'coffee_table', [room.x1 - 2.2, 0, front(1.6)], 0);
+  // Lounge corner facing the wall TV (timeline) on the east wall, shared with the first project room.
+  const cz = (room.z0 + room.z1) / 2 + frame.toward * 0.4;
+  place(list, 'rug', [room.x1 - 2.1, 0, cz], Math.PI / 2);
+  place(list, 'sofa', [room.x1 - 3.15, 0, cz], Math.PI / 2);
+  place(list, 'coffee_table', [room.x1 - 2.05, 0, cz], Math.PI / 2);
+  place(list, 'floor_lamp', [room.x1 - 3.2, 0, cz - 1.35], 0);
   place(list, 'wall_clock', [cx, 2.3, back(0.02)], frame.facingCorridor);
-  place(list, 'poster_b', [room.x0 + INSET + 0.015, 1.6, (room.z0 + room.z1) / 2], Math.PI / 2);
-  place(list, 'poster_c', [room.x1 - INSET - 0.015, 1.6, (room.z0 + room.z1) / 2 - 1], -Math.PI / 2);
   place(list, 'coat_rack', [room.x0 + 2.4, 0, front(0.4)], 0);
+  const tv = masterTvPose(room);
+  place(list, 'tv_screen', tv.position, tv.rotation);
   backWallRadiators(list, room, frame, [[room.x0, room.x0 + 2.3]]);
   ceilingLights(list, room);
   return list;

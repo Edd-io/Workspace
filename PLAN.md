@@ -263,10 +263,12 @@ Each phase ends with a working, demonstrable state, verified in a real browser (
       written in the UI language, generated on arrival (reused for 10 min) and on demand
 - [x] Large interactive map panel (click a desk to open it, elsewhere to go there)
 
-### Phase 7 — Timeline & sound
-- [ ] Timeline view (per-desk state bars over the day, event details)
-- [ ] Positional ambience driven by real activity
-- Demo: hear the office work; review the day.
+### Phase 7 — Timeline & sound ✅
+- [x] `/api/timeline`: per-desk state segments + prompt ticks rebuilt from recorded events (tested)
+- [x] Timeline panel (1/6/12/24 h, hover details, click to open a desk) and a wall TV in the master
+      office showing the last hours
+- [x] Synthesized soundscape (no audio files): room tone, positional keyboard typing at the desks
+      that are actually working (nearest 8), footsteps when walking, alert chimes; mute toggle
 
 ### Phase 8 — Hardening & Linux
 - [ ] Performance pass (LOD, preview subscriptions, instancing), many-desk stress test

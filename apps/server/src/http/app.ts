@@ -18,6 +18,7 @@ import type { BoardStore } from '../office/boardStore.ts';
 import { OfficeError, type OfficeService } from '../office/officeService.ts';
 import type { RoomAwareness } from '../office/roomAwareness.ts';
 import type { Summarizer } from '../office/summarizer.ts';
+import { buildTimeline } from '../office/timeline.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import type { HookPayload } from '../sessions/stateMachine.ts';
 import { toPublicDesk, type OfficeStore } from '../store/officeStore.ts';
@@ -210,6 +211,12 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   });
 
   registerOfficeRoutes(app, { store, boards, awareness });
+
+  app.get<{ Querystring: { hours?: string } }>('/api/timeline', async (request) => {
+    const hours = Math.min(Math.max(Number(request.query.hours ?? 12) || 12, 1), 24 * 7);
+    const to = Date.now();
+    return buildTimeline(store, to - hours * 3600_000, to);
+  });
 
   // ---- summary (Haiku) ------------------------------------------------------------------------
 

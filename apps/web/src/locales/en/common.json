@@ -203,5 +203,19 @@
     "title": "{{desk}} ({{room}}) needs you",
     "enable": "Enable browser notifications",
     "disable": "Disable browser notifications"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "button": "Timeline",
+    "range": "Period",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "hint": "White ticks are the instructions desks received. Click a row to open the desk.",
+    "empty": "No desk activity in this period.",
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} min)"
+  },
+  "sound": {
+    "mute": "Mute the office",
+    "unmute": "Turn the office sound on"
   }
 }

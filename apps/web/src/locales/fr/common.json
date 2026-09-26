@@ -203,5 +203,19 @@
     "title": "{{desk}} ({{room}}) t'attend",
     "enable": "Activer les notifications du navigateur",
     "disable": "Désactiver les notifications du navigateur"
+  },
+  "timeline": {
+    "title": "Journée",
+    "button": "Journée",
+    "range": "Période",
+    "hours_one": "{{count}} h",
+    "hours_other": "{{count}} h",
+    "hint": "Les traits blancs sont les consignes reçues par les postes. Clique sur une ligne pour ouvrir le poste.",
+    "empty": "Aucune activité sur cette période.",
+    "tooltip": "{{desk}} · {{state}} · {{from}} → {{to}} ({{minutes}} min)"
+  },
+  "sound": {
+    "mute": "Couper le son du bureau",
+    "unmute": "Activer le son du bureau"
   }
 }

@@ -6,6 +6,8 @@ import { CameraRig } from './CameraRig';
 import type { PropPlacement } from './decor';
 import { DeskStation } from './DeskStation';
 import { MasterScreens } from './MasterScreens';
+import { Soundscape } from './Soundscape';
+import { TimelineTV } from './TimelineTV';
 import { PropInstances } from './props/PropInstances';
 import { RoomView } from './RoomView';
 import { Structure } from './structure/Structure';
@@ -94,8 +96,14 @@ export function World() {
         <DeskStation key={desk.desk.id} layout={desk} showLabel={!walking} />
       ))}
       <MasterScreens layout={layout} />
+      {layout.rooms
+        .filter((room) => room.kind === 'master')
+        .map((room) => (
+          <TimelineTV key="timeline-tv" room={room} />
+        ))}
 
       {walking ? <WalkControls layout={layout} props={props} /> : <CameraRig layout={layout} />}
+      <Soundscape layout={layout} />
     </Canvas>
   );
 }

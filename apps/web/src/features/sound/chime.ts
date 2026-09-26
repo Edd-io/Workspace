@@ -1,10 +1,10 @@
-/** Tiny synthesized sounds (no audio files): a soft two-note chime for alerts. */
+import { sharedAudioContext, soundEnabled } from './soundSettings';
 
-let context: AudioContext | null = null;
+/** Tiny synthesized sounds (no audio files): a soft two-note chime for alerts. */
 
 export function audioContext(): AudioContext | null {
   try {
-    context ??= new AudioContext();
+    const context = sharedAudioContext();
     if (context.state === 'suspended') void context.resume();
     return context;
   } catch {
@@ -26,6 +26,7 @@ function note(audio: AudioContext, frequency: number, start: number, duration: n
 }
 
 export function playChime(kind: 'question' | 'error'): void {
+  if (!soundEnabled()) return;
   const audio = audioContext();
   if (!audio || audio.state !== 'running') return;
   const now = audio.currentTime;
