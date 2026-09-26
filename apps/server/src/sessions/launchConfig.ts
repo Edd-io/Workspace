@@ -106,8 +106,8 @@ export function writeLaunchFiles(context: LaunchContext): string {
   const args: string[] = [
     resume ? '--resume' : '--session-id',
     desk.sessionId,
-    '--name',
-    desk.name,
+    // No `--name`: Claude Code then generates a session title from the conversation, which the
+    // UserPromptSubmit hook reports and the office shows as the desk's current topic.
     '--settings',
     settingsPath,
   ];

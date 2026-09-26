@@ -1,0 +1,129 @@
+{
+  "app": {
+    "name": "Workspace",
+    "loading": "Loading the office…",
+    "serverUnreachable": "The server cannot be reached."
+  },
+  "common": {
+    "retry": "Retry",
+    "close": "Close",
+    "cancel": "Cancel"
+  },
+  "languages": {
+    "fr": "FR",
+    "en": "EN"
+  },
+  "login": {
+    "subtitle": "Your office of Claude Code sessions",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "signOut": "Sign out",
+    "noPassword": "No password is set yet. Run this command on the server, then reload the page:",
+    "errors": {
+      "invalid": "Wrong password.",
+      "rate_limited": "Too many attempts. Try again in a few minutes.",
+      "no_password": "No password is set on the server.",
+      "invalid_input": "Please enter your password.",
+      "unknown_error": "Sign-in failed."
+    }
+  },
+  "hud": {
+    "language": "Language"
+  },
+  "connection": {
+    "connecting": "Connecting…",
+    "open": "Connected",
+    "closed": "Disconnected — reconnecting"
+  },
+  "states": {
+    "starting": "Starting",
+    "idle": "Idle",
+    "working": "Working",
+    "question": "Needs you",
+    "compacting": "Compacting",
+    "limited": "Usage limit",
+    "error": "Error",
+    "offline": "Offline"
+  },
+  "sidebar": {
+    "title": "Office",
+    "show": "Office",
+    "hide": "Hide",
+    "empty": "No room yet. Create one for your first project.",
+    "addDesk": "Add a desk",
+    "newRoom": "New room"
+  },
+  "desk": {
+    "menu": "Desk actions",
+    "actions": {
+      "start": "Start",
+      "stop": "Stop",
+      "restart": "Restart",
+      "delete": "Delete desk",
+      "confirmDelete": "Delete"
+    },
+    "confirmDelete": "The session stops and its worktree is removed. The branch {{branch}} is kept.",
+    "confirmDeleteUncommitted": "This desk has uncommitted changes. They will be lost if you delete it."
+  },
+  "errors": {
+    "path_not_found": "This folder does not exist on the server.",
+    "path_not_absolute": "The project path must be absolute.",
+    "not_a_git_repo": "This project is not a git repository: use the shared folder mode.",
+    "repo_without_commits": "The repository has no commit yet. Make a first commit to use worktrees.",
+    "worktree_failed": "The worktree could not be created.",
+    "room_not_empty": "This room still has desks.",
+    "uncommitted_changes": "This desk has uncommitted changes.",
+    "invalid_input": "Some fields are invalid.",
+    "cannot_read_directory": "This folder cannot be read.",
+    "room_not_found": "This room no longer exists.",
+    "desk_not_found": "This desk no longer exists.",
+    "unknown_error": "Something went wrong."
+  },
+  "createRoom": {
+    "title": "New room",
+    "name": "Room name",
+    "project": "Project folder on the server",
+    "parent": "Parent folder",
+    "hint": "Every desk of this room works on this project.",
+    "submit": "Create the room"
+  },
+  "createDesk": {
+    "title": "New desk in {{room}}",
+    "name": "Name",
+    "namePlaceholder": "Random name",
+    "mode": "Working copy",
+    "modes": {
+      "worktree": {
+        "label": "Own worktree",
+        "description": "A dedicated git branch and folder. No conflicts with other desks."
+      },
+      "shared": {
+        "label": "Shared folder",
+        "description": "Works directly in the project folder, like the other shared desks."
+      }
+    },
+    "notGit": "The project is not a git repository, so only the shared folder mode is available.",
+    "model": "Model",
+    "permissionMode": "Permissions",
+    "defaultOption": "Default",
+    "initialPrompt": "First instruction (optional)",
+    "initialPromptPlaceholder": "What should this desk work on?",
+    "submit": "Create the desk",
+    "creating": "Creating…"
+  },
+  "permissionModes": {
+    "default": "Ask every time",
+    "acceptEdits": "Accept edits",
+    "auto": "Auto",
+    "plan": "Plan mode",
+    "bypassPermissions": "Bypass all permissions"
+  },
+  "terminal": {
+    "offline": "This session is stopped.",
+    "removed": "This desk was deleted."
+  },
+  "world": {
+    "addDesk": "+ Add a desk"
+  }
+}

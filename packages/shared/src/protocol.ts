@@ -11,7 +11,7 @@ export type TerminalMode = (typeof TERMINAL_MODES)[number];
 
 export const clientMessageSchema = z.discriminatedUnion('t', [
   z.object({ t: z.literal('term.open'), deskId: z.string(), mode: z.enum(TERMINAL_MODES) }),
-  z.object({ t: z.literal('term.close'), deskId: z.string() }),
+  z.object({ t: z.literal('term.close'), deskId: z.string(), mode: z.enum(TERMINAL_MODES) }),
   z.object({ t: z.literal('term.input'), deskId: z.string(), data: z.string().max(65_536) }),
   z.object({
     t: z.literal('term.resize'),

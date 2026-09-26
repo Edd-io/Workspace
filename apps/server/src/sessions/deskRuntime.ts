@@ -107,9 +107,9 @@ export class DeskRuntime {
     }
   }
 
-  unsubscribe(subscriber: TerminalSubscriber): void {
-    this.interactive.delete(subscriber);
-    this.previews.delete(subscriber);
+  unsubscribe(subscriber: TerminalSubscriber, mode?: TerminalMode): void {
+    if (mode !== 'preview') this.interactive.delete(subscriber);
+    if (mode !== 'interactive') this.previews.delete(subscriber);
   }
 
   /** Sends a new preview frame to preview subscribers if the screen changed. */

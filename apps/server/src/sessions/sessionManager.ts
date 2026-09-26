@@ -7,12 +7,14 @@ import type { DeskRecord, OfficeStore } from '../store/officeStore.ts';
 import { DeskRuntime, type TerminalSubscriber } from './deskRuntime.ts';
 import { writeLaunchFiles } from './launchConfig.ts';
 import { reduceHook, type HookPayload } from './stateMachine.ts';
+import { latestAiTitle } from './transcript.ts';
 import type { TmuxHost } from './tmuxHost.ts';
 
 const PANE_POLL_MS = 2000;
 const PREVIEW_TICK_MS = 500;
 const REATTACH_DELAY_MS = 1000;
 const MAX_TEXT = 4000;
+const TITLE_RETRY_MS = 8000;
 
 function truncate(text: string | undefined, max = MAX_TEXT): string | undefined {
   if (text === undefined) return undefined;
@@ -175,8 +177,8 @@ export class SessionManager {
     return true;
   }
 
-  unsubscribe(deskId: string, subscriber: TerminalSubscriber): void {
-    this.runtimes.get(deskId)?.unsubscribe(subscriber);
+  unsubscribe(deskId: string, subscriber: TerminalSubscriber, mode?: TerminalMode): void {
+    this.runtimes.get(deskId)?.unsubscribe(subscriber, mode);
   }
 
   unsubscribeAll(subscriber: TerminalSubscriber): void {
@@ -233,6 +235,14 @@ export class SessionManager {
     }
   }
 
+  /** Picks up the conversation title Claude Code generates in the background. */
+  private async refreshTitle(deskId: string): Promise<void> {
+    const desk = this.store.getDesk(deskId);
+    if (!desk?.transcriptPath) return;
+    const title = await latestAiTitle(desk.transcriptPath);
+    if (title && title !== desk.sessionTitle) this.store.updateDesk(deskId, { sessionTitle: title });
+  }
+
   handleHook(deskId: string, payload: HookPayload): HookResponse {
     const desk = this.store.getDesk(deskId);
     if (!desk) return {};
@@ -259,6 +269,11 @@ export class SessionManager {
       prompt: truncate(payload.prompt, 500),
     });
     if (state) this.setState(deskId, state, { cause: payload.hook_event_name });
+    if (payload.hook_event_name === 'Stop' || payload.hook_event_name === 'SessionStart') {
+      // The title is generated asynchronously: look now and once more a bit later.
+      void this.refreshTitle(deskId);
+      setTimeout(() => void this.refreshTitle(deskId), TITLE_RETRY_MS);
+    }
 
     const updated = this.store.getDesk(deskId);
     return updated ? this.hookResponder(updated, payload) : {};

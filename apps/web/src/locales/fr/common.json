@@ -1,0 +1,129 @@
+{
+  "app": {
+    "name": "Workspace",
+    "loading": "Chargement du bureau…",
+    "serverUnreachable": "Impossible de joindre le serveur."
+  },
+  "common": {
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "cancel": "Annuler"
+  },
+  "languages": {
+    "fr": "FR",
+    "en": "EN"
+  },
+  "login": {
+    "subtitle": "Ton bureau de sessions Claude Code",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion…",
+    "signOut": "Se déconnecter",
+    "noPassword": "Aucun mot de passe n'est défini. Lance cette commande sur le serveur, puis recharge la page :",
+    "errors": {
+      "invalid": "Mot de passe incorrect.",
+      "rate_limited": "Trop de tentatives. Réessaie dans quelques minutes.",
+      "no_password": "Aucun mot de passe n'est défini sur le serveur.",
+      "invalid_input": "Saisis ton mot de passe.",
+      "unknown_error": "La connexion a échoué."
+    }
+  },
+  "hud": {
+    "language": "Langue"
+  },
+  "connection": {
+    "connecting": "Connexion…",
+    "open": "Connecté",
+    "closed": "Déconnecté — reconnexion"
+  },
+  "states": {
+    "starting": "Démarrage",
+    "idle": "Au repos",
+    "working": "Au travail",
+    "question": "T'attend",
+    "compacting": "Compactage",
+    "limited": "Limite d'usage",
+    "error": "Erreur",
+    "offline": "Éteint"
+  },
+  "sidebar": {
+    "title": "Bureau",
+    "show": "Bureau",
+    "hide": "Masquer",
+    "empty": "Aucune salle pour l'instant. Crée-en une pour ton premier projet.",
+    "addDesk": "Ajouter un poste",
+    "newRoom": "Nouvelle salle"
+  },
+  "desk": {
+    "menu": "Actions du poste",
+    "actions": {
+      "start": "Démarrer",
+      "stop": "Arrêter",
+      "restart": "Redémarrer",
+      "delete": "Supprimer le poste",
+      "confirmDelete": "Supprimer"
+    },
+    "confirmDelete": "La session s'arrête et son worktree est supprimé. La branche {{branch}} est conservée.",
+    "confirmDeleteUncommitted": "Ce poste a des modifications non commitées. Elles seront perdues si tu le supprimes."
+  },
+  "errors": {
+    "path_not_found": "Ce dossier n'existe pas sur le serveur.",
+    "path_not_absolute": "Le chemin du projet doit être absolu.",
+    "not_a_git_repo": "Ce projet n'est pas un dépôt git : utilise le mode dossier partagé.",
+    "repo_without_commits": "Le dépôt n'a encore aucun commit. Fais un premier commit pour utiliser les worktrees.",
+    "worktree_failed": "Le worktree n'a pas pu être créé.",
+    "room_not_empty": "Cette salle contient encore des postes.",
+    "uncommitted_changes": "Ce poste a des modifications non commitées.",
+    "invalid_input": "Certains champs sont invalides.",
+    "cannot_read_directory": "Ce dossier ne peut pas être lu.",
+    "room_not_found": "Cette salle n'existe plus.",
+    "desk_not_found": "Ce poste n'existe plus.",
+    "unknown_error": "Une erreur est survenue."
+  },
+  "createRoom": {
+    "title": "Nouvelle salle",
+    "name": "Nom de la salle",
+    "project": "Dossier du projet sur le serveur",
+    "parent": "Dossier parent",
+    "hint": "Tous les postes de cette salle travaillent sur ce projet.",
+    "submit": "Créer la salle"
+  },
+  "createDesk": {
+    "title": "Nouveau poste dans {{room}}",
+    "name": "Nom",
+    "namePlaceholder": "Nom aléatoire",
+    "mode": "Copie de travail",
+    "modes": {
+      "worktree": {
+        "label": "Worktree dédié",
+        "description": "Une branche et un dossier git à lui. Aucun conflit avec les autres postes."
+      },
+      "shared": {
+        "label": "Dossier partagé",
+        "description": "Travaille directement dans le dossier du projet, comme les autres postes partagés."
+      }
+    },
+    "notGit": "Le projet n'est pas un dépôt git : seul le mode dossier partagé est disponible.",
+    "model": "Modèle",
+    "permissionMode": "Permissions",
+    "defaultOption": "Par défaut",
+    "initialPrompt": "Première consigne (facultatif)",
+    "initialPromptPlaceholder": "Sur quoi ce poste doit-il travailler ?",
+    "submit": "Créer le poste",
+    "creating": "Création…"
+  },
+  "permissionModes": {
+    "default": "Demander à chaque fois",
+    "acceptEdits": "Accepter les modifications",
+    "auto": "Automatique",
+    "plan": "Mode plan",
+    "bypassPermissions": "Ignorer toutes les permissions"
+  },
+  "terminal": {
+    "offline": "Cette session est arrêtée.",
+    "removed": "Ce poste a été supprimé."
+  },
+  "world": {
+    "addDesk": "+ Ajouter un poste"
+  }
+}

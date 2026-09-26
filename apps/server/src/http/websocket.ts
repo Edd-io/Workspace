@@ -71,8 +71,8 @@ export function registerWebSocket(app: FastifyInstance, { store, sessions }: Dep
           });
           break;
         case 'term.close':
-          client.interactiveDesks.delete(message.deskId);
-          sessions.unsubscribe(message.deskId, client);
+          if (message.mode === 'interactive') client.interactiveDesks.delete(message.deskId);
+          sessions.unsubscribe(message.deskId, client, message.mode);
           break;
         case 'term.input':
           if (client.interactiveDesks.has(message.deskId)) sessions.input(message.deskId, message.data);
