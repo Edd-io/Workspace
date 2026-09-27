@@ -101,6 +101,7 @@ export class SessionManager {
         scriptPath: join(this.config.repoRoot, 'packages/office-mcp/src/index.ts'),
       },
       systemPrompt: buildSystemPrompt(room, desk),
+      envPass: this.config.deskEnvPass,
     });
   }
 

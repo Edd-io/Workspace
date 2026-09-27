@@ -60,7 +60,7 @@ export interface AppDeps {
 
 function sendError(reply: FastifyReply, error: unknown): FastifyReply {
   if (error instanceof OfficeError) {
-    return reply.code(error.status).send({ error: error.code, message: error.message });
+    return reply.code(error.status).send({ error: error.code, message: error.message, ...error.details });
   }
   if (error instanceof IntegrationError) {
     return reply.code(409).send({ error: error.code, message: error.message, ...error.details });
@@ -183,7 +183,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
 
   app.patch<{ Params: { id: string } }>('/api/rooms/:id', async (request, reply) => {
     try {
-      return office.updateRoom(request.params.id, updateRoomSchema.parse(request.body));
+      return await office.updateRoom(request.params.id, updateRoomSchema.parse(request.body));
     } catch (error) {
       return sendError(reply, error);
     }

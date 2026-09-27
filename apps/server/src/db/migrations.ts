@@ -115,4 +115,7 @@ export const MIGRATIONS: string[] = [
     updated_at INTEGER NOT NULL
   );
   `,
+  `
+  ALTER TABLE rooms ADD COLUMN worktree_files TEXT NOT NULL DEFAULT '[]';
+  `,
 ];

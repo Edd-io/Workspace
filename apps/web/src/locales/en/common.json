@@ -104,7 +104,8 @@
     "cannot_read_directory": "This folder cannot be read.",
     "room_not_found": "This room no longer exists.",
     "desk_not_found": "This desk no longer exists.",
-    "unknown_error": "Something went wrong."
+    "unknown_error": "Something went wrong.",
+    "worktree_files_not_ignored": "Git does not ignore these files, so a desk could commit them: {{files}}. Add them to .gitignore first."
   },
   "createRoom": {
     "title": "New room",
@@ -187,7 +188,11 @@
     "human": "You",
     "room": "everyone",
     "autoWake": "Wake idle desks up when someone writes to them",
-    "autoWakeHint": "A message to an idle desk is typed in as a prompt (at most 4 times per 10 minutes)."
+    "autoWakeHint": "A message to an idle desk is typed in as a prompt (at most 4 times per 10 minutes).",
+    "worktreeFiles": "Files copied into worktree desks",
+    "worktreeFilesHint": "Git-ignored files of the project, one path per line (e.g. .env). Each worktree desk gets a copy, since git never puts them in a worktree; only ignored files are accepted, so they can never be committed.",
+    "worktreeFilesSave": "Save",
+    "worktreeFilesSaved": "Saved. Existing desks received the files they were missing."
   },
   "board": {
     "formerDesk": "Former desk",
@@ -346,7 +351,8 @@
       "merge_failed": "The merge failed: {{message}}",
       "no_remote": "The repository has no remote.",
       "no_gh": "The GitHub CLI (gh) is not installed on the server.",
-      "gh_not_authenticated": "The GitHub CLI (gh) is not logged in."
+      "gh_not_authenticated": "The GitHub CLI (gh) is not logged in.",
+      "secret_files": "These files look like secrets and were not committed: {{files}}. Add them to .gitignore, or commit them yourself if they are safe to share."
     },
     "open": "Integrate…"
   },

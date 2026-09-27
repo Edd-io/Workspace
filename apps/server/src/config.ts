@@ -21,6 +21,8 @@ export interface Config {
   secureCookies: boolean;
   /** Record every raw hook payload to `<dataDir>/hook-log.jsonl` (test fixtures). */
   recordHooks: boolean;
+  /** Variables whose names look like secrets but that desks may still see (see launchConfig.ts). */
+  deskEnvPass: string[];
   defaultCols: number;
   defaultRows: number;
   /** Repository root (used to locate the office MCP server and the built web client). */
@@ -67,6 +69,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     hookBaseUrl: env.WORKSPACE_HOOK_BASE_URL ?? `http://${hookHost}:${port}`,
     secureCookies: env.WORKSPACE_SECURE_COOKIES === '1',
     recordHooks: env.WORKSPACE_RECORD_HOOKS === '1',
+    deskEnvPass: (env.WORKSPACE_DESK_ENV_PASS ?? '')
+      .split(',')
+      .map((name) => name.trim())
+      .filter((name) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(name)),
     defaultCols: 120,
     defaultRows: 36,
     repoRoot,

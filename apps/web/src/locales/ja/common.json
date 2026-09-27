@@ -104,7 +104,8 @@
     "cannot_read_directory": "このフォルダーを読み取れません。",
     "room_not_found": "このルームはもう存在しません。",
     "desk_not_found": "このデスクはもう存在しません。",
-    "unknown_error": "問題が発生しました。"
+    "unknown_error": "問題が発生しました。",
+    "worktree_files_not_ignored": "git はこれらのファイルを無視していないため、デスクがコミットしてしまう可能性があります: {{files}}。先に .gitignore に追加してください。"
   },
   "createRoom": {
     "title": "新しいルーム",
@@ -187,7 +188,11 @@
     "human": "あなた",
     "room": "全員",
     "autoWake": "メッセージが届いたら待機中のデスクを起こす",
-    "autoWakeHint": "待機中のデスクへのメッセージは、プロンプトとして入力されます（10分あたり最大4回）。"
+    "autoWakeHint": "待機中のデスクへのメッセージは、プロンプトとして入力されます（10分あたり最大4回）。",
+    "worktreeFiles": "worktree デスクにコピーするファイル",
+    "worktreeFilesHint": "git が無視するプロジェクトのファイルを 1 行に 1 パスずつ（例: .env）。git は worktree にこれらを置かないため、worktree デスクごとにコピーされます。無視されたファイルのみ受け付けるので、コミットされることはありません。",
+    "worktreeFilesSave": "保存",
+    "worktreeFilesSaved": "保存しました。既存のデスクには不足していたファイルをコピーしました。"
   },
   "board": {
     "formerDesk": "削除済みのデスク",
@@ -339,7 +344,8 @@
       "merge_failed": "マージに失敗しました：{{message}}",
       "no_remote": "リポジトリにリモートがありません。",
       "no_gh": "サーバーに GitHub CLI（gh）がインストールされていません。",
-      "gh_not_authenticated": "GitHub CLI（gh）が認証されていません。"
+      "gh_not_authenticated": "GitHub CLI（gh）が認証されていません。",
+      "secret_files": "これらのファイルは秘密情報のようなのでコミットしませんでした: {{files}}。.gitignore に追加するか、共有しても問題なければご自身でコミットしてください。"
     },
     "open": "統合…"
   },

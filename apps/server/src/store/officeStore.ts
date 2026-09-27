@@ -82,6 +82,7 @@ function toRoom(row: Row): Room {
     position: row.position as number,
     createdAt: row.created_at as number,
     autoWake: row.auto_wake !== 0,
+    worktreeFiles: JSON.parse((row.worktree_files as string | null) ?? '[]') as string[],
   };
 }
 
@@ -177,8 +178,9 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
   insertRoom(room: Room): void {
     this.db
       .prepare(
-        `INSERT INTO rooms (id, name, project_path, is_git_repo, accent_color, position, created_at, auto_wake)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO rooms (id, name, project_path, is_git_repo, accent_color, position, created_at, auto_wake,
+           worktree_files)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         room.id,
@@ -189,11 +191,20 @@ export class OfficeStore extends EventEmitter<OfficeStoreEvents> {
         room.position,
         room.createdAt,
         room.autoWake ? 1 : 0,
+        JSON.stringify(room.worktreeFiles),
       );
     this.emit('roomUpsert', room);
   }
 
-  updateRoom(id: string, patch: { name?: string; accentColor?: string; autoWake?: boolean }): Room | null {
+  updateRoom(
+    id: string,
+    patch: { name?: string; accentColor?: string; autoWake?: boolean; worktreeFiles?: string[] },
+  ): Room | null {
+    if (patch.worktreeFiles !== undefined) {
+      this.db
+        .prepare('UPDATE rooms SET worktree_files = ? WHERE id = ?')
+        .run(JSON.stringify(patch.worktreeFiles), id);
+    }
     if (patch.autoWake !== undefined) {
       this.db.prepare('UPDATE rooms SET auto_wake = ? WHERE id = ?').run(patch.autoWake ? 1 : 0, id);
     }

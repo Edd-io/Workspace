@@ -104,7 +104,8 @@
     "cannot_read_directory": "Não é possível ler esta pasta.",
     "room_not_found": "Esta sala não existe mais.",
     "desk_not_found": "Esta mesa não existe mais.",
-    "unknown_error": "Algo deu errado."
+    "unknown_error": "Algo deu errado.",
+    "worktree_files_not_ignored": "O git não ignora estes arquivos, então uma mesa poderia colocá-los em um commit: {{files}}. Adicione-os ao .gitignore primeiro."
   },
   "createRoom": {
     "title": "Nova sala",
@@ -187,7 +188,11 @@
     "human": "Você",
     "room": "todos",
     "autoWake": "Despertar as mesas ociosas quando alguém escrever para elas",
-    "autoWakeHint": "Uma mensagem para uma mesa ociosa é digitada como prompt (no máximo 4 vezes a cada 10 minutos)."
+    "autoWakeHint": "Uma mensagem para uma mesa ociosa é digitada como prompt (no máximo 4 vezes a cada 10 minutos).",
+    "worktreeFiles": "Arquivos copiados para as mesas com worktree",
+    "worktreeFilesHint": "Arquivos do projeto ignorados pelo git, um caminho por linha (ex.: .env). Cada mesa com worktree recebe uma cópia, já que o git nunca os coloca em um worktree; só arquivos ignorados são aceitos, para que nunca possam ir para um commit.",
+    "worktreeFilesSave": "Salvar",
+    "worktreeFilesSaved": "Salvo. As mesas existentes receberam os arquivos que faltavam."
   },
   "board": {
     "formerDesk": "Mesa removida",
@@ -346,7 +351,8 @@
       "merge_failed": "O merge falhou: {{message}}",
       "no_remote": "O repositório não tem remote.",
       "no_gh": "A GitHub CLI (gh) não está instalada no servidor.",
-      "gh_not_authenticated": "A GitHub CLI (gh) não está autenticada."
+      "gh_not_authenticated": "A GitHub CLI (gh) não está autenticada.",
+      "secret_files": "Estes arquivos parecem segredos e não foram para o commit: {{files}}. Adicione-os ao .gitignore, ou faça você mesmo o commit se puderem ser compartilhados."
     },
     "open": "Integrar…"
   },

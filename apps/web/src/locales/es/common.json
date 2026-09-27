@@ -104,7 +104,8 @@
     "cannot_read_directory": "No se puede leer esta carpeta.",
     "room_not_found": "Esta sala ya no existe.",
     "desk_not_found": "Este puesto ya no existe.",
-    "unknown_error": "Se produjo un error."
+    "unknown_error": "Se produjo un error.",
+    "worktree_files_not_ignored": "Git no ignora estos archivos, así que un puesto podría incluirlos en un commit: {{files}}. Añádelos antes al .gitignore."
   },
   "createRoom": {
     "title": "Nueva sala",
@@ -187,7 +188,11 @@
     "human": "Tú",
     "room": "todos",
     "autoWake": "Despertar a los puestos inactivos cuando alguien les escribe",
-    "autoWakeHint": "Un mensaje dirigido a un puesto inactivo le llega como instrucción (4 veces como máximo cada 10 minutos)."
+    "autoWakeHint": "Un mensaje dirigido a un puesto inactivo le llega como instrucción (4 veces como máximo cada 10 minutos).",
+    "worktreeFiles": "Archivos copiados en los puestos con worktree",
+    "worktreeFilesHint": "Archivos del proyecto ignorados por git, una ruta por línea (p. ej. .env). Cada puesto con worktree recibe una copia, ya que git nunca los pone en un worktree; solo se aceptan archivos ignorados, para que nunca se puedan confirmar en un commit.",
+    "worktreeFilesSave": "Guardar",
+    "worktreeFilesSaved": "Guardado. Los puestos existentes recibieron los archivos que les faltaban."
   },
   "board": {
     "formerDesk": "Antiguo puesto",
@@ -346,7 +351,8 @@
       "merge_failed": "Falló la fusión: {{message}}",
       "no_remote": "El repositorio no tiene remoto.",
       "no_gh": "La CLI de GitHub (gh) no está instalada en el servidor.",
-      "gh_not_authenticated": "La CLI de GitHub (gh) no tiene sesión iniciada."
+      "gh_not_authenticated": "La CLI de GitHub (gh) no tiene sesión iniciada.",
+      "secret_files": "Estos archivos parecen secretos y no se incluyeron en el commit: {{files}}. Añádelos al .gitignore, o haz tú mismo el commit si se pueden compartir."
     },
     "open": "Integrar…"
   },

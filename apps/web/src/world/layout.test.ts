@@ -14,6 +14,7 @@ function room(id: string, position: number): Room {
     position,
     createdAt: position,
     autoWake: true,
+    worktreeFiles: [],
   };
 }
 

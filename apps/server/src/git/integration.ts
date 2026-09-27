@@ -209,8 +209,34 @@ export async function integrationDiff(repo: DeskRepo, target: string): Promise<I
 }
 
 /** Commits everything the desk left uncommitted in its worktree. */
+/** Names of files that usually hold secrets; `.env.example` and the like are templates, not secrets. */
+const SECRET_FILES = [
+  /^\.env(\..+)?$/,
+  /\.(pem|key|p12|pfx|jks|keystore)$/i,
+  /^id_(rsa|dsa|ecdsa|ed25519)$/,
+  /^\.(netrc|pgpass)$/,
+];
+const TEMPLATE_FILES = /\.(example|sample|template|dist|defaults?)$/i;
+
+/** Whether a file of the repository looks like it holds secrets (and should never be committed). */
+export function looksLikeSecret(path: string): boolean {
+  const name = path.split('/').pop() ?? path;
+  return !TEMPLATE_FILES.test(name) && SECRET_FILES.some((pattern) => pattern.test(name));
+}
+
 export async function commitPending(repo: DeskRepo, message: string): Promise<void> {
   await git(repo.workdir, ['add', '--all']);
+  // A desk may have created a secret file git does not ignore: never commit it on its behalf.
+  const staged = (await git(repo.workdir, ['diff', '--cached', '--name-only'])).split('\n').filter(Boolean);
+  const secrets = staged.filter(looksLikeSecret);
+  if (secrets.length > 0) {
+    await git(repo.workdir, ['reset', '--quiet']);
+    throw new IntegrationError(
+      'secret_files',
+      `These files look like secrets and were not committed: ${secrets.join(', ')}.`,
+      { files: secrets },
+    );
+  }
   const result = await run('git', ['-C', repo.workdir, 'commit', '--quiet', '-m', message]);
   if (result.code !== 0)
     throw new IntegrationError('commit_failed', result.stderr.trim() || result.stdout.trim());

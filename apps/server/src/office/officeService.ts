@@ -17,6 +17,7 @@ import {
   isGitRepo,
   removeWorktree,
 } from '../git/git.ts';
+import { copyWorktreeFiles, notIgnored } from '../git/worktreeFiles.ts';
 import { deskDir } from '../sessions/launchConfig.ts';
 import type { SessionManager } from '../sessions/sessionManager.ts';
 import type { DeskRecord, OfficeStore } from '../store/officeStore.ts';
@@ -60,11 +61,14 @@ const ROOM_COLORS = ['#e07a5f', '#3d85c6', '#81b29a', '#f2cc8f', '#9b72cf', '#e5
 export class OfficeError extends Error {
   readonly code: string;
   readonly status: number;
+  /** Extra fields of the error response (e.g. the offending files). */
+  readonly details: Record<string, unknown>;
 
-  constructor(code: string, message: string, status = 400) {
+  constructor(code: string, message: string, status = 400, details: Record<string, unknown> = {}) {
     super(message);
     this.code = code;
     this.status = status;
+    this.details = details;
   }
 }
 
@@ -119,15 +123,51 @@ export class OfficeService {
       position,
       createdAt: Date.now(),
       autoWake: true,
+      worktreeFiles: [],
     };
     this.store.insertRoom(room);
     return room;
   }
 
-  updateRoom(id: string, input: UpdateRoomInput): Room {
-    const room = this.store.updateRoom(id, input);
-    if (!room) throw new OfficeError('room_not_found', 'Room not found.', 404);
+  async updateRoom(id: string, input: UpdateRoomInput): Promise<Room> {
+    const current = this.store.getRoom(id);
+    if (!current) throw new OfficeError('room_not_found', 'Room not found.', 404);
+    const worktreeFiles = input.worktreeFiles && [...new Set(input.worktreeFiles)];
+    if (worktreeFiles?.length) {
+      if (!current.isGitRepo) {
+        throw new OfficeError('not_a_git_repo', 'Only the desks of a git project have worktrees.');
+      }
+      // A file git does not ignore could be committed from a worktree: never copy one.
+      const unsafe = await notIgnored(current.projectPath, worktreeFiles);
+      if (unsafe.length > 0) {
+        throw new OfficeError(
+          'worktree_files_not_ignored',
+          `Not ignored by git: ${unsafe.join(', ')}.`,
+          400,
+          {
+            files: unsafe,
+          },
+        );
+      }
+    }
+    const room = this.store.updateRoom(id, { ...input, worktreeFiles })!;
+    if (worktreeFiles) {
+      // Desks already there get the files they do not have yet.
+      for (const desk of this.store.listDesksInRoom(id)) {
+        if (desk.mode === 'worktree') await this.copyWorktreeFiles(room, desk.workdir);
+      }
+    }
     return room;
+  }
+
+  /** Copies the room's git-ignored files (e.g. `.env`) into a worktree; never fails the caller. */
+  private async copyWorktreeFiles(room: Room, workdir: string): Promise<void> {
+    if (room.worktreeFiles.length === 0) return;
+    try {
+      await copyWorktreeFiles(room.projectPath, workdir, room.worktreeFiles);
+    } catch (error) {
+      console.warn(`[office] cannot copy the room's files into ${workdir}:`, (error as Error).message);
+    }
   }
 
   async deleteRoom(id: string, force: boolean): Promise<void> {
@@ -189,6 +229,7 @@ export class OfficeService {
         if (error instanceof GitError) throw new OfficeError(error.code, error.message);
         throw new OfficeError('worktree_failed', `Cannot create the worktree: ${(error as Error).message}`);
       }
+      await this.copyWorktreeFiles(room, workdir);
     }
 
     const now = Date.now();

@@ -104,7 +104,8 @@
     "cannot_read_directory": "无法读取这个文件夹。",
     "room_not_found": "这个房间已不存在。",
     "desk_not_found": "这个工位已不存在。",
-    "unknown_error": "出了点问题。"
+    "unknown_error": "出了点问题。",
+    "worktree_files_not_ignored": "git 没有忽略这些文件，工位可能会提交它们：{{files}}。请先把它们加入 .gitignore。"
   },
   "createRoom": {
     "title": "新建房间",
@@ -187,7 +188,11 @@
     "human": "你",
     "room": "所有人",
     "autoWake": "有人给空闲的工位发消息时唤醒它们",
-    "autoWakeHint": "发给空闲工位的消息会作为指令输入（每 10 分钟最多 4 次）。"
+    "autoWakeHint": "发给空闲工位的消息会作为指令输入（每 10 分钟最多 4 次）。",
+    "worktreeFiles": "复制到 worktree 工位的文件",
+    "worktreeFilesHint": "项目中被 git 忽略的文件，每行一个路径（例如 .env）。git 不会把它们放进 worktree，因此每个 worktree 工位都会得到一份副本；只接受被忽略的文件，确保它们永远不会被提交。",
+    "worktreeFilesSave": "保存",
+    "worktreeFilesSaved": "已保存。现有工位已收到缺少的文件。"
   },
   "board": {
     "formerDesk": "已删除的工位",
@@ -339,7 +344,8 @@
       "merge_failed": "合并失败：{{message}}",
       "no_remote": "仓库没有配置远程仓库。",
       "no_gh": "服务器上未安装 GitHub CLI（gh）。",
-      "gh_not_authenticated": "GitHub CLI（gh）尚未登录。"
+      "gh_not_authenticated": "GitHub CLI（gh）尚未登录。",
+      "secret_files": "这些文件看起来包含机密，未被提交：{{files}}。请把它们加入 .gitignore；如果可以公开，也可以自己提交。"
     },
     "open": "集成…"
   },

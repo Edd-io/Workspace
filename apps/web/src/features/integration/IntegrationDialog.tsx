@@ -37,6 +37,7 @@ export function IntegrationDialog({ deskId, onClose }: { deskId: string; onClose
         defaultValue: t('integration.errors.generic', { message }),
         path: details.path,
         target: details.target,
+        files: Array.isArray(details.files) ? details.files.join(', ') : undefined,
         message,
       });
     },

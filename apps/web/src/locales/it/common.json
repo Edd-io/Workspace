@@ -104,7 +104,8 @@
     "cannot_read_directory": "Impossibile leggere questa cartella.",
     "room_not_found": "Questa stanza non esiste più.",
     "desk_not_found": "Questa postazione non esiste più.",
-    "unknown_error": "Qualcosa è andato storto."
+    "unknown_error": "Qualcosa è andato storto.",
+    "worktree_files_not_ignored": "Git non ignora questi file, quindi una postazione potrebbe metterli in un commit: {{files}}. Aggiungili prima al .gitignore."
   },
   "createRoom": {
     "title": "Nuova stanza",
@@ -187,7 +188,11 @@
     "human": "Tu",
     "room": "tutti",
     "autoWake": "Sveglia le postazioni inattive quando qualcuno scrive loro",
-    "autoWakeHint": "Un messaggio a una postazione inattiva le viene digitato come prompt (al massimo 4 volte ogni 10 minuti)."
+    "autoWakeHint": "Un messaggio a una postazione inattiva le viene digitato come prompt (al massimo 4 volte ogni 10 minuti).",
+    "worktreeFiles": "File copiati nelle postazioni con worktree",
+    "worktreeFilesHint": "File del progetto ignorati da git, un percorso per riga (es. .env). Ogni postazione con worktree ne riceve una copia, perché git non li mette mai in un worktree; sono accettati solo file ignorati, così non possono mai finire in un commit.",
+    "worktreeFilesSave": "Salva",
+    "worktreeFilesSaved": "Salvato. Le postazioni esistenti hanno ricevuto i file che mancavano."
   },
   "board": {
     "formerDesk": "Ex postazione",
@@ -346,7 +351,8 @@
       "merge_failed": "Merge non riuscito: {{message}}",
       "no_remote": "Il repository non ha nessun remote.",
       "no_gh": "La CLI di GitHub (gh) non è installata sul server.",
-      "gh_not_authenticated": "La CLI di GitHub (gh) non ha effettuato l'accesso."
+      "gh_not_authenticated": "La CLI di GitHub (gh) non ha effettuato l'accesso.",
+      "secret_files": "Questi file sembrano segreti e non sono stati inclusi nel commit: {{files}}. Aggiungili al .gitignore, oppure fai tu il commit se possono essere condivisi."
     },
     "open": "Integra…"
   },

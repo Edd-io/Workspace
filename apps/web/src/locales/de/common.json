@@ -104,7 +104,8 @@
     "cannot_read_directory": "Dieser Ordner kann nicht gelesen werden.",
     "room_not_found": "Diesen Raum gibt es nicht mehr.",
     "desk_not_found": "Diesen Arbeitsplatz gibt es nicht mehr.",
-    "unknown_error": "Etwas ist schiefgelaufen."
+    "unknown_error": "Etwas ist schiefgelaufen.",
+    "worktree_files_not_ignored": "Git ignoriert diese Dateien nicht, ein Arbeitsplatz könnte sie also committen: {{files}}. Füge sie zuerst zur .gitignore hinzu."
   },
   "createRoom": {
     "title": "Neuer Raum",
@@ -187,7 +188,11 @@
     "human": "Du",
     "room": "alle",
     "autoWake": "Arbeitsplätze im Leerlauf wecken, wenn ihnen jemand schreibt",
-    "autoWakeHint": "Eine Nachricht an einen Arbeitsplatz im Leerlauf wird als Prompt eingegeben (höchstens 4-mal pro 10 Minuten)."
+    "autoWakeHint": "Eine Nachricht an einen Arbeitsplatz im Leerlauf wird als Prompt eingegeben (höchstens 4-mal pro 10 Minuten).",
+    "worktreeFiles": "In Worktree-Arbeitsplätze kopierte Dateien",
+    "worktreeFilesHint": "Von Git ignorierte Dateien des Projekts, ein Pfad pro Zeile (z. B. .env). Jeder Worktree-Arbeitsplatz erhält eine Kopie, da Git sie nie in einen Worktree legt; nur ignorierte Dateien werden akzeptiert, damit sie nie committet werden können.",
+    "worktreeFilesSave": "Speichern",
+    "worktreeFilesSaved": "Gespeichert. Bestehende Arbeitsplätze haben die fehlenden Dateien erhalten."
   },
   "board": {
     "formerDesk": "Ehemaliger Arbeitsplatz",
@@ -346,7 +351,8 @@
       "merge_failed": "Der Merge ist fehlgeschlagen: {{message}}",
       "no_remote": "Das Repository hat kein Remote.",
       "no_gh": "Die GitHub-CLI (gh) ist auf dem Server nicht installiert.",
-      "gh_not_authenticated": "Die GitHub-CLI (gh) ist nicht angemeldet."
+      "gh_not_authenticated": "Die GitHub-CLI (gh) ist nicht angemeldet.",
+      "secret_files": "Diese Dateien sehen nach Geheimnissen aus und wurden nicht committet: {{files}}. Füge sie zur .gitignore hinzu oder committe sie selbst, wenn sie geteilt werden dürfen."
     },
     "open": "Integrieren…"
   },

@@ -15,6 +15,7 @@ const room = (id: string, position: number): Room => ({
   position,
   createdAt: position,
   autoWake: true,
+  worktreeFiles: [],
 });
 
 const desk = (id: string, roomId: string, position: number): Desk => ({

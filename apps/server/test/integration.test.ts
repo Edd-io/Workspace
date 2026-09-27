@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -8,10 +8,13 @@ import {
   commitPending,
   defaultTarget,
   integrationStatus,
+  IntegrationError,
+  looksLikeSecret,
   mergeIntoTarget,
   updateDeskFromTarget,
   type DeskRepo,
 } from '../src/git/integration.ts';
+import { copyWorktreeFiles, notIgnored } from '../src/git/worktreeFiles.ts';
 
 let dir: string;
 let project: string;
@@ -114,5 +117,52 @@ describe('desk integration', () => {
     commitFile(project, 'z.txt', 'main\n', 'main moves on');
     expect(await updateDeskFromTarget(desk, 'main')).toMatchObject({ status: 'merged', commits: 1 });
     expect(git(desk.workdir, 'show', 'HEAD:z.txt')).toBe('main');
+  });
+});
+
+describe('secrets', () => {
+  it('recognizes files that usually hold secrets, not their templates', () => {
+    for (const path of ['.env', 'api/.env.local', 'certs/server.key', 'tls.pem', 'id_ed25519', '.netrc']) {
+      expect(looksLikeSecret(path), path).toBe(true);
+    }
+    for (const path of ['.env.example', '.env.sample', 'id_ed25519.pub', 'src/env.ts', 'keyboard.tsx']) {
+      expect(looksLikeSecret(path), path).toBe(false);
+    }
+  });
+
+  it('never commits secret files on behalf of a desk', async () => {
+    writeFileSync(join(desk.workdir, '.env'), 'API_KEY=secret\n');
+    writeFileSync(join(desk.workdir, 'b.txt'), 'work\n');
+    const failure = await commitPending(desk, 'work').catch((error: unknown) => error);
+    expect(failure).toBeInstanceOf(IntegrationError);
+    expect((failure as IntegrationError).code).toBe('secret_files');
+    expect((failure as IntegrationError).details.files).toEqual(['.env']);
+    // Nothing committed, nothing left staged.
+    expect(git(desk.workdir, 'rev-list', '--count', 'HEAD')).toBe('1');
+    expect(git(desk.workdir, 'diff', '--cached', '--name-only')).toBe('');
+
+    rmSync(join(desk.workdir, '.env'));
+    writeFileSync(join(desk.workdir, '.env.example'), 'API_KEY=\n');
+    await commitPending(desk, 'work');
+    expect(git(desk.workdir, 'show', '--name-only', '--format=', 'HEAD').split('\n').sort()).toEqual([
+      '.env.example',
+      'b.txt',
+    ]);
+  });
+
+  it('copies only git-ignored files into a worktree, without overwriting them', async () => {
+    commitFile(project, '.gitignore', '.env\n', 'ignore env');
+    writeFileSync(join(project, '.env'), 'API_KEY=secret\n');
+    writeFileSync(join(project, 'notes.txt'), 'untracked but not ignored\n');
+    expect(await notIgnored(project, ['.env', 'notes.txt', 'a.txt'])).toEqual(['notes.txt', 'a.txt']);
+
+    const workdir = await createWorktree(project, join(dir, 'worktrees', 'bo'), 'workspace/bo');
+    expect(await copyWorktreeFiles(project, workdir, ['.env', 'notes.txt', 'missing.env'])).toEqual(['.env']);
+    expect(readFileSync(join(workdir, '.env'), 'utf8')).toBe('API_KEY=secret\n');
+    // The desk's own version stays.
+    writeFileSync(join(workdir, '.env'), 'API_KEY=changed\n');
+    expect(await copyWorktreeFiles(project, workdir, ['.env'])).toEqual([]);
+    expect(readFileSync(join(workdir, '.env'), 'utf8')).toBe('API_KEY=changed\n');
+    expect(git(workdir, 'status', '--porcelain')).toBe('');
   });
 });

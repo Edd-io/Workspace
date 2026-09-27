@@ -1306,6 +1306,25 @@ textarea.input {
   border: 0;
   cursor: pointer;
 }
+.board__files {
+  margin: -6px 0 14px;
+  color: var(--text-muted);
+}
+.board__files summary {
+  cursor: pointer;
+}
+.board__files-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+.board__files-form textarea {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 13px;
+}
 .board__option {
   display: flex;
   align-items: center;

@@ -36,6 +36,11 @@ export interface Room {
   createdAt: number;
   /** A message to an idle desk of this room is typed into its session (see WakeService). */
   autoWake: boolean;
+  /**
+   * Git-ignored files of the project (paths relative to it, e.g. `.env`) copied into the worktree of
+   * each worktree desk: git never puts them there.
+   */
+  worktreeFiles: string[];
 }
 
 export interface Desk {
@@ -130,6 +135,16 @@ export const createRoomSchema = z.object({
 });
 export type CreateRoomInput = z.infer<typeof createRoomSchema>;
 
+/** A path relative to the project folder that stays inside it. */
+const projectFileSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(200)
+  .refine((path) => !path.startsWith('/') && !path.includes('\0') && !path.split(/[\\/]/).includes('..'), {
+    message: 'A path relative to the project folder, inside it.',
+  });
+
 export const updateRoomSchema = z.object({
   name: z.string().trim().min(1).max(80).optional(),
   accentColor: z
@@ -137,6 +152,7 @@ export const updateRoomSchema = z.object({
     .regex(/^#[0-9a-fA-F]{6}$/)
     .optional(),
   autoWake: z.boolean().optional(),
+  worktreeFiles: z.array(projectFileSchema).max(20).optional(),
 });
 export type UpdateRoomInput = z.infer<typeof updateRoomSchema>;
 

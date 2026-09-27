@@ -104,7 +104,8 @@
     "cannot_read_directory": "이 폴더를 읽을 수 없어요.",
     "room_not_found": "이 룸은 더 이상 존재하지 않아요.",
     "desk_not_found": "이 데스크는 더 이상 존재하지 않아요.",
-    "unknown_error": "문제가 발생했어요."
+    "unknown_error": "문제가 발생했어요.",
+    "worktree_files_not_ignored": "git이 이 파일들을 무시하지 않아 데스크가 커밋할 수 있습니다: {{files}}. 먼저 .gitignore에 추가하세요."
   },
   "createRoom": {
     "title": "새 룸",
@@ -187,7 +188,11 @@
     "human": "나",
     "room": "모두",
     "autoWake": "메시지를 받으면 대기 중인 데스크 깨우기",
-    "autoWakeHint": "대기 중인 데스크에 보낸 메시지는 프롬프트로 입력돼요 (10분에 최대 4번)."
+    "autoWakeHint": "대기 중인 데스크에 보낸 메시지는 프롬프트로 입력돼요 (10분에 최대 4번).",
+    "worktreeFiles": "워크트리 데스크에 복사할 파일",
+    "worktreeFilesHint": "git이 무시하는 프로젝트 파일을 한 줄에 경로 하나씩 입력하세요(예: .env). git은 이 파일들을 워크트리에 넣지 않으므로 워크트리 데스크마다 복사본을 받습니다. 무시된 파일만 허용되어 커밋될 일이 없습니다.",
+    "worktreeFilesSave": "저장",
+    "worktreeFilesSaved": "저장했습니다. 기존 데스크에 빠져 있던 파일을 복사했습니다."
   },
   "board": {
     "formerDesk": "삭제된 데스크",
@@ -339,7 +344,8 @@
       "merge_failed": "병합 실패: {{message}}",
       "no_remote": "저장소에 리모트가 없어요.",
       "no_gh": "서버에 GitHub CLI(gh)가 설치되어 있지 않아요.",
-      "gh_not_authenticated": "GitHub CLI(gh)에 로그인되어 있지 않아요."
+      "gh_not_authenticated": "GitHub CLI(gh)에 로그인되어 있지 않아요.",
+      "secret_files": "이 파일들은 비밀 정보로 보여 커밋하지 않았습니다: {{files}}. .gitignore에 추가하거나, 공유해도 괜찮다면 직접 커밋하세요."
     },
     "open": "통합…"
   },

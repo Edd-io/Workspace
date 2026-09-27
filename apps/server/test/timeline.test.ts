@@ -49,6 +49,7 @@ describe('buildTimeline', () => {
       position: 0,
       createdAt: 0,
       autoWake: true,
+      worktreeFiles: [],
     });
     store.insertDesk(desk('d', 0));
     store.addDeskEvent('d', 'state', 'idle', {}, 50);

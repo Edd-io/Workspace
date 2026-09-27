@@ -358,6 +358,13 @@ More languages:
       Chinese besides French and English; language picker showing each language in its own name
 - [x] Locale test checks keys, the plural forms each language needs and `{{variables}}`
 
+Secrets:
+- [x] Per-room list of git-ignored files (e.g. `.env`) copied into worktree desks; only ignored files
+      are accepted, so they can never be committed
+- [x] Sessions start without the server's secret-looking variables (Claude Code's own and
+      `WORKSPACE_DESK_ENV_PASS` kept)
+- [x] *Integrate → Commit* refuses files that look like secrets
+
 ## 4. Risks & open points
 
 - **Subscription limits**: many parallel sessions drain the usage windows fast → the `limited` state

@@ -13,6 +13,7 @@ const room: Room = {
   position: 0,
   createdAt: 0,
   autoWake: true,
+  worktreeFiles: [],
 };
 
 const desk = { id: 'd', roomId: 'a', position: 0, appearanceSeed: 1 } as Desk;

@@ -152,6 +152,7 @@ Environment variables of the server:
 | `WORKSPACE_HOOK_BASE_URL` | `http://<host>:<port>` | URL Claude Code hooks call back |
 | `WORKSPACE_SECURE_COOKIES` | unset | Set to `1` when served over HTTPS |
 | `WORKSPACE_RECORD_HOOKS` | unset | Set to `1` to log raw hook payloads to `<data dir>/hook-log.jsonl` |
+| `WORKSPACE_DESK_ENV_PASS` | unset | Comma-separated variables desks may see although their names look like secrets (e.g. `NPM_TOKEN`) |
 
 Viewer preferences (graphics quality, sound volumes, language, notifications) are in the ⚙ menu;
 graphics quality **Eco** keeps laptops cool.
@@ -169,23 +170,25 @@ graphics quality **Eco** keeps laptops cool.
 
 ### Secrets and isolation between desks
 
-Desks are **not sandboxed from each other**: know what each one can reach before you give it a
-project with secrets.
-
 - **Env files**: a worktree desk gets a fresh `git worktree`, which only contains tracked files, so
-  git-ignored files such as `.env` are **not** copied into it. Workspace never copies them: if a desk
-  needs one, put it in its worktree yourself (`<data dir>/worktrees/…`) and keep it out of commits.
-  A shared-folder desk works in the project folder itself and sees its `.env` files as they are.
-- **Environment variables**: every session inherits the environment of the Workspace server (the
-  Claude Code credentials included, e.g. `CLAUDE_CODE_OAUTH_TOKEN` on a server), plus its own
-  `WORKSPACE_DESK_TOKEN`, which only authenticates that desk to its own office endpoints. Do not
-  start the server with secrets in its environment that desks should not see.
-- **Same system user**: all desks run as the user of the server. Beyond its folder, a desk can
-  technically read the other desks' worktrees, your other projects and `WORKSPACE_DATA_DIR` (whose
-  database holds the desk tokens and the Discord webhook); what stops it is Claude Code's permission
-  prompts, so keep desks with access to secrets out of `bypassPermissions` mode. For real isolation,
-  run Workspace as a dedicated user that only owns the projects it works on (see
-  [`docs/deployment.md`](docs/deployment.md)).
+  git-ignored files such as `.env` are not in it. A room can list the ones its desks need (room
+  board → *Files copied into worktree desks*): each worktree desk gets a copy when it is created, and
+  existing desks get the files they miss when the list changes. Only files git ignores are accepted,
+  so a copy can never be committed. A shared-folder desk works in the project folder itself and sees
+  its `.env` files as they are.
+- **Environment variables**: a session inherits the environment of the Workspace server, **minus
+  every variable whose name looks like a secret** (`*TOKEN*`, `*SECRET*`, `*PASSWORD*`, `*API_KEY*`,
+  `*CREDENTIAL*`, `*PRIVATE_KEY*`, …). Claude Code's own variables (`CLAUDE_*`, `ANTHROPIC_*`), the
+  SSH agent and the desk's `WORKSPACE_DESK_TOKEN` (which only authenticates it to its own office
+  endpoints) are kept; list others desks need in `WORKSPACE_DESK_ENV_PASS`.
+- **Commits**: *Integrate → Commit* refuses files that look like secrets (`.env`, `*.pem`, `*.key`,
+  SSH private keys, `.netrc`, …; templates such as `.env.example` are fine) and says which ones.
+- **Same system user**: desks are **not sandboxed from each other**. All of them run as the user of
+  the server: beyond its folder, a desk can technically read the other desks' worktrees, your other
+  projects and `WORKSPACE_DATA_DIR` (whose database holds the desk tokens and the Discord webhook).
+  What stops it is Claude Code's permission prompts, so keep desks with access to secrets out of
+  `bypassPermissions` mode. For real isolation, run Workspace as a dedicated user that only owns the
+  projects it works on (see [`docs/deployment.md`](docs/deployment.md)).
 
 ## Project layout
 

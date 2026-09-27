@@ -79,6 +79,7 @@ export function RoomBoardDialog({ roomId, onClose }: { roomId: string; onClose: 
         />
         {t('whiteboard.autoWake')}
       </label>
+      {room.isGitRepo && <WorktreeFiles roomId={roomId} files={room.worktreeFiles} />}
       <div className="board">
         <section className="board__section">
           <h3>{t('whiteboard.whoDoesWhat')}</h3>
@@ -169,5 +170,64 @@ export function RoomBoardDialog({ roomId, onClose }: { roomId: string; onClose: 
       </div>
       {error && <p className="form-error">{error}</p>}
     </Dialog>
+  );
+}
+
+/** The git-ignored files (e.g. `.env`) a room copies into its worktree desks. */
+function WorktreeFiles({ roomId, files }: { roomId: string; files: string[] }) {
+  const { t } = useTranslation();
+  const [text, setText] = useState(files.join('\n'));
+  const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const save = async (event: FormEvent) => {
+    event.preventDefault();
+    setSaving(true);
+    setMessage(null);
+    const next = text
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+    try {
+      await api('PATCH', `/api/rooms/${roomId}`, { worktreeFiles: next });
+      setText(next.join('\n'));
+      setMessage({ tone: 'success', text: t('whiteboard.worktreeFilesSaved') });
+    } catch (caught) {
+      const code = caught instanceof ApiError ? caught.code : 'unknown_error';
+      const offending =
+        caught instanceof ApiError ? (caught.details.files as string[] | undefined) : undefined;
+      setMessage({
+        tone: 'error',
+        text: t(`errors.${code}`, { defaultValue: t('errors.unknown_error'), files: offending?.join(', ') }),
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <details className="board__files">
+      <summary>
+        {t('whiteboard.worktreeFiles')}
+        {files.length > 0 && <span className="muted"> · {files.join(', ')}</span>}
+      </summary>
+      <form className="board__files-form" onSubmit={(event) => void save(event)}>
+        <p className="field__hint">{t('whiteboard.worktreeFilesHint')}</p>
+        <textarea
+          className="input"
+          rows={3}
+          spellCheck={false}
+          placeholder={'.env\n.env.local'}
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+        />
+        {message && (
+          <p className={message.tone === 'error' ? 'form-error' : 'integration__success'}>{message.text}</p>
+        )}
+        <button className="button" disabled={saving}>
+          {t('whiteboard.worktreeFilesSave')}
+        </button>
+      </form>
+    </details>
   );
 }

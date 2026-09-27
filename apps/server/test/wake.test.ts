@@ -52,6 +52,7 @@ function setup() {
     position: 0,
     createdAt: 0,
     autoWake: true,
+    worktreeFiles: [],
   });
   store.insertDesk(desk('ada', 'idle'));
   store.insertDesk(desk('ken', 'working'));
