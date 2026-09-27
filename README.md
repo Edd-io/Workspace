@@ -167,6 +167,26 @@ graphics quality **Eco** keeps laptops cool.
 - The Discord webhook URL never leaves the server; the browser only sees a masked hint.
 - Desk work is never lost: deleting a worktree desk keeps its branch.
 
+### Secrets and isolation between desks
+
+Desks are **not sandboxed from each other**: know what each one can reach before you give it a
+project with secrets.
+
+- **Env files**: a worktree desk gets a fresh `git worktree`, which only contains tracked files, so
+  git-ignored files such as `.env` are **not** copied into it. Workspace never copies them: if a desk
+  needs one, put it in its worktree yourself (`<data dir>/worktrees/…`) and keep it out of commits.
+  A shared-folder desk works in the project folder itself and sees its `.env` files as they are.
+- **Environment variables**: every session inherits the environment of the Workspace server (the
+  Claude Code credentials included, e.g. `CLAUDE_CODE_OAUTH_TOKEN` on a server), plus its own
+  `WORKSPACE_DESK_TOKEN`, which only authenticates that desk to its own office endpoints. Do not
+  start the server with secrets in its environment that desks should not see.
+- **Same system user**: all desks run as the user of the server. Beyond its folder, a desk can
+  technically read the other desks' worktrees, your other projects and `WORKSPACE_DATA_DIR` (whose
+  database holds the desk tokens and the Discord webhook); what stops it is Claude Code's permission
+  prompts, so keep desks with access to secrets out of `bypassPermissions` mode. For real isolation,
+  run Workspace as a dedicated user that only owns the projects it works on (see
+  [`docs/deployment.md`](docs/deployment.md)).
+
 ## Project layout
 
 ```

@@ -48,3 +48,11 @@ Legend: 💡 raw idea · 👍 approved by the user, not scheduled yet · 🧪 to
 - 💡 **Mobile view**: simplified 2D (map + inbox + terminal).
 - 💡 **Multi-user**: several humans connected, visible as avatars, with presence.
 - 💡 **Deployment**: Docker image / systemd service for the Linux server, HTTPS through a reverse proxy or Tailscale.
+
+## Security
+- 💡 **Env files for worktree desks**: a per-room list of untracked files (e.g. `.env.local`) copied
+  or symlinked into each new worktree, and kept out of its commits.
+- 💡 **Scrubbed desk environment**: start sessions with an allowlist of variables (`PATH`, `HOME`,
+  locale, Claude Code credentials) instead of the server's whole environment.
+- 💡 **Sandboxed desks**: one system user or container per desk with only its worktree mounted, and a
+  data directory the desks cannot read.
